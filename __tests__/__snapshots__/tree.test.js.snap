@@ -86,8 +86,8 @@ exports[`tree directoriesOnly 5`] = `
 │   ├── alpha
 │   │   └── beta
 │   └── charlie
-├── charlie
-│   ├── beta"
+└── charlie
+    └── beta"
 `;
 
 exports[`tree directoriesOnly 6`] = `"single-file"`;

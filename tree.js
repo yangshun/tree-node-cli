@@ -73,10 +73,20 @@ function print(
   }
 
   // Handle directory files.
-  const files = fs.readdirSync(path)
+  let files = fs.readdirSync(path)
     .filter(
       file => !EXCLUSIONS.includes(file)
     );
+  if (options.directoriesOnly) {
+    // We have to filter here instead of at the start of the function
+    // because we need to know how many non-directories there are before
+    // we even start recursing.
+    files = files.filter(file => {
+      const filePath = nodePath.join(path, file);
+      return !fs.lstatSync(filePath).isFile();
+    })
+  }
+
   files.forEach((file, index) => {
     const isCurrentLast = index === files.length - 1;
     const linesForFile = print(
@@ -103,9 +113,3 @@ function tree(path, options) {
 }
 
 module.exports = tree;
-
-// console.log(
-//   printTree('/Users/yangshun/Developer/redux-devtools/', {
-//     excludeDirs: ['node_modules'],
-//   }),
-// );
