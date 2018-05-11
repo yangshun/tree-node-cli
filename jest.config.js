@@ -1,3 +1,3 @@
 module.exports = {
-  testPathIgnorePatterns: ['fixtures'],
+  testPathIgnorePatterns: ['__fixtures__'],
 };

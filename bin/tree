@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+const program = require('commander');
+
+const package = require('../package.json');
+const tree = require('../tree');
+
+const PATTERN_SEPARATOR = '|';
+
+program
+  .version(package.version)
+  .option('-a, --all-files', 'All files, include hidden files, are printed.')
+  .option('-d, --dir-only', 'List directories only.')
+  .option(
+    '-I, --exclude [patterns]',
+    'Exclude files that match the pattern. | separates alternate patterns. ' +
+      'Wrap your pattern in double quotes.',
+  )
+  .option('-L, --max-depth', 'Max display depth of the directory tree.')
+  .option('--trailing-slash', 'Add a trailing slash behind directories.');
+
+program.parse(process.argv);
+const path = program.args[0];
+
+const options = {
+  allFiles: program.allFiles,
+  dirOnly: program.dirOnly,
+  exclude: program.exclude,
+  maxDepth: program.maxDepth,
+  trailingSlash: program.trailingSlash,
+};
+
+Object.keys(options).forEach(key => {
+  if (options[key] === undefined) {
+    delete options[key];
+  }
+});
+
+if (options.exclude) {
+  options.exclude = options.exclude.split(PATTERN_SEPARATOR);
+}
+
+console.log(tree(path, options));

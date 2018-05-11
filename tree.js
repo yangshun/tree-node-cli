@@ -2,10 +2,10 @@ const fs = require('fs');
 const nodePath = require('path');
 
 const DEFAULT_OPTIONS = {
-  directoriesOnly: false,
-  directoriesTrailingSlash: false,
-  excludeDirs: [],
-  hideHiddenFiles: true,
+  allFiles: false,
+  dirOnly: false,
+  trailingSlash: false,
+  exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
 };
 
@@ -17,10 +17,7 @@ const SYMBOLS = {
   VERTICAL: '│   ',
 };
 
-// Files we want to exclude no matter what.
-const EXCLUSIONS = [
-  '.DS_Store',
-];
+const EXCLUDED_PATTERNS = [/\.DS_Store/];
 
 function isHiddenFile(filename) {
   return filename[0] === '.';
@@ -36,19 +33,29 @@ function print(
 ) {
   const isFile = fs.lstatSync(path).isFile();
   const isDir = !isFile;
+
   const lines = [];
+  // Do not show these regardless.
+  for (let i = 0; i < EXCLUDED_PATTERNS.length; i++) {
+    if (EXCLUDED_PATTERNS[i].test(path)) {
+      return lines;
+    }
+  }
+
   // Handle directories only.
-  if (isFile && options.directoriesOnly) {
+  if (isFile && options.dirOnly) {
     return lines;
   }
 
-  // Handle excluded dirs.
-  if (isDir && options.excludeDirs.includes(filename)) {
-    return lines;
+  // Handle excluded patterns.
+  for (let i = 0; i < options.exclude.length; i++) {
+    if (options.exclude[i].test(path)) {
+      return lines;
+    }
   }
 
-  // Handle hidden files.
-  if (options.hideHiddenFiles && isHiddenFile(filename)) {
+  // Handle showing of all files.
+  if (!options.allFiles && isHiddenFile(filename)) {
     return lines;
   }
 
@@ -63,7 +70,7 @@ function print(
     line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
   }
   line.push(filename);
-  if (isDir && options.directoriesTrailingSlash) {
+  if (isDir && options.trailingSlash) {
     line.push('/');
   }
   lines.push(line.join(''));
@@ -73,18 +80,15 @@ function print(
   }
 
   // Handle directory files.
-  let files = fs.readdirSync(path)
-    .filter(
-      file => !EXCLUSIONS.includes(file)
-    );
-  if (options.directoriesOnly) {
+  let files = fs.readdirSync(path);
+  if (options.dirOnly) {
     // We have to filter here instead of at the start of the function
     // because we need to know how many non-directories there are before
     // we even start recursing.
     files = files.filter(file => {
       const filePath = nodePath.join(path, file);
       return !fs.lstatSync(filePath).isFile();
-    })
+    });
   }
 
   files.forEach((file, index) => {
@@ -107,9 +111,17 @@ function print(
 
 function tree(path, options) {
   const combinedOptions = { ...DEFAULT_OPTIONS, ...options };
-  return print(nodePath.basename(path), path, 0, '', combinedOptions).join(
-    '\n',
+  combinedOptions.exclude = combinedOptions.exclude.map(
+    pattern => new RegExp(pattern),
   );
+
+  return print(
+    nodePath.basename(nodePath.join(process.cwd(), path)),
+    path,
+    0,
+    '',
+    combinedOptions,
+  ).join('\n');
 }
 
 module.exports = tree;
