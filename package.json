@@ -6,6 +6,10 @@
   "repository": "git@github.com:yangshun/tree-node-cli.git",
   "author": "Yangshun Tay <tay.yang.shun@gmail.com>",
   "license": "MIT",
+  "bin": {
+    "tree": "./bin/tree",
+    "treee": "./bin/tree"
+  },
   "scripts": {
     "test": "jest"
   },
