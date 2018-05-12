@@ -15,8 +15,9 @@ program
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +
       'Wrap your pattern in double quotes.',
+    string => string.split(PATTERN_SEPARATOR)
   )
-  .option('-L, --max-depth', 'Max display depth of the directory tree.')
+  .option('-L, --max-depth <n>', 'Max display depth of the directory tree.', parseInt)
   .option('--trailing-slash', 'Add a trailing slash behind directories.');
 
 program.parse(process.argv);
@@ -35,9 +36,5 @@ Object.keys(options).forEach(key => {
     delete options[key];
   }
 });
-
-if (options.exclude) {
-  options.exclude = options.exclude.split(PATTERN_SEPARATOR);
-}
 
 console.log(tree(path, options));
