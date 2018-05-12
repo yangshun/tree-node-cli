@@ -20,7 +20,7 @@ program
   .option('--trailing-slash', 'Add a trailing slash behind directories.');
 
 program.parse(process.argv);
-const path = program.args[0];
+const path = program.args[0] || '.';
 
 const options = {
   allFiles: program.allFiles,
