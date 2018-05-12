@@ -99,7 +99,9 @@ function print(
       currentDepth + 1,
       precedingSymbols +
         (currentDepth >= 1
-          ? isLast ? SYMBOLS.INDENT : SYMBOLS.VERTICAL
+          ? isLast
+            ? SYMBOLS.INDENT
+            : SYMBOLS.VERTICAL
           : SYMBOLS.EMPTY),
       options,
       isCurrentLast,
