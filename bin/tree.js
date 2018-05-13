@@ -11,6 +11,7 @@ const PATTERN_SEPARATOR = '|';
 program
   .version(pkg.version)
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
+  .option('--dirs-first', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
   .option(
     '-I, --exclude [patterns]',
@@ -18,7 +19,6 @@ program
       'Wrap your entire pattern in double quotes. E.g. `"node_modules|lcov".',
     string => string.split(PATTERN_SEPARATOR),
   )
-  .option('--dirs-first', 'List directories before files.')
   .option(
     '-L, --max-depth <n>',
     'Max display depth of the directory tree.',
