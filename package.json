@@ -24,7 +24,7 @@
     "npm": ">= 2.x <= 5.x",
     "yarn": ">=0.27.5 || >=1.0.0-20170811"
   },
-  "files": ["bin", "test.js"],
+  "files": ["bin"],
   "devDependencies": {
     "jest": "^22.4.3",
     "junk": "^2.1.0",
