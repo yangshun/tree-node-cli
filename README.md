@@ -73,6 +73,16 @@ const string = tree('path/to/dir', options);
 | `exclude`       | `[]`                       | Array   | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. |
 | `maxDepth`      | `Number.POSITIVE_INFINITY` | Number  | Max display depth of the directory tree.                                                                                              |
 
+```js
+const string = tree('path/to/dir'), {
+  allFiles: true,
+  exclude: [/node_modules/, /lcov/],
+  maxDepth: 4,
+});
+
+console.log(string);
+```
+
 ## License
 
 MIT
