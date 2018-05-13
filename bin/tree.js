@@ -11,7 +11,7 @@ const PATTERN_SEPARATOR = '|';
 program
   .version(pkg.version)
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
-  .option('-d, --dirsonly', 'List directories only.')
+  .option('-d, --dirs-only', 'List directories only.')
   .option(
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +
