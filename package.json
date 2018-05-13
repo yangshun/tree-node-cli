@@ -13,8 +13,11 @@
     "treee": "./bin/tree.js"
   },
   "scripts": {
-    "test": "jest",
-    "prettier": "prettier --write 'tree.js' 'bin/**/*' '__tests__/**/*.js'"
+    "check-all": "yarn prettier && yarn test",
+    "check-all:ci": "yarn prettier && yarn lint && yarn run test:ci",
+    "prettier": "prettier --write 'tree.js' 'bin/**/*' '__tests__/**/*.js'",
+    "test": "jest --coverage",
+    "test:ci": "jest --coverage --runInBand"
   },
   "engines": {
     "node": ">= 6.x <= 9.x",
