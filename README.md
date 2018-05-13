@@ -59,7 +59,7 @@ $ tree -h
 ## API
 
 ```js
-const tree = require('tree');
+const tree = require('tree-node-cli');
 const string = tree('path/to/dir', options);
 ```
 
