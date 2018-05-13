@@ -1,6 +1,8 @@
 # tree-node-cli
 
-Lists the contents of directories in a tree-like format. Both CLI and Node APIs are provided.
+Lists the contents of directories in a tree-like format, similar to the Linux [`tree`](https://linux.die.net/man/1/tree) command. Both CLI and Node APIs are provided.
+
+Tree is a recursive directory listing program that produces a depth indented listing of files. When a directory argument is given, tree lists all the files and/or directories found in the given directory.
 
 ## Installation
 
@@ -43,7 +45,7 @@ The following options are available:
 ```bash
 $ tree -h
 
-  Usage: tree [options] [path/to/dir]
+  Usage: tree [options]
 
   Options:
 
@@ -52,7 +54,7 @@ $ tree -h
     -d, --dir-only            List directories only.
     -I, --exclude [patterns]  Exclude files that match the pattern. | separates alternate patterns. Wrap your entire pattern in double quotes. E.g. `"node_modules|lcov".
     -L, --max-depth <n>       Max display depth of the directory tree.
-    --trailing-slash          Add a trailing slash behind directories.
+    -F, --trailing-slash      Append a '/' for directories,
     -h, --help                output usage information
 ```
 

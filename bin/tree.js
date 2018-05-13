@@ -23,7 +23,7 @@ program
     'Max display depth of the directory tree.',
     parseInt,
   )
-  .option('--trailing-slash', 'Add a trailing slash behind directories.');
+  .option('-F, --trailing-slash', "Append a '/' for directories.");
 
 program.parse(process.argv);
 const path = program.args[0] || '.'; // Defaults to CWD if not specified.
