@@ -24,6 +24,7 @@ program
     'Max display depth of the directory tree.',
     parseInt,
   )
+  .option('-r, --reverse', 'Sort the output in reverse alphabetic order.')
   .option('-F, --trailing-slash', "Append a '/' for directories.");
 
 program.parse(process.argv);
@@ -35,6 +36,7 @@ const options = {
   dirsOnly: program.dirsOnly,
   exclude: program.exclude,
   maxDepth: program.maxDepth,
+  reverse: program.reverse,
   trailingSlash: program.trailingSlash,
 };
 

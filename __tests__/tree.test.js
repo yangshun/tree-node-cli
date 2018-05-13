@@ -84,6 +84,16 @@ describe('tree', () => {
     });
   });
 
+  test('reverse', () => {
+    dirs.forEach(dir => {
+      expect(
+        tree(path.join(PATH_TO_TEST, dir), {
+          reverse: true,
+        }),
+      ).toMatchSnapshot();
+    });
+  });
+
   test('trailingSlash', () => {
     dirs.forEach(dir => {
       expect(

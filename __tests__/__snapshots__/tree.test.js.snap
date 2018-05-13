@@ -444,6 +444,65 @@ exports[`tree maxDepth 14`] = `
 └── beta"
 `;
 
+exports[`tree reverse 1`] = `
+"chain
+└── alpha
+    └── alpha
+        └── alpha
+            └── alpha
+                └── alpha
+                    └── alpha
+                        └── alpha
+                            └── alpha
+                                └── alpha.txt"
+`;
+
+exports[`tree reverse 2`] = `
+"double-level
+├── beta
+│   └── alpha.txt
+└── alpha.txt"
+`;
+
+exports[`tree reverse 3`] = `"empty-dir"`;
+
+exports[`tree reverse 4`] = `
+"multi-files
+├── charlie.txt
+├── beta.txt
+└── alpha.txt"
+`;
+
+exports[`tree reverse 5`] = `
+"multi-level
+├── delta.txt
+├── charlie
+│   ├── charlie.txt
+│   ├── beta
+│   │   └── alpha.txt
+│   ├── alpha.txt
+├── beta
+│   ├── charlie
+│   │   └── alpha.txt
+│   ├── beta.txt
+│   └── alpha
+│       ├── beta
+│       │   ├── alpha.txt
+│       └── alpha.txt
+└── alpha.txt"
+`;
+
+exports[`tree reverse 6`] = `
+"single-file
+└── alpha.txt"
+`;
+
+exports[`tree reverse 7`] = `
+"single-level
+├── beta
+└── alpha.txt"
+`;
+
 exports[`tree trailingSlash 1`] = `
 "chain/
 └── alpha/

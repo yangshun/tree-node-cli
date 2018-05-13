@@ -7,9 +7,10 @@ const DEFAULT_OPTIONS = {
   allFiles: false,
   dirsFirst: false,
   dirsOnly: false,
-  trailingSlash: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
+  reverse: false,
+  trailingSlash: false,
 };
 
 const SYMBOLS = {
@@ -82,8 +83,13 @@ function print(
     return lines;
   }
 
+  // Contents of a directory.
   let contents = fs.readdirSync(path);
-  // Handle directory files.
+
+  if (options.reverse) {
+    contents.reverse();
+  }
+
   if (options.dirsOnly) {
     // We have to filter here instead of at the start of the function
     // because we need to know how many non-directories there are before
