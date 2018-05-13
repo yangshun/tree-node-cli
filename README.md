@@ -76,6 +76,7 @@ const string = tree('path/to/dir', options);
 | `dirsOnly`      | `false`                    | Boolean | List directories only.                                                                                                                |
 | `exclude`       | `[]`                       | Array   | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. |
 | `maxDepth`      | `Number.POSITIVE_INFINITY` | Number  | Max display depth of the directory tree.                                                                                              |
+| `reverse`       | `false`                    | Boolean | Sort the output in reverse alphabetic order.                                                                                          |
 | `trailingSlash` | `false`                    | Boolean | Appends a trailing slash behind directories.                                                                                          |
 
 ```js
