@@ -42,7 +42,7 @@ $ tree [options] [path/to/dir]
 
 The following options are available:
 
-```bash
+```txt
 $ tree -h
 
   Usage: tree [options]
