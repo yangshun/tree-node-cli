@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const nodePath = require('path');
 
@@ -113,10 +115,6 @@ function print(
 
 function tree(path, options) {
   const combinedOptions = { ...DEFAULT_OPTIONS, ...options };
-  combinedOptions.exclude = combinedOptions.exclude.map(
-    pattern => new RegExp(pattern),
-  );
-
   return print(
     nodePath.basename(nodePath.join(process.cwd(), path)),
     path,

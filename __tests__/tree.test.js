@@ -37,21 +37,21 @@ describe('tree', () => {
     dirs.forEach(dir => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
-          exclude: ['beta'],
+          exclude: [/beta/],
         }),
       ).toMatchSnapshot();
     });
     dirs.forEach(dir => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
-          exclude: ['charlie'],
+          exclude: [/charlie/],
         }),
       ).toMatchSnapshot();
     });
     dirs.forEach(dir => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
-          exclude: ['beta', 'charlie'],
+          exclude: [/beta/, /charlie/],
         }),
       ).toMatchSnapshot();
     });
