@@ -124,7 +124,7 @@ exports[`tree default 7`] = `
 └── beta"
 `;
 
-exports[`tree dirOnly 1`] = `
+exports[`tree dirsOnly 1`] = `
 "chain
 └── alpha
     └── alpha
@@ -133,32 +133,53 @@ exports[`tree dirOnly 1`] = `
                 └── alpha
                     └── alpha
                         └── alpha
-                            └── alpha"
+                            └── alpha
+                                └── alpha.txt"
 `;
 
-exports[`tree dirOnly 2`] = `
+exports[`tree dirsOnly 2`] = `
 "double-level
-└── beta"
+├── alpha.txt
+└── beta
+    └── alpha.txt"
 `;
 
-exports[`tree dirOnly 3`] = `"empty-dir"`;
+exports[`tree dirsOnly 3`] = `"empty-dir"`;
 
-exports[`tree dirOnly 4`] = `"multi-files"`;
+exports[`tree dirsOnly 4`] = `
+"multi-files
+├── alpha.txt
+├── beta.txt
+└── charlie.txt"
+`;
 
-exports[`tree dirOnly 5`] = `
+exports[`tree dirsOnly 5`] = `
 "multi-level
+├── alpha.txt
 ├── beta
 │   ├── alpha
+│   │   ├── alpha.txt
 │   │   └── beta
+│   │       └── alpha.txt
+│   ├── beta.txt
 │   └── charlie
-└── charlie
-    └── beta"
+│       └── alpha.txt
+├── charlie
+│   ├── alpha.txt
+│   ├── beta
+│   │   └── alpha.txt
+│   └── charlie.txt
+└── delta.txt"
 `;
 
-exports[`tree dirOnly 6`] = `"single-file"`;
+exports[`tree dirsOnly 6`] = `
+"single-file
+└── alpha.txt"
+`;
 
-exports[`tree dirOnly 7`] = `
+exports[`tree dirsOnly 7`] = `
 "single-level
+├── alpha.txt
 └── beta"
 `;
 

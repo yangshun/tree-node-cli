@@ -5,7 +5,7 @@ const nodePath = require('path');
 
 const DEFAULT_OPTIONS = {
   allFiles: false,
-  dirOnly: false,
+  dirsOnly: false,
   trailingSlash: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,

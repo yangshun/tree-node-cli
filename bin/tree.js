@@ -11,7 +11,7 @@ const PATTERN_SEPARATOR = '|';
 program
   .version(pkg.version)
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
-  .option('-d, --dir-only', 'List directories only.')
+  .option('-d, --dirsonly', 'List directories only.')
   .option(
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +
@@ -30,7 +30,7 @@ const path = program.args[0] || '.'; // Defaults to CWD if not specified.
 
 const options = {
   allFiles: program.allFiles,
-  dirOnly: program.dirOnly,
+  dirsOnly: program.dirsOnly,
   exclude: program.exclude,
   maxDepth: program.maxDepth,
   trailingSlash: program.trailingSlash,

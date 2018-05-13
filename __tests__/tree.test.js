@@ -23,11 +23,11 @@ describe('tree', () => {
     });
   });
 
-  test('dirOnly', () => {
+  test('dirsOnly', () => {
     dirs.forEach(dir => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
-          dirOnly: true,
+          dirsOnly: true,
         }),
       ).toMatchSnapshot();
     });
