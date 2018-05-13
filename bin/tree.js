@@ -16,7 +16,7 @@ program
   .option(
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +
-      'Wrap your entire pattern in double quotes. E.g. `"node_modules|lcov".',
+      'Wrap your entire pattern in double quotes. E.g. `"node_modules|coverage".',
     string => string.split(PATTERN_SEPARATOR),
   )
   .option(

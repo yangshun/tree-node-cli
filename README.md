@@ -53,7 +53,7 @@ $ tree -h
     -a, --all-files           All files, include hidden files, are printed.
     --dirs-first              List directories before files.
     -d, --dirs-only           List directories only.
-    -I, --exclude [patterns]  Exclude files that match the pattern. | separates alternate patterns. Wrap your entire pattern in double quotes. E.g. `"node_modules|lcov".
+    -I, --exclude [patterns]  Exclude files that match the pattern. | separates alternate patterns. Wrap your entire pattern in double quotes. E.g. `"node_modules|coverage".
     -L, --max-depth <n>       Max display depth of the directory tree.
     -r, --reverse             Sort the output in reverse alphabetic order.
     -F, --trailing-slash      Append a '/' for directories.
