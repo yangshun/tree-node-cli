@@ -5,6 +5,7 @@ const nodePath = require('path');
 
 const DEFAULT_OPTIONS = {
   allFiles: false,
+  dirsFirst: false,
   dirsOnly: false,
   trailingSlash: false,
   exclude: [],
@@ -45,7 +46,7 @@ function print(
   }
 
   // Handle directories only.
-  if (isFile && options.dirOnly) {
+  if (isFile && options.dirsOnly) {
     return lines;
   }
 
@@ -81,23 +82,33 @@ function print(
     return lines;
   }
 
+  let contents = fs.readdirSync(path);
   // Handle directory files.
-  let files = fs.readdirSync(path);
-  if (options.dirOnly) {
+  if (options.dirsOnly) {
     // We have to filter here instead of at the start of the function
     // because we need to know how many non-directories there are before
     // we even start recursing.
-    files = files.filter(file => {
-      const filePath = nodePath.join(path, file);
-      return !fs.lstatSync(filePath).isFile();
-    });
+    contents = contents.filter(
+      file => !fs.lstatSync(nodePath.join(path, file)).isFile(),
+    );
   }
 
-  files.forEach((file, index) => {
-    const isCurrentLast = index === files.length - 1;
+  // Sort directories first.
+  if (options.dirsFirst) {
+    const dirs = contents.filter(
+      content => !fs.lstatSync(nodePath.join(path, content)).isFile(),
+    );
+    const files = contents.filter(content =>
+      fs.lstatSync(nodePath.join(path, content)).isFile(),
+    );
+    contents = [...dirs, ...files];
+  }
+
+  contents.forEach((content, index) => {
+    const isCurrentLast = index === contents.length - 1;
     const linesForFile = print(
-      file,
-      nodePath.join(path, file),
+      content,
+      nodePath.join(path, content),
       currentDepth + 1,
       precedingSymbols +
         (currentDepth >= 1

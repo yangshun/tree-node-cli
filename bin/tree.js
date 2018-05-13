@@ -18,6 +18,7 @@ program
       'Wrap your entire pattern in double quotes. E.g. `"node_modules|lcov".',
     string => string.split(PATTERN_SEPARATOR),
   )
+  .option('--dirs-first', 'List directories before files.')
   .option(
     '-L, --max-depth <n>',
     'Max display depth of the directory tree.',
@@ -30,6 +31,7 @@ const path = program.args[0] || '.'; // Defaults to CWD if not specified.
 
 const options = {
   allFiles: program.allFiles,
+  dirsFirst: program.dirsFirst,
   dirsOnly: program.dirsOnly,
   exclude: program.exclude,
   maxDepth: program.maxDepth,

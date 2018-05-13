@@ -23,6 +23,16 @@ describe('tree', () => {
     });
   });
 
+  test('dirsFirst', () => {
+    dirs.forEach(dir => {
+      expect(
+        tree(path.join(PATH_TO_TEST, dir), {
+          dirsFirst: true,
+        }),
+      ).toMatchSnapshot();
+    });
+  });
+
   test('dirsOnly', () => {
     dirs.forEach(dir => {
       expect(
