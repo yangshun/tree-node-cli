@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description":
     "Prints out file system as a tree, similar to the Linux tree command",
-  "main": "tree.js",
   "repository": "git@github.com:yangshun/tree-node-cli.git",
   "author": "Yangshun Tay <tay.yang.shun@gmail.com>",
   "license": "MIT",
+  "main": "tree.js",
   "bin": {
-    "tree": "./bin/tree",
-    "treee": "./bin/tree"
+    "tree": "./bin/tree.js",
+    "treee": "./bin/tree.js"
   },
   "scripts": {
     "test": "jest",
