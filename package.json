@@ -1,9 +1,15 @@
 {
   "name": "tree-node-cli",
-  "version": "1.0.0",
-  "description":
-    "Prints out file system as a tree, similar to the Linux tree command",
-  "keywords": ["tree", "cli", "node-tree", "command", "file", "directory"],
+  "version": "1.0.1",
+  "description": "Prints out file system as a tree, similar to the Linux tree command",
+  "keywords": [
+    "tree",
+    "cli",
+    "node-tree",
+    "command",
+    "file",
+    "directory"
+  ],
   "repository": "git@github.com:yangshun/tree-node-cli.git",
   "author": "Yangshun Tay <tay.yang.shun@gmail.com>",
   "license": "MIT",
@@ -21,7 +27,10 @@
     "npm": ">= 2.x <= 5.x",
     "yarn": ">=0.27.5 || >=1.0.0-20170811"
   },
-  "files": ["bin", "test.js"],
+  "files": [
+    "bin",
+    "test.js"
+  ],
   "devDependencies": {
     "jest": "^22.4.3",
     "junk": "^2.1.0",
