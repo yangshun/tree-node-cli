@@ -480,14 +480,14 @@ exports[`tree reverse 5`] = `
 │   ├── charlie.txt
 │   ├── beta
 │   │   └── alpha.txt
-│   ├── alpha.txt
+│   └── alpha.txt
 ├── beta
 │   ├── charlie
 │   │   └── alpha.txt
 │   ├── beta.txt
 │   └── alpha
 │       ├── beta
-│       │   ├── alpha.txt
+│       │   └── alpha.txt
 │       └── alpha.txt
 └── alpha.txt"
 `;

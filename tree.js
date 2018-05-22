@@ -58,11 +58,6 @@ function print(
     }
   }
 
-  // Handle showing of all files.
-  if (!options.allFiles && isHiddenFile(filename)) {
-    return lines;
-  }
-
   // Handle max depth.
   if (currentDepth > options.maxDepth) {
     return lines;
@@ -85,9 +80,13 @@ function print(
 
   // Contents of a directory.
   let contents = fs.readdirSync(path);
-
   if (options.reverse) {
     contents.reverse();
+  }
+
+  // Handle showing of all files.
+  if (!options.allFiles) {
+    contents = contents.filter(content => !isHiddenFile(content));
   }
 
   if (options.dirsOnly) {
@@ -118,9 +117,7 @@ function print(
       currentDepth + 1,
       precedingSymbols +
         (currentDepth >= 1
-          ? isLast
-            ? SYMBOLS.INDENT
-            : SYMBOLS.VERTICAL
+          ? isLast ? SYMBOLS.INDENT : SYMBOLS.VERTICAL
           : SYMBOLS.EMPTY),
       options,
       isCurrentLast,
