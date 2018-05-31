@@ -106,7 +106,7 @@ function print(
     const files = contents.filter(content =>
       fs.lstatSync(nodePath.join(path, content)).isFile(),
     );
-    contents = [...dirs, ...files];
+    contents = [].concat(dirs, files);
   }
 
   contents.forEach((content, index) => {
@@ -117,18 +117,20 @@ function print(
       currentDepth + 1,
       precedingSymbols +
         (currentDepth >= 1
-          ? isLast ? SYMBOLS.INDENT : SYMBOLS.VERTICAL
+          ? isLast
+            ? SYMBOLS.INDENT
+            : SYMBOLS.VERTICAL
           : SYMBOLS.EMPTY),
       options,
       isCurrentLast,
     );
-    lines.push(...linesForFile);
+    lines.push.apply(lines, linesForFile);
   });
   return lines;
 }
 
 function tree(path, options) {
-  const combinedOptions = { ...DEFAULT_OPTIONS, ...options };
+  const combinedOptions = Object.assign({}, DEFAULT_OPTIONS, options);
   return print(
     nodePath.basename(nodePath.join(process.cwd(), path)),
     path,
