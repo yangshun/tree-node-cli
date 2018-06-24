@@ -25,11 +25,6 @@
     "test": "jest --coverage",
     "test:ci": "jest --coverage --runInBand"
   },
-  "engines": {
-    "node": ">= 8",
-    "npm": ">= 2",
-    "yarn": ">=0.27.5 || >=1.0.0-20170811"
-  },
   "files": [
     "bin"
   ],
