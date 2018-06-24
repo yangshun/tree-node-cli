@@ -1,6 +1,6 @@
 {
   "name": "tree-node-cli",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Lists the contents of directories in a tree-like format, similar to the Linux tree command.",
   "keywords": [
     "tree",
