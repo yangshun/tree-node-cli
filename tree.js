@@ -35,10 +35,13 @@ function print(
   options,
   isLast,
 ) {
-  const isFile = fs.lstatSync(path).isFile();
-  const isDir = !isFile;
+  const isDir = fs.lstatSync(path).isDirectory();
+  // We treat all non-directory paths as files and don't
+  // recurse into them, including symlinks, sockets, etc.
+  const isFile = !isDir;
 
   const lines = [];
+
   // Do not show these regardless.
   for (let i = 0; i < EXCLUDED_PATTERNS.length; i++) {
     if (EXCLUDED_PATTERNS[i].test(path)) {
@@ -93,18 +96,18 @@ function print(
     // We have to filter here instead of at the start of the function
     // because we need to know how many non-directories there are before
     // we even start recursing.
-    contents = contents.filter(
-      file => !fs.lstatSync(nodePath.join(path, file)).isFile(),
+    contents = contents.filter(file =>
+      fs.lstatSync(nodePath.join(path, file)).isDirectory(),
     );
   }
 
   // Sort directories first.
   if (options.dirsFirst) {
-    const dirs = contents.filter(
-      content => !fs.lstatSync(nodePath.join(path, content)).isFile(),
+    const dirs = contents.filter(content =>
+      fs.lstatSync(nodePath.join(path, content)).isDirectory(),
     );
-    const files = contents.filter(content =>
-      fs.lstatSync(nodePath.join(path, content)).isFile(),
+    const files = contents.filter(
+      content => !fs.lstatSync(nodePath.join(path, content)).isDirectory(),
     );
     contents = [].concat(dirs, files);
   }
@@ -117,9 +120,7 @@ function print(
       currentDepth + 1,
       precedingSymbols +
         (currentDepth >= 1
-          ? isLast
-            ? SYMBOLS.INDENT
-            : SYMBOLS.VERTICAL
+          ? isLast ? SYMBOLS.INDENT : SYMBOLS.VERTICAL
           : SYMBOLS.EMPTY),
       options,
       isCurrentLast,

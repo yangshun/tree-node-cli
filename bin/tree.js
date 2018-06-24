@@ -50,4 +50,5 @@ if (options.exclude) {
   options.exclude = options.exclude.map(pattern => new RegExp(pattern));
 }
 
-console.log(tree(path, options));
+const output = tree(path, options);
+console.log(output);

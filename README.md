@@ -4,6 +4,8 @@ Lists the contents of directories in a tree-like format, similar to the Linux [`
 
 Tree is a recursive directory listing program that produces a depth indented listing of files. When a directory argument is given, tree lists all the files and/or directories found in the given directory.
 
+Note: Symlinks are not followed.
+
 ## Installation
 
 ```bash
