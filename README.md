@@ -82,7 +82,7 @@ const string = tree('path/to/dir', options);
 | `trailingSlash` | `false`                    | Boolean | Appends a trailing slash behind directories.                                                                                          |
 
 ```js
-const string = tree('path/to/dir'), {
+const string = tree('path/to/dir', {
   allFiles: true,
   exclude: [/node_modules/, /lcov/],
   maxDepth: 4,
