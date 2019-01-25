@@ -131,7 +131,7 @@ function print(
 }
 
 function tree(path, options) {
-  const combinedOptions = Object.assign({}, DEFAULT_OPTIONS, options);
+  const combinedOptions = Object.assign({}, options, DEFAULT_OPTIONS);
   return print(
     nodePath.basename(nodePath.join(process.cwd(), path)),
     path,
