@@ -131,7 +131,12 @@ function print(
 }
 
 function tree(path, options) {
-  const combinedOptions = Object.assign({}, DEFAULT_OPTIONS, options);
+  const combinedOptions = Object.keys(options).reduce(
+		(result, key) => (
+			result[key] = options[key] || DEFAULT_OPTIONS[key], result
+		),
+		{}
+	);
   return print(
     nodePath.basename(nodePath.join(process.cwd(), path)),
     path,
