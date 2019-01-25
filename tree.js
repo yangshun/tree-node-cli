@@ -55,9 +55,11 @@ function print(
   }
 
   // Handle excluded patterns.
-  for (let i = 0; i < options.exclude.length; i++) {
-    if (options.exclude[i].test(path)) {
-      return lines;
+  if(options.exclude && Array.isArray(options.exclude)){
+    for (let i = 0; i < options.exclude.length; i++) {
+      if (options.exclude[i].test(path)) {
+        return lines;
+      }
     }
   }
 
