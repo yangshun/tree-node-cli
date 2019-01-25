@@ -46,9 +46,5 @@ Object.keys(options).forEach(key => {
   }
 });
 
-if (options.exclude) {
-  options.exclude = options.exclude.map(pattern => new RegExp(pattern));
-}
-
 const output = tree(path, options);
 console.log(output);
