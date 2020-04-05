@@ -29,11 +29,11 @@
     "bin"
   ],
   "devDependencies": {
-    "jest": "^22.4.3",
+    "jest": "^25.1",
     "junk": "^2.1.0",
-    "prettier": "^1.12.1"
+    "prettier": "^2.0.21"
   },
   "dependencies": {
-    "commander": "^2.15.1"
+    "commander": "^5.0.0"
   }
 }
