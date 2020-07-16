@@ -89,25 +89,25 @@ function print(
 
   // Handle showing of all files.
   if (!options.allFiles) {
-    contents = contents.filter(content => !isHiddenFile(content));
+    contents = contents.filter((content) => !isHiddenFile(content));
   }
 
   if (options.dirsOnly) {
     // We have to filter here instead of at the start of the function
     // because we need to know how many non-directories there are before
     // we even start recursing.
-    contents = contents.filter(file =>
+    contents = contents.filter((file) =>
       fs.lstatSync(nodePath.join(path, file)).isDirectory(),
     );
   }
 
   // Sort directories first.
   if (options.dirsFirst) {
-    const dirs = contents.filter(content =>
+    const dirs = contents.filter((content) =>
       fs.lstatSync(nodePath.join(path, content)).isDirectory(),
     );
     const files = contents.filter(
-      content => !fs.lstatSync(nodePath.join(path, content)).isDirectory(),
+      (content) => !fs.lstatSync(nodePath.join(path, content)).isDirectory(),
     );
     contents = [].concat(dirs, files);
   }
@@ -120,7 +120,9 @@ function print(
       currentDepth + 1,
       precedingSymbols +
         (currentDepth >= 1
-          ? isLast ? SYMBOLS.INDENT : SYMBOLS.VERTICAL
+          ? isLast
+            ? SYMBOLS.INDENT
+            : SYMBOLS.VERTICAL
           : SYMBOLS.EMPTY),
       options,
       isCurrentLast,

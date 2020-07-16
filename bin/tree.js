@@ -17,7 +17,7 @@ program
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +
       'Wrap your entire pattern in double quotes. E.g. `"node_modules|coverage".',
-    string => string.split(PATTERN_SEPARATOR),
+    (string) => string.split(PATTERN_SEPARATOR),
   )
   .option(
     '-L, --max-depth <n>',
@@ -40,14 +40,14 @@ const options = {
   trailingSlash: program.trailingSlash,
 };
 
-Object.keys(options).forEach(key => {
+Object.keys(options).forEach((key) => {
   if (options[key] === undefined) {
     delete options[key];
   }
 });
 
 if (options.exclude) {
-  options.exclude = options.exclude.map(pattern => new RegExp(pattern));
+  options.exclude = options.exclude.map((pattern) => new RegExp(pattern));
 }
 
 const output = tree(path, options);

@@ -32,9 +32,9 @@
     "bin"
   ],
   "devDependencies": {
-    "jest": "^25.1",
+    "jest": "^26.1",
     "junk": "^2.1.0",
-    "prettier": "^2.0.21"
+    "prettier": "^2.0.5"
   },
   "dependencies": {
     "commander": "^5.0.0"

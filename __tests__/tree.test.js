@@ -8,13 +8,13 @@ const dirs = fs.readdirSync(PATH_TO_TEST).filter(junk.not);
 
 describe('tree', () => {
   test('default', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(tree(path.join(PATH_TO_TEST, dir))).toMatchSnapshot();
     });
   });
 
   test('allFiles', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           allFiles: true,
@@ -24,7 +24,7 @@ describe('tree', () => {
   });
 
   test('dirsFirst', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           dirsFirst: true,
@@ -34,7 +34,7 @@ describe('tree', () => {
   });
 
   test('dirsOnly', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           dirsOnly: true,
@@ -44,21 +44,21 @@ describe('tree', () => {
   });
 
   test('exclude', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           exclude: [/beta/],
         }),
       ).toMatchSnapshot();
     });
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           exclude: [/charlie/],
         }),
       ).toMatchSnapshot();
     });
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           exclude: [/beta/, /charlie/],
@@ -68,14 +68,14 @@ describe('tree', () => {
   });
 
   test('maxDepth', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           maxDepth: 1,
         }),
       ).toMatchSnapshot();
     });
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           maxDepth: 2,
@@ -85,7 +85,7 @@ describe('tree', () => {
   });
 
   test('reverse', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           reverse: true,
@@ -95,7 +95,7 @@ describe('tree', () => {
   });
 
   test('trailingSlash', () => {
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       expect(
         tree(path.join(PATH_TO_TEST, dir), {
           trailingSlash: true,
