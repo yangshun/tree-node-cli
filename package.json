@@ -10,7 +10,10 @@
     "file",
     "directory"
   ],
-  "repository": "git@github.com:yangshun/tree-node-cli.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yangshun/tree-node-cli.git"
+  },
   "author": "Yangshun Tay <tay.yang.shun@gmail.com>",
   "license": "MIT",
   "main": "tree.js",
