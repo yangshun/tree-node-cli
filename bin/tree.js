@@ -25,7 +25,8 @@ program
     parseInt,
   )
   .option('-r, --reverse', 'Sort the output in reverse alphabetic order.')
-  .option('-F, --trailing-slash', "Append a '/' for directories.");
+  .option('-F, --trailing-slash', "Append a '/' for directories.")
+  .option('-S, --line-ascii', "Turn on ASCII line graphics.");
 
 program.parse(process.argv);
 const path = program.args[0] || '.'; // Defaults to CWD if not specified.
@@ -38,6 +39,7 @@ const options = {
   maxDepth: program.maxDepth,
   reverse: program.reverse,
   trailingSlash: program.trailingSlash,
+  ascii: program.lineAscii
 };
 
 Object.keys(options).forEach((key) => {

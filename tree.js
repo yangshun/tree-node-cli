@@ -11,14 +11,23 @@ const DEFAULT_OPTIONS = {
   maxDepth: Number.POSITIVE_INFINITY,
   reverse: false,
   trailingSlash: false,
+  ascii: false,
 };
 
-const SYMBOLS = {
+const SYMBOLS_ANSI = {
   BRANCH: '├── ',
   EMPTY: '',
   INDENT: '    ',
   LAST_BRANCH: '└── ',
   VERTICAL: '│   ',
+};
+
+const SYMBOLS_ASCII = {
+  BRANCH: '|-- ',
+  EMPTY: '',
+  INDENT: '    ',
+  LAST_BRANCH: '`-- ',
+  VERTICAL: '|   ',
 };
 
 const EXCLUDED_PATTERNS = [/\.DS_Store/];
@@ -41,6 +50,8 @@ function print(
   const isFile = !isDir;
 
   const lines = [];
+
+  const SYMBOLS = options.ascii ? SYMBOLS_ASCII : SYMBOLS_ANSI;
 
   // Do not show these regardless.
   for (let i = 0; i < EXCLUDED_PATTERNS.length; i++) {
