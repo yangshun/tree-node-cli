@@ -59,6 +59,7 @@ $ tree -h
     -L, --max-depth <n>       Max display depth of the directory tree.
     -r, --reverse             Sort the output in reverse alphabetic order.
     -F, --trailing-slash      Append a '/' for directories.
+    -S, --line-ascii          Turn on ASCII line graphics.
     -h, --help                output usage information
 ```
 
@@ -80,6 +81,7 @@ const string = tree('path/to/dir', options);
 | `maxDepth`      | `Number.POSITIVE_INFINITY` | Number  | Max display depth of the directory tree.                                                                                              |
 | `reverse`       | `false`                    | Boolean | Sort the output in reverse alphabetic order.                                                                                          |
 | `trailingSlash` | `false`                    | Boolean | Appends a trailing slash behind directories.                                                                                          |
+| `lineAscii`     | `false`                    | Boolean | Turn on ASCII line graphics.                                                                                                          |
 
 ```js
 const string = tree('path/to/dir', {
