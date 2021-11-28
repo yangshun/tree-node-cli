@@ -13,6 +13,7 @@ program
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
   .option('--dirs-first', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
+  .option('-s, --sizes', 'Show filesizes.')
   .option(
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +
@@ -26,7 +27,7 @@ program
   )
   .option('-r, --reverse', 'Sort the output in reverse alphabetic order.')
   .option('-F, --trailing-slash', "Append a '/' for directories.")
-  .option('-S, --line-ascii', "Turn on ASCII line graphics.");
+  .option('-S, --line-ascii', 'Turn on ASCII line graphics.');
 
 program.parse(process.argv);
 const path = program.args[0] || '.'; // Defaults to CWD if not specified.
@@ -35,11 +36,12 @@ const options = {
   allFiles: program.allFiles,
   dirsFirst: program.dirsFirst,
   dirsOnly: program.dirsOnly,
+  sizes: program.sizes,
   exclude: program.exclude,
   maxDepth: program.maxDepth,
   reverse: program.reverse,
   trailingSlash: program.trailingSlash,
-  ascii: program.lineAscii
+  ascii: program.lineAscii,
 };
 
 Object.keys(options).forEach((key) => {
