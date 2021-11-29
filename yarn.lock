@@ -1414,9 +1414,10 @@ fast-deep-equal@^3.1.1:
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.1.tgz#545145077c501491e33b15ec408c294376e94ae4"
   integrity sha512-8UEa58QDLauDNfpbrX55Q9jrGHThw2ZMdOky5Gl1CDtVeJDPVrG4Jxx1N8jw2gkWaff5UUuX1KJd+9zGe2B+ZA==
 
-fast-folder-size@marcofugaro/fast-folder-size#sync:
-  version "1.5.0"
-  resolved "https://codeload.github.com/marcofugaro/fast-folder-size/tar.gz/5659cfdafbd7b07a5b6e2625c4cf09e875ca3b85"
+fast-folder-size@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/fast-folder-size/-/fast-folder-size-1.6.1.tgz#1dc1674842854032cf07a387ba77c66546c547eb"
+  integrity sha512-F3tRpfkAzb7TT2JNKaJUglyuRjRa+jelQD94s9OSqkfEeytLmupCqQiD+H2KoIXGtp4pB5m4zNmv5m2Ktcr+LA==
   dependencies:
     unzipper "^0.10.11"
 
