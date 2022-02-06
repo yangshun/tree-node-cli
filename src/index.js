@@ -103,6 +103,8 @@ function print(
 
   // Contents of a directory.
   let contents = fs.readdirSync(path);
+  contents.sort();
+
   if (options.reverse) {
     contents.reverse();
   }
@@ -126,6 +128,7 @@ function print(
     const dirs = contents.filter((content) =>
       fs.lstatSync(nodePath.join(path, content)).isDirectory(),
     );
+
     const files = contents.filter(
       (content) => !fs.lstatSync(nodePath.join(path, content)).isDirectory(),
     );
