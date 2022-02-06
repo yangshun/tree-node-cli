@@ -33,6 +33,16 @@ describe('tree', () => {
     });
   });
 
+  test('sizes', () => {
+    dirs.forEach((dir) => {
+      expect(
+        tree(path.join(PATH_TO_TEST, dir), {
+          sizes: true,
+        }),
+      ).toMatchSnapshot();
+    });
+  });
+
   test('dirsOnly', () => {
     dirs.forEach((dir) => {
       expect(

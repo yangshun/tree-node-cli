@@ -503,6 +503,65 @@ exports[`tree reverse 7`] = `
 └── alpha.txt"
 `;
 
+exports[`tree sizes 1`] = `
+"0B chain
+└── 0B alpha
+    └── 0B alpha
+        └── 0B alpha
+            └── 0B alpha
+                └── 0B alpha
+                    └── 0B alpha
+                        └── 0B alpha
+                            └── 0B alpha
+                                └── 0B alpha.txt"
+`;
+
+exports[`tree sizes 2`] = `
+"0B double-level
+├── 0B alpha.txt
+└── 0B beta
+    └── 0B alpha.txt"
+`;
+
+exports[`tree sizes 3`] = `"0B empty-dir"`;
+
+exports[`tree sizes 4`] = `
+"0B multi-files
+├── 0B alpha.txt
+├── 0B beta.txt
+└── 0B charlie.txt"
+`;
+
+exports[`tree sizes 5`] = `
+"0B multi-level
+├── 0B alpha.txt
+├── 0B beta
+│   ├── 0B alpha
+│   │   ├── 0B alpha.txt
+│   │   └── 0B beta
+│   │       └── 0B alpha.txt
+│   ├── 0B beta.txt
+│   └── 0B charlie
+│       └── 0B alpha.txt
+├── 0B charlie
+│   ├── 0B alpha.txt
+│   ├── 0B beta
+│   │   └── 0B alpha.txt
+│   └── 0B charlie.txt
+└── 0B delta.txt"
+`;
+
+exports[`tree sizes 6`] = `
+"0B single-file
+└── 0B alpha.txt"
+`;
+
+exports[`tree sizes 7`] = `
+"0B single-level
+├── 0B alpha.txt
+└── 0B beta"
+`;
+
 exports[`tree trailingSlash 1`] = `
 "chain/
 └── alpha/

@@ -2,11 +2,14 @@
 
 const fs = require('fs');
 const nodePath = require('path');
+const prettyBytes = require('pretty-bytes');
+const folderSize = require('fast-folder-size/sync');
 
 const DEFAULT_OPTIONS = {
   allFiles: false,
   dirsFirst: false,
   dirsOnly: false,
+  sizes: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
   reverse: false,
@@ -81,6 +84,12 @@ function print(
   const line = [precedingSymbols];
   if (currentDepth >= 1) {
     line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
+  }
+  if (options.sizes) {
+    const filesize = isDir ? folderSize(path) : fs.statSync(path).size;
+    const prettifiedFilesize = prettyBytes(filesize);
+    line.push(prettifiedFilesize.replace(' ', ''));
+    line.push(' ');
   }
   line.push(filename);
   if (isDir && options.trailingSlash) {
