@@ -4,7 +4,7 @@
 const program = require('commander');
 
 const pkg = require('../package.json');
-const tree = require('../tree');
+const tree = require('../src/index');
 
 const PATTERN_SEPARATOR = '|';
 
@@ -13,7 +13,10 @@ program
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
   .option('--dirs-first', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
-  .option('-s, --sizes', 'Show filesizes.')
+  .option(
+    '-s, --sizes',
+    'Print the size of each file in bytes along with the name.',
+  )
   .option(
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +

@@ -16,7 +16,7 @@
   },
   "author": "Yangshun Tay <tay.yang.shun@gmail.com>",
   "license": "MIT",
-  "main": "tree.js",
+  "main": "src/index.js",
   "bin": {
     "tree": "./bin/tree.js",
     "treee": "./bin/tree.js"
@@ -24,7 +24,7 @@
   "scripts": {
     "check-all": "yarn prettier && yarn test",
     "check-all:ci": "yarn prettier && yarn lint && yarn run test:ci",
-    "prettier": "prettier --write 'tree.js' 'bin/**/*' '__tests__/**/*.js'",
+    "prettier": "prettier --write \"{bin,src}/**/*.js\"",
     "test": "jest --coverage",
     "test:ci": "jest --coverage --runInBand"
   },

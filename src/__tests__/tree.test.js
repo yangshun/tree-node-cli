@@ -1,9 +1,9 @@
 const fs = require('fs');
 const junk = require('junk');
 const path = require('path');
-const tree = require('../tree');
+const tree = require('../');
 
-const PATH_TO_TEST = '__tests__/__fixtures__';
+const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
 const dirs = fs.readdirSync(PATH_TO_TEST).filter(junk.not);
 
 describe('tree', () => {
