@@ -11,4 +11,4 @@ export interface Options {
   ascii?: boolean,
 }
 
-export default function tree(path: string, options: Options): string
+export default function tree(path: string, options?: Options): string
