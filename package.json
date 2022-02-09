@@ -17,6 +17,7 @@
   "author": "Yangshun Tay <tay.yang.shun@gmail.com>",
   "license": "MIT",
   "main": "src/index.js",
+  "types": "types.d.ts",
   "bin": {
     "tree": "./bin/tree.js",
     "treee": "./bin/tree.js"
