@@ -2,9 +2,17 @@
 
 Lists the contents of directories in a tree-like format, similar to the Linux [`tree`](https://linux.die.net/man/1/tree) command. Both CLI and Node APIs are provided.
 
-Tree is a recursive directory listing program that produces a depth indented listing of files. When a directory argument is given, tree lists all the files and/or directories found in the given directory.
+`tree` is a command that produces a nicely-formatted indented output of directories and files. When a directory argument is given, tree lists all the files and/or directories found in the given directory.
 
 Note: Symlinks are not followed.
+
+## Quickstart
+
+Instantly execute the command in your current directory via `npx`:
+
+```bash
+npx tree-node-cli -I "node_modules" # ignore node_modules
+```
 
 ## Installation
 
@@ -64,7 +72,7 @@ $ tree -h
     -h, --help                output usage information
 ```
 
-## API
+## Node.js API
 
 ```js
 const tree = require('tree-node-cli');
