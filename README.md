@@ -14,7 +14,8 @@ Instantly execute the command in your current directory via `npx`:
 npx tree-node-cli -I "node_modules" # ignore node_modules
 ```
 
-Or via yarn 2+
+Or via Yarn 2+:
+
 ```bash
 yarn dlx -p tree-node-cli tree -I "node_modules" # ignore node_modules
 ```
