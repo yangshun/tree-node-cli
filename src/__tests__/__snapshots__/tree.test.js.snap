@@ -358,6 +358,124 @@ exports[`tree exclude 21`] = `
 ├── alpha.txt"
 `;
 
+exports[`tree lineAscii 1`] = `
+"chain
+\`-- alpha
+    \`-- alpha
+        \`-- alpha
+            \`-- alpha
+                \`-- alpha
+                    \`-- alpha
+                        \`-- alpha
+                            \`-- alpha
+                                \`-- alpha.txt"
+`;
+
+exports[`tree lineAscii 2`] = `
+"double-level
+|-- alpha.txt
+\`-- beta
+    \`-- alpha.txt"
+`;
+
+exports[`tree lineAscii 3`] = `"empty-dir"`;
+
+exports[`tree lineAscii 4`] = `
+"multi-files
+|-- alpha.txt
+|-- beta.txt
+\`-- charlie.txt"
+`;
+
+exports[`tree lineAscii 5`] = `
+"multi-level
+|-- alpha.txt
+|-- beta
+|   |-- alpha
+|   |   |-- alpha.txt
+|   |   \`-- beta
+|   |       \`-- alpha.txt
+|   |-- beta.txt
+|   \`-- charlie
+|       \`-- alpha.txt
+|-- charlie
+|   |-- alpha.txt
+|   |-- beta
+|   |   \`-- alpha.txt
+|   \`-- charlie.txt
+\`-- delta.txt"
+`;
+
+exports[`tree lineAscii 6`] = `
+"single-file
+\`-- alpha.txt"
+`;
+
+exports[`tree lineAscii 7`] = `
+"single-level
+|-- alpha.txt
+\`-- beta"
+`;
+
+exports[`tree lineAscii 8`] = `
+"chain
+└── alpha
+    └── alpha
+        └── alpha
+            └── alpha
+                └── alpha
+                    └── alpha
+                        └── alpha
+                            └── alpha
+                                └── alpha.txt"
+`;
+
+exports[`tree lineAscii 9`] = `
+"double-level
+├── alpha.txt
+└── beta
+    └── alpha.txt"
+`;
+
+exports[`tree lineAscii 10`] = `"empty-dir"`;
+
+exports[`tree lineAscii 11`] = `
+"multi-files
+├── alpha.txt
+├── beta.txt
+└── charlie.txt"
+`;
+
+exports[`tree lineAscii 12`] = `
+"multi-level
+├── alpha.txt
+├── beta
+│   ├── alpha
+│   │   ├── alpha.txt
+│   │   └── beta
+│   │       └── alpha.txt
+│   ├── beta.txt
+│   └── charlie
+│       └── alpha.txt
+├── charlie
+│   ├── alpha.txt
+│   ├── beta
+│   │   └── alpha.txt
+│   └── charlie.txt
+└── delta.txt"
+`;
+
+exports[`tree lineAscii 13`] = `
+"single-file
+└── alpha.txt"
+`;
+
+exports[`tree lineAscii 14`] = `
+"single-level
+├── alpha.txt
+└── beta"
+`;
+
 exports[`tree maxDepth 1`] = `
 "chain
 └── alpha"

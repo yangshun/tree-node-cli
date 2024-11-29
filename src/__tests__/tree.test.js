@@ -113,4 +113,20 @@ describe('tree', () => {
       ).toMatchSnapshot();
     });
   });
+
+  test('lineAscii', () => {
+    dirs.forEach((dir) => {
+      const result = tree(path.join(PATH_TO_TEST, dir), {
+        lineAscii: true,
+      });
+      expect(result).toMatchSnapshot();
+    });
+    dirs.forEach((dir) => {
+      const result = tree(path.join(PATH_TO_TEST, dir), {
+        lineAscii: false,
+      });
+      expect(result).toMatchSnapshot();
+    });
+  });
+  
 });

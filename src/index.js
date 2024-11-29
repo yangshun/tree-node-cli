@@ -14,7 +14,7 @@ const DEFAULT_OPTIONS = {
   maxDepth: Number.POSITIVE_INFINITY,
   reverse: false,
   trailingSlash: false,
-  ascii: false,
+  lineAscii: false,
 };
 
 const SYMBOLS_ANSI = {
@@ -54,7 +54,7 @@ function print(
 
   const lines = [];
 
-  const SYMBOLS = options.ascii ? SYMBOLS_ASCII : SYMBOLS_ANSI;
+  const SYMBOLS = options.lineAscii ? SYMBOLS_ASCII : SYMBOLS_ANSI;
 
   // Do not show these regardless.
   for (let i = 0; i < EXCLUDED_PATTERNS.length; i++) {
