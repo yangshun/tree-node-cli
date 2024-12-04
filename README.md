@@ -109,6 +109,8 @@ const string = tree('path/to/dir', {
 console.log(string);
 ```
 
+_Note:_ To exclude the contents of a directory while retaining the directory itself, use a trailing slash with the `-I` option (e.g., `-I "node_modules/"`). For the Node.js API, provide a regex matching the directory contents (e.g., `/node_modules\//`). See Issue https://github.com/yangshun/tree-node-cli/issues/33 for more details.
+
 ## License
 
 MIT
