@@ -23,8 +23,8 @@
     "treee": "./bin/tree.js"
   },
   "scripts": {
-    "check-all": "yarn prettier && yarn test",
-    "check-all:ci": "yarn prettier && yarn lint && yarn run test:ci",
+    "check-all": "pnpm prettier && pnpm test",
+    "check-all:ci": "pnpm prettier && pnpm lint && pnpm run test:ci",
     "prettier": "prettier --write \"{bin,src}/**/*.js\"",
     "test": "jest --coverage",
     "test:ci": "jest --coverage --runInBand"
