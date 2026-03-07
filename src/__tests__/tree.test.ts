@@ -1,11 +1,11 @@
 import fs from 'fs';
-import junk from 'junk';
+import { isNotJunk } from 'junk';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 import tree from '../index';
 
 const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
-const dirs = fs.readdirSync(PATH_TO_TEST).filter(junk.not);
+const dirs = fs.readdirSync(PATH_TO_TEST).filter(isNotJunk);
 
 describe('tree', () => {
   test('default', () => {

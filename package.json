@@ -47,16 +47,16 @@
   ],
   "devDependencies": {
     "@types/node": "^25.3.5",
-    "junk": "^2.1.0",
-    "prettier": "^2.0.5",
+    "junk": "^4.0.1",
+    "prettier": "^3.8.1",
     "tsdown": "^0.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "commander": "^5.0.0",
-    "fast-folder-size": "1.6.1",
-    "pretty-bytes": "^5.6.0"
+    "commander": "^14.0.3",
+    "fast-folder-size": "2.4.0",
+    "pretty-bytes": "^7.1.0"
   },
   "engines": {
     "node": ">=22"
