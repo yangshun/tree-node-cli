@@ -163,6 +163,30 @@ describe('formatAsText', () => {
     expect(lines[0]).toMatch(/^\[.+\] a\.ts$/);
   });
 
+  test('openError shows [error opening dir]', () => {
+    const node = makeDir('root', [
+      makeDir('forbidden', [], { path: 'root/forbidden', openError: true }),
+      makeFile('ok.txt', { path: 'root/ok.txt' }),
+    ]);
+    const lines = formatAsText(node, opts(), '.');
+    expect(lines).toEqual([
+      'root',
+      '├── forbidden [error opening dir]',
+      '└── ok.txt',
+    ]);
+  });
+
+  test('openError with trailingSlash', () => {
+    const node = makeDir('root', [
+      makeDir('forbidden', [], { path: 'root/forbidden', openError: true }),
+    ]);
+    const lines = formatAsText(node, opts({ trailingSlash: true }), '.');
+    expect(lines).toEqual([
+      'root/',
+      '└── forbidden/ [error opening dir]',
+    ]);
+  });
+
   test('vertical line for non-last siblings', () => {
     const node = makeDir('root', [
       makeDir('dir1', [makeFile('file.txt', { path: 'root/dir1/file.txt' })], {

@@ -643,6 +643,53 @@ describe('tree error handling', () => {
     expect(lines).toHaveLength(1);
     expect(lines[0]).toBe('alpha.txt');
   });
+
+  test('shows [error opening dir] for inaccessible directories', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-perm-'));
+    const forbidden = path.join(tmpDir, 'forbidden');
+    fs.mkdirSync(forbidden);
+    fs.writeFileSync(path.join(tmpDir, 'ok.txt'), 'hello');
+    // Remove all permissions from the directory.
+    fs.chmodSync(forbidden, 0o000);
+
+    const result = tree(tmpDir);
+    expect(result).toContain('forbidden [error opening dir]');
+    expect(result).toContain('ok.txt');
+
+    // Restore permissions for cleanup.
+    fs.chmodSync(forbidden, 0o755);
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('json includes error for inaccessible directories', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-perm-'));
+    const forbidden = path.join(tmpDir, 'forbidden');
+    fs.mkdirSync(forbidden);
+    fs.chmodSync(forbidden, 0o000);
+
+    const result = asDir(treeJson(tmpDir));
+    const entry = result.contents.find((c) => c.name === 'forbidden');
+    expect(entry).toBeDefined();
+    expect((entry as any).error).toBe('error opening dir');
+
+    fs.chmodSync(forbidden, 0o755);
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('du handles inaccessible directories gracefully', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-perm-'));
+    const forbidden = path.join(tmpDir, 'forbidden');
+    fs.mkdirSync(forbidden);
+    fs.writeFileSync(path.join(tmpDir, 'ok.txt'), 'hello');
+    fs.chmodSync(forbidden, 0o000);
+
+    const result = tree(tmpDir, { du: true });
+    expect(result).toContain('forbidden [error opening dir]');
+    expect(result).toContain('ok.txt');
+
+    fs.chmodSync(forbidden, 0o755);
+    fs.rmSync(tmpDir, { recursive: true });
+  });
 });
 
 describe('tree with symlinks', () => {

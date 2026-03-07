@@ -64,6 +64,7 @@ export interface TreeNode {
   mtime: Date;
   size: number;
   children: TreeNode[];
+  openError?: boolean;
 }
 
 // ── Build tree ─────────────────────────────────────────────
@@ -98,14 +99,20 @@ function matchesExcludePattern(
 function statEntries(
   dirPath: string,
   entries: string[],
-): Map<string, fs.Stats> {
+): { stats: Map<string, fs.Stats>; accessible: string[] } {
   const stats = new Map<string, fs.Stats>();
+  const accessible: string[] = [];
 
   for (const entry of entries) {
-    stats.set(entry, fs.lstatSync(nodePath.join(dirPath, entry)));
+    try {
+      stats.set(entry, fs.lstatSync(nodePath.join(dirPath, entry)));
+      accessible.push(entry);
+    } catch {
+      // Skip entries that cannot be stat'd (e.g. permission denied).
+    }
   }
 
-  return stats;
+  return { stats, accessible };
 }
 
 /**
@@ -189,19 +196,25 @@ function filterAndOrderContents(
 function getDirectoryContents(
   dirPath: string,
   options: RequiredOptions,
-): { entries: string[]; stats: Map<string, fs.Stats> } {
-  let entries = fs.readdirSync(dirPath);
+): { entries: string[]; stats: Map<string, fs.Stats>; openError: boolean } {
+  let entries: string[];
+
+  try {
+    entries = fs.readdirSync(dirPath);
+  } catch {
+    return { entries: [], stats: new Map(), openError: true };
+  }
 
   // Filter hidden files before stat'ing to avoid unnecessary syscalls.
   if (!options.allFiles) {
     entries = entries.filter((entry) => !isHiddenFile(entry));
   }
 
-  const stats = statEntries(dirPath, entries);
-  const sorted = sortContentsInPlace(entries, stats, options);
+  const { stats, accessible } = statEntries(dirPath, entries);
+  const sorted = sortContentsInPlace(accessible, stats, options);
   const filtered = filterAndOrderContents(sorted, stats, options);
 
-  return { entries: filtered, stats };
+  return { entries: filtered, stats, openError: false };
 }
 
 /**
@@ -212,10 +225,24 @@ function getDirectoryContents(
  */
 function computeSizes(dirPath: string, cache: Map<string, number>): number {
   let size = 0;
+  let entries: string[];
 
-  for (const entry of fs.readdirSync(dirPath)) {
+  try {
+    entries = fs.readdirSync(dirPath);
+  } catch {
+    cache.set(dirPath, 0);
+    return 0;
+  }
+
+  for (const entry of entries) {
     const entryPath = nodePath.join(dirPath, entry);
-    const stat = fs.lstatSync(entryPath);
+
+    let stat: fs.Stats;
+    try {
+      stat = fs.lstatSync(entryPath);
+    } catch {
+      continue;
+    }
 
     if (stat.isDirectory()) {
       size += computeSizes(entryPath, cache);
@@ -267,7 +294,11 @@ function buildTree(
     return node;
   }
 
-  const { entries, stats } = getDirectoryContents(path, options);
+  const { entries, stats, openError } = getDirectoryContents(path, options);
+
+  if (openError) {
+    node.openError = true;
+  }
 
   for (const entry of entries) {
     const child = buildTree(

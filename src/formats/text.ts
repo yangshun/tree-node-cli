@@ -63,6 +63,10 @@ export function formatAsText(
     line.push('/');
   }
 
+  if (node.openError) {
+    line.push(' [error opening dir]');
+  }
+
   const lines = [line.join('')];
 
   // Recurse into children.

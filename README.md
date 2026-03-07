@@ -4,7 +4,7 @@ Lists the contents of directories in a tree-like format, similar to the Linux [`
 
 `tree` is a command that produces a nicely-formatted indented output of directories and files. When a directory argument is given, tree lists all the files and/or directories found in the given directory.
 
-Note: Symlinks are not followed.
+Note: Symlinks are not followed. Directories that cannot be opened (e.g. due to permission errors) are listed with `[error opening dir]` instead of crashing, matching Linux `tree` behavior.
 
 ## Quickstart
 
@@ -130,6 +130,7 @@ type TreeJsonEntry =
 // size: present when `sizes: true`
 // mode: present when `permissions: true`
 // time: present when `date: true`
+// error: present when the directory could not be opened (e.g. permission denied)
 ```
 
 ```js

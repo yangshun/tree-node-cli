@@ -6,6 +6,7 @@ interface TreeJsonEntryBase {
   size?: number;
   mode?: string;
   time?: string;
+  error?: string;
 }
 
 interface TreeJsonDirectoryEntry extends TreeJsonEntryBase {
@@ -37,6 +38,10 @@ export function formatAsJson(
 
   if (options.date) {
     base.time = `${node.mtime.toLocaleDateString('en-CA')} ${node.mtime.toLocaleTimeString('en-GB')}`;
+  }
+
+  if (node.openError) {
+    base.error = 'error opening dir';
   }
 
   if (node.isDirectory) {
