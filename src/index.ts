@@ -78,7 +78,10 @@ function isHiddenFile(filename: string): boolean {
 /**
  * Checks whether a path matches any of the configured exclude patterns.
  */
-function matchesExcludePattern(path: string, options: RequiredOptions): boolean {
+function matchesExcludePattern(
+  path: string,
+  options: RequiredOptions,
+): boolean {
   for (const pattern of options.exclude) {
     if (pattern.test(path)) {
       return true;
@@ -110,7 +113,7 @@ function statEntries(
  * Mutates `contents` in place — callers must not reuse the input array.
  * Assumes every entry in `contents` has a corresponding key in `stats`.
  */
-function sortContents(
+function sortContentsInPlace(
   contents: string[],
   stats: Map<string, fs.Stats>,
   options: RequiredOptions,
@@ -195,7 +198,7 @@ function getDirectoryContents(
   }
 
   const stats = statEntries(dirPath, entries);
-  const sorted = sortContents(entries, stats, options);
+  const sorted = sortContentsInPlace(entries, stats, options);
   const filtered = filterAndOrderContents(sorted, stats, options);
 
   return { entries: filtered, stats };
