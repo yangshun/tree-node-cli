@@ -42,6 +42,7 @@
     "build": "tsdown",
     "check": "pnpm format && pnpm lint && pnpm test",
     "format": "oxfmt",
+    "lint": "oxlint",
     "test": "vitest run"
   },
   "dependencies": {
@@ -53,6 +54,7 @@
     "@types/node": "^25.3.5",
     "junk": "^4.0.1",
     "oxfmt": "^0.36.0",
+    "oxlint": "^1.51.0",
     "tsdown": "^0.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
