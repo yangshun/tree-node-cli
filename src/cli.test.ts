@@ -108,6 +108,22 @@ describe('cli', () => {
     expect(stdout).not.toContain('└');
   });
 
+  test('respects -i no indent', async () => {
+    const { stdout } = await run([
+      '-i',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    const lines = stdout.split('\n');
+    for (const line of lines) {
+      expect(line).not.toMatch(/[├└│|`]/);
+      expect(line).not.toMatch(/^\s/);
+    }
+    expect(stdout).toContain('alpha.txt');
+    expect(stdout).toContain('beta');
+  });
+
   test('respects --prune', async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-prune-'));
     fs.mkdirSync(path.join(tmpDir, 'empty-dir'));

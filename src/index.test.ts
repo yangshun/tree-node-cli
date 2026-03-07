@@ -209,6 +209,20 @@ describe('tree', () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
+  test('noIndent', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      noIndent: true,
+      maxDepth: 1,
+    });
+    const lines = result.split('\n');
+    for (const line of lines) {
+      expect(line).not.toMatch(/[├└│|`]/);
+      expect(line).not.toMatch(/^\s/);
+    }
+    expect(result).toContain('alpha.txt');
+    expect(result).toContain('beta');
+  });
+
   test('fullPath', () => {
     const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
       fullPath: true,

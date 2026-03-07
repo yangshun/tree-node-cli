@@ -10,6 +10,7 @@ export interface Options {
   dirsOnly?: boolean;
   filesFirst?: boolean;
   fullPath?: boolean;
+  noIndent?: boolean;
   prune?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
@@ -27,6 +28,7 @@ interface RequiredOptions {
   dirsOnly: boolean;
   filesFirst: boolean;
   fullPath: boolean;
+  noIndent: boolean;
   prune: boolean;
   sizes: boolean;
   exclude: RegExp[];
@@ -44,6 +46,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   dirsOnly: false,
   filesFirst: false,
   fullPath: false,
+  noIndent: false,
   prune: false,
   sizes: false,
   exclude: [],
@@ -141,9 +144,9 @@ function print(
   }
 
   // Handle current file.
-  const line: string[] = [precedingSymbols];
+  const line: string[] = options.noIndent ? [] : [precedingSymbols];
 
-  if (currentDepth >= 1) {
+  if (!options.noIndent && currentDepth >= 1) {
     line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
   }
 
@@ -246,12 +249,14 @@ function print(
       content,
       nodePath.join(path, content),
       currentDepth + 1,
-      precedingSymbols +
-        (currentDepth >= 1
-          ? isLast
-            ? SYMBOLS.INDENT
-            : SYMBOLS.VERTICAL
-          : SYMBOLS.EMPTY),
+      options.noIndent
+        ? ''
+        : precedingSymbols +
+          (currentDepth >= 1
+            ? isLast
+              ? SYMBOLS.INDENT
+              : SYMBOLS.VERTICAL
+            : SYMBOLS.EMPTY),
       options,
       sizeCache,
       rootPath,
