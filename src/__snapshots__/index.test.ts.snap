@@ -156,12 +156,6 @@ exports[`tree > combined: filesFirst + reverse 1`] = `
 └── beta"
 `;
 
-exports[`tree > combined: trailingSlash + lineAscii + sizes 1`] = `
-"128B single-level/
-|-- 13B alpha.txt
-\`-- 96B beta/"
-`;
-
 exports[`tree > default 1`] = `
 "chain
 └── alpha
@@ -1260,108 +1254,6 @@ exports[`tree > reverse 12`] = `
 ├── small.txt
 ├── medium.txt
 └── large.txt"
-`;
-
-exports[`tree > sizes 1`] = `
-"96B chain
-└── 96B alpha
-    └── 96B alpha
-        └── 96B alpha
-            └── 96B alpha
-                └── 96B alpha
-                    └── 96B alpha
-                        └── 96B alpha
-                            └── 96B alpha
-                                └── 24B alpha.txt"
-`;
-
-exports[`tree > sizes 2`] = `
-"128B double-level
-├── 9B alpha.txt
-└── 96B beta
-    └── 20B alpha.txt"
-`;
-
-exports[`tree > sizes 3`] = `"96B empty-dir"`;
-
-exports[`tree > sizes 4`] = `
-"192B hidden-files
-├── 8B another.txt
-└── 8B visible.txt"
-`;
-
-exports[`tree > sizes 5`] = `
-"224B mixed-content
-├── 1B alpha.txt
-├── 96B bravo-dir
-│   └── 1B inner.txt
-├── 1B charlie.txt
-├── 96B delta-dir
-│   └── 1B inner.txt
-└── 1B echo.txt"
-`;
-
-exports[`tree > sizes 6`] = `
-"160B multi-files
-├── 5B alpha.txt
-├── 17B beta.txt
-└── 46B charlie.txt"
-`;
-
-exports[`tree > sizes 7`] = `
-"192B multi-level
-├── 10B alpha.txt
-├── 160B beta
-│   ├── 128B alpha
-│   │   ├── 16B alpha.txt
-│   │   └── 128B beta
-│   │       └── 11B alpha.txt
-│   ├── 9B beta.txt
-│   └── 96B charlie
-│       └── 12B alpha.txt
-├── 192B charlie
-│   ├── 13B alpha.txt
-│   ├── 96B beta
-│   │   └── 18B alpha.txt
-│   └── 23B charlie.txt
-└── 15B delta.txt"
-`;
-
-exports[`tree > sizes 8`] = `
-"224B numbered-files
-├── 0B file1.txt
-├── 0B file10.txt
-├── 0B file2.txt
-├── 0B file20.txt
-└── 0B file3.txt"
-`;
-
-exports[`tree > sizes 9`] = `
-"96B single-file
-└── 5B alpha.txt"
-`;
-
-exports[`tree > sizes 10`] = `
-"128B single-level
-├── 13B alpha.txt
-└── 96B beta"
-`;
-
-exports[`tree > sizes 11`] = `
-"192B unicode-names
-├── 1B café.txt
-├── 1B emoji-🎉.txt
-├── 1B über.txt
-└── 96B 日本語
-    └── 1B ファイル.txt"
-`;
-
-exports[`tree > sizes 12`] = `
-"192B varied-sizes
-├── 10kB large.txt
-├── 1kB medium.txt
-├── 100B small.txt
-└── 1B tiny.txt"
 `;
 
 exports[`tree > trailingSlash 1`] = `

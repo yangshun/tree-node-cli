@@ -46,13 +46,20 @@ describe('tree', () => {
   });
 
   test('sizes', () => {
-    dirs.forEach((dir) => {
-      expect(
-        tree(path.join(PATH_TO_TEST, dir), {
-          sizes: true,
-        }),
-      ).toMatchSnapshot();
+    // Use a controlled fixture to avoid filesystem-dependent directory sizes.
+    const result = tree(path.join(PATH_TO_TEST, 'varied-sizes'), {
+      sizes: true,
     });
+    const lines = result.split('\n');
+    // Every line should have a size prefix.
+    for (const line of lines) {
+      expect(line).toMatch(/\d+(\.\d+)?(B|kB|MB)/);
+    }
+    // File sizes are deterministic.
+    expect(result).toContain('10kB large.txt');
+    expect(result).toContain('1kB medium.txt');
+    expect(result).toContain('100B small.txt');
+    expect(result).toContain('1B tiny.txt');
   });
 
   test('du', () => {
@@ -183,7 +190,13 @@ describe('tree', () => {
       lineAscii: true,
       sizes: true,
     });
-    expect(result).toMatchSnapshot();
+    const lines = result.split('\n');
+    // Root directory with trailing slash and size prefix.
+    expect(lines[0]).toMatch(/^\S+ single-level\/$/);
+    // File entry with ASCII branch and size.
+    expect(result).toContain('13B alpha.txt');
+    // Subdirectory with trailing slash.
+    expect(lines[2]).toMatch(/`-- \S+ beta\/$/);
   });
 
   test('combined: exclude + allFiles', () => {
