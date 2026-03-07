@@ -3,7 +3,14 @@ import { isNotJunk } from 'junk';
 import os from 'os';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import tree from './index';
+import type { TreeJsonEntry } from './formats/json';
+import { tree, treeJson } from './index';
+
+function asDir(entry: TreeJsonEntry | null) {
+  expect(entry).not.toBeNull();
+  expect(entry!.type).toBe('directory');
+  return entry as TreeJsonEntry & { type: 'directory'; contents: TreeJsonEntry[] };
+}
 
 const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
 const dirs = fs.readdirSync(PATH_TO_TEST).filter(isNotJunk);
@@ -210,83 +217,66 @@ describe('tree', () => {
   });
 
   test('json', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
-      json: true,
-      maxDepth: 1,
-    });
-    const parsed = JSON.parse(result);
-    expect(parsed).toHaveLength(1);
-    expect(parsed[0].type).toBe('directory');
-    expect(parsed[0].name).toBe('multi-level');
-    expect(parsed[0].contents).toBeDefined();
-    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-level'), { maxDepth: 1 }),
+    );
+    expect(result.name).toBe('multi-level');
+    const names = result.contents.map((c) => c.name);
     expect(names).toContain('alpha.txt');
     expect(names).toContain('beta');
   });
 
   test('json with sizes', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'single-file'), {
-      json: true,
-      sizes: true,
-    });
-    const parsed = JSON.parse(result);
-    expect(parsed[0].size).toBeDefined();
-    expect(typeof parsed[0].contents[0].size).toBe('number');
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'single-file'), { sizes: true }),
+    );
+    expect(result.size).toBeDefined();
+    expect(typeof result.contents[0].size).toBe('number');
   });
 
   test('json with permissions', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
-      json: true,
-      maxDepth: 1,
-    });
-    const parsed = JSON.parse(result);
-    // Without permissions, mode should not be present
-    expect(parsed[0].mode).toBeUndefined();
-
-    const withPerms = tree(path.join(PATH_TO_TEST, 'multi-level'), {
-      json: true,
-      permissions: true,
-      maxDepth: 1,
-    });
-    const parsedPerms = JSON.parse(withPerms);
-    expect(parsedPerms[0].mode).toMatch(/\[d[rwx-]{9}\]/);
-    const file = parsedPerms[0].contents.find(
-      (c: { name: string }) => c.name === 'alpha.txt',
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-level'), { maxDepth: 1 }),
     );
-    expect(file.mode).toMatch(/\[-[rwx-]{9}\]/);
+    // Without permissions, mode should not be present
+    expect(result.mode).toBeUndefined();
+
+    const withPerms = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-level'), {
+        permissions: true,
+        maxDepth: 1,
+      }),
+    );
+    expect(withPerms.mode).toMatch(/\[d[rwx-]{9}\]/);
+    const file = withPerms.contents.find((c) => c.name === 'alpha.txt');
+    expect(file!.mode).toMatch(/\[-[rwx-]{9}\]/);
   });
 
   test('json with date', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'single-file'), {
-      json: true,
-      date: true,
-    });
-    const parsed = JSON.parse(result);
-    expect(parsed[0].time).toMatch(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/);
-    expect(parsed[0].contents[0].time).toMatch(
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'single-file'), { date: true }),
+    );
+    expect(result.time).toMatch(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/);
+    expect(result.contents[0].time).toMatch(
       /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/,
     );
   });
 
   test('json with exclude', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
-      json: true,
-      exclude: [/beta/],
-    });
-    const parsed = JSON.parse(result);
-    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-files'), { exclude: [/beta/] }),
+    );
+    const names = result.contents.map((c) => c.name);
     expect(names).toContain('alpha.txt');
     expect(names).not.toContain('beta.txt');
     expect(names).toContain('charlie.txt');
   });
 
   test('json with dirsOnly', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
-      json: true,
-      dirsOnly: true,
-    });
-    const parsed = JSON.parse(result);
-    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-level'), { dirsOnly: true }),
+    );
+    const names = result.contents.map((c) => c.name);
     expect(names).toContain('beta');
     expect(names).toContain('charlie');
     expect(names).not.toContain('alpha.txt');
@@ -294,69 +284,56 @@ describe('tree', () => {
   });
 
   test('json with dirsFirst', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
-      json: true,
-      dirsFirst: true,
-      maxDepth: 1,
-    });
-    const parsed = JSON.parse(result);
-    const contents = parsed[0].contents;
-    const firstFileIdx = contents.findIndex(
-      (c: { type: string }) => c.type === 'file',
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-level'), {
+        dirsFirst: true,
+        maxDepth: 1,
+      }),
     );
+    const { contents } = result;
+    const firstFileIdx = contents.findIndex((c) => c.type === 'file');
     const lastDirIdx =
       contents.length -
       1 -
-      [...contents]
-        .reverse()
-        .findIndex((c: { type: string }) => c.type === 'directory');
+      [...contents].reverse().findIndex((c) => c.type === 'directory');
     expect(lastDirIdx).toBeLessThan(firstFileIdx);
   });
 
   test('json with filesFirst', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
-      json: true,
-      filesFirst: true,
-      maxDepth: 1,
-    });
-    const parsed = JSON.parse(result);
-    const contents = parsed[0].contents;
-    const firstDirIdx = contents.findIndex(
-      (c: { type: string }) => c.type === 'directory',
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-level'), {
+        filesFirst: true,
+        maxDepth: 1,
+      }),
     );
+    const { contents } = result;
+    const firstDirIdx = contents.findIndex((c) => c.type === 'directory');
     const lastFileIdx =
       contents.length -
       1 -
-      [...contents]
-        .reverse()
-        .findIndex((c: { type: string }) => c.type === 'file');
+      [...contents].reverse().findIndex((c) => c.type === 'file');
     expect(lastFileIdx).toBeLessThan(firstDirIdx);
   });
 
   test('json with reverse', () => {
-    const normal = tree(path.join(PATH_TO_TEST, 'multi-files'), {
-      json: true,
-    });
-    const reversed = tree(path.join(PATH_TO_TEST, 'multi-files'), {
-      json: true,
-      reverse: true,
-    });
-    const normalNames = JSON.parse(normal)[0].contents.map(
-      (c: { name: string }) => c.name,
+    const normal = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-files')),
     );
-    const reversedNames = JSON.parse(reversed)[0].contents.map(
-      (c: { name: string }) => c.name,
+    const reversed = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-files'), { reverse: true }),
     );
+    const normalNames = normal.contents.map((c) => c.name);
+    const reversedNames = reversed.contents.map((c) => c.name);
     expect(reversedNames).toEqual([...normalNames].reverse());
   });
 
   test('json with sortBy version', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'numbered-files'), {
-      json: true,
-      sortBy: 'version',
-    });
-    const parsed = JSON.parse(result);
-    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'numbered-files'), {
+        sortBy: 'version',
+      }),
+    );
+    const names = result.contents.map((c) => c.name);
     expect(names).toEqual([
       'file1.txt',
       'file2.txt',
@@ -367,30 +344,24 @@ describe('tree', () => {
   });
 
   test('json with sortBy mtime', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
-      json: true,
-      sortBy: 'mtime',
-    });
-    const parsed = JSON.parse(result);
-    expect(parsed[0].contents.length).toBe(3);
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-files'), { sortBy: 'mtime' }),
+    );
+    expect(result.contents.length).toBe(3);
   });
 
   test('json with sortBy ctime', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
-      json: true,
-      sortBy: 'ctime',
-    });
-    const parsed = JSON.parse(result);
-    expect(parsed[0].contents.length).toBe(3);
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-files'), { sortBy: 'ctime' }),
+    );
+    expect(result.contents.length).toBe(3);
   });
 
   test('json with sortBy size', () => {
-    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
-      json: true,
-      sortBy: 'size',
-    });
-    const parsed = JSON.parse(result);
-    expect(parsed[0].contents.length).toBe(3);
+    const result = asDir(
+      treeJson(path.join(PATH_TO_TEST, 'multi-files'), { sortBy: 'size' }),
+    );
+    expect(result.contents.length).toBe(3);
   });
 
   test('json with prune', () => {
@@ -399,9 +370,8 @@ describe('tree', () => {
     fs.mkdirSync(path.join(tmpDir, 'populated-dir'));
     fs.writeFileSync(path.join(tmpDir, 'populated-dir', 'file.txt'), '');
 
-    const result = tree(tmpDir, { json: true, prune: true });
-    const parsed = JSON.parse(result);
-    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    const result = asDir(treeJson(tmpDir, { prune: true }));
+    const names = result.contents.map((c) => c.name);
     expect(names).not.toContain('empty-dir');
     expect(names).toContain('populated-dir');
 

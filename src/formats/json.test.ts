@@ -12,7 +12,6 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   fullPath: false,
   noIndent: false,
   permissions: false,
-  json: false,
   prune: false,
   quote: false,
   sizes: false,
@@ -130,7 +129,8 @@ describe('formatAsJson', () => {
   test('file nodes do not have contents', () => {
     const node = makeFile('a.ts');
     const result = formatAsJson(node, opts());
-    expect(result.contents).toBeUndefined();
+    expect(result.type).toBe('file');
+    expect('contents' in result).toBe(false);
   });
 
   test('nested directories', () => {
@@ -138,9 +138,16 @@ describe('formatAsJson', () => {
       makeDir('sub', [makeFile('file.txt')]),
     ]);
     const result = formatAsJson(node, opts());
-    expect(result.contents![0].contents![0]).toEqual({
-      type: 'file',
-      name: 'file.txt',
-    });
+    expect(result.type).toBe('directory');
+    if (result.type === 'directory') {
+      const sub = result.contents[0];
+      expect(sub.type).toBe('directory');
+      if (sub.type === 'directory') {
+        expect(sub.contents[0]).toEqual({
+          type: 'file',
+          name: 'file.txt',
+        });
+      }
+    }
   });
 });

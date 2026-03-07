@@ -12,7 +12,6 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   fullPath: false,
   noIndent: false,
   permissions: false,
-  json: false,
   prune: false,
   quote: false,
   sizes: false,

@@ -2,7 +2,7 @@
 
 import { createRequire } from 'module';
 import cac from 'cac';
-import tree, { type Options } from './index';
+import { type Options, tree, treeJson } from './index';
 
 const require = createRequire(import.meta.url);
 const { version } = require('../package.json');
@@ -83,7 +83,6 @@ const options: Options = {
   ...((process.argv.includes('-i') || process.argv.includes('--no-indent')) && {
     noIndent: true,
   }),
-  ...(opts.json != null && { json: opts.json as boolean }),
   ...(opts.permissions != null && { permissions: opts.permissions as boolean }),
   ...(opts.prune != null && { prune: opts.prune as boolean }),
   ...(opts.quote != null && { quote: opts.quote as boolean }),
@@ -103,5 +102,9 @@ const options: Options = {
   ...(opts.unsorted != null && { unsorted: opts.unsorted as boolean }),
 };
 
-const output = tree(path, options);
-console.log(output);
+if (opts.json) {
+  const jsonOutput = treeJson(path, options);
+  console.log(JSON.stringify([jsonOutput], null, 2));
+} else {
+  console.log(tree(path, options));
+}

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import nodePath from 'path';
 
-import { formatAsJson } from './formats/json';
+import { type TreeJsonEntry, formatAsJson } from './formats/json';
 import { formatAsText } from './formats/text';
 
 export type SortBy = 'name' | 'version' | 'mtime' | 'ctime' | 'size';
@@ -16,7 +16,6 @@ export interface Options {
   noIndent?: boolean;
   permissions?: boolean;
   prune?: boolean;
-  json?: boolean;
   quote?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
@@ -39,7 +38,6 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   fullPath: false,
   noIndent: false,
   permissions: false,
-  json: false,
   prune: false,
   quote: false,
   sizes: false,
@@ -267,28 +265,35 @@ function buildTree(
   return node;
 }
 
-// ── Public API ─────────────────────────────────────────────
-
-export default function tree(path: string, options?: Options): string {
-  const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
+function buildTreeNode(
+  path: string,
+  options: RequiredOptions,
+): TreeNode | null {
   const sizeCache = new Map<string, number>();
 
-  if (combinedOptions.sizes) {
+  if (options.sizes) {
     computeSizes(path, sizeCache);
   }
 
   const resolvedPath = nodePath.join(process.cwd(), path);
   const rootName = nodePath.basename(resolvedPath);
-  const root = buildTree(rootName, path, 0, combinedOptions, sizeCache);
+  return buildTree(rootName, path, 0, options, sizeCache);
+}
 
-  if (combinedOptions.json) {
-    const jsonTree = root ? formatAsJson(root, combinedOptions) : null;
-    return JSON.stringify([jsonTree], null, 2);
-  }
+export function tree(path: string, options?: Options): string {
+  const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
+  const root = buildTreeNode(path, combinedOptions);
 
   if (!root) {
     return '';
   }
 
   return formatAsText(root, combinedOptions, path).join('\n');
+}
+
+export function treeJson(path: string, options?: Options): TreeJsonEntry | null {
+  const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
+  const root = buildTreeNode(path, combinedOptions);
+
+  return root ? formatAsJson(root, combinedOptions) : null;
 }

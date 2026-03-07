@@ -91,11 +91,47 @@ Options:
 
 ## Node.js API
 
-```js
-import tree from 'tree-node-cli';
+### `tree(path, options?)`
 
-const string = tree('path/to/dir', options);
+Returns the tree as a formatted string.
+
+```js
+import { tree } from 'tree-node-cli';
+
+const string = tree('path/to/dir', {
+  allFiles: true,
+  exclude: [/node_modules/, /lcov/],
+  maxDepth: 4,
+});
+
+console.log(string);
 ```
+
+### `treeJson(path, options?)`
+
+Returns the tree as a structured `TreeJsonEntry` object (or `null` if the path is excluded).
+
+```ts
+// Discriminated union — `contents` only exists on directories
+type TreeJsonEntry =
+  | { type: 'directory'; name: string; contents: TreeJsonEntry[];
+      size?: number; mode?: string; time?: string }
+  | { type: 'file'; name: string;
+      size?: number; mode?: string; time?: string }
+// size: present when `sizes: true`
+// mode: present when `permissions: true`
+// time: present when `date: true`
+```
+
+```js
+import { treeJson } from 'tree-node-cli';
+
+const result = treeJson('path/to/dir', { sizes: true });
+console.log(result);
+// { type: 'directory', name: 'dir', size: 4096, contents: [...] }
+```
+
+### Options
 
 `options` is a configuration object with the following fields:
 
@@ -104,7 +140,6 @@ const string = tree('path/to/dir', options);
 | `allFiles`      | `false`                    | `boolean`  | All files are printed. By default, tree does not print hidden files (those beginning with a dot).                                     |
 | `date`          | `false`                    | `boolean`  | Show last modification time for each entry.                                                                                           |
 | `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                        |
-| `json`          | `false`                    | `boolean`  | Output the tree as a JSON structure.                                                                                                  |
 | `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                             |
 | `noIndent`      | `false`                    | `boolean`  | Print entries without tree indentation lines.                                                                                         |
 | `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                |
@@ -120,18 +155,6 @@ const string = tree('path/to/dir', options);
 | `filesFirst`    | `false`                    | `boolean`  | List files before directories.                                                                                                        |
 | `sortBy`        | `'name'`                   | `string`   | Sort the output. Options: `'name'`, `'version'`, `'mtime'`, `'ctime'`, `'size'`.                                                     |
 | `unsorted`      | `false`                    | `boolean`  | Do not sort. List files in directory order.                                                                                            |
-
-```js
-import tree from 'tree-node-cli';
-
-const string = tree('path/to/dir', {
-  allFiles: true,
-  exclude: [/node_modules/, /lcov/],
-  maxDepth: 4,
-});
-
-console.log(string);
-```
 
 **Note:** To exclude the contents of a directory while retaining the directory itself, use a trailing slash with the `-I` option (e.g., `-I "node_modules/"`). For the Node.js API, provide a regex matching the directory contents (e.g., `/node_modules\//`). See [#33](https://github.com/yangshun/tree-node-cli/issues/33) for more details.
 

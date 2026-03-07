@@ -1,41 +1,51 @@
 import type { RequiredOptions, TreeNode } from '../index';
 import { formatPermissions } from '../utils/format-permissions';
 
-export interface JsonNode {
-  type: 'directory' | 'file';
+interface TreeJsonEntryBase {
   name: string;
   size?: number;
   mode?: string;
   time?: string;
-  contents?: JsonNode[];
 }
+
+interface TreeJsonDirectoryEntry extends TreeJsonEntryBase {
+  type: 'directory';
+  contents: TreeJsonEntry[];
+}
+
+interface TreeJsonFileEntry extends TreeJsonEntryBase {
+  type: 'file';
+}
+
+export type TreeJsonEntry = TreeJsonDirectoryEntry | TreeJsonFileEntry;
 
 export function formatAsJson(
   node: TreeNode,
   options: RequiredOptions,
-): JsonNode {
-  const jsonNode: JsonNode = {
-    type: node.isDirectory ? 'directory' : 'file',
+): TreeJsonEntry {
+  const base: TreeJsonEntryBase = {
     name: node.name,
   };
 
   if (options.sizes) {
-    jsonNode.size = node.size;
+    base.size = node.size;
   }
 
   if (options.permissions) {
-    jsonNode.mode = formatPermissions(node.mode, node.isDirectory);
+    base.mode = formatPermissions(node.mode, node.isDirectory);
   }
 
   if (options.date) {
-    jsonNode.time = `${node.mtime.toLocaleDateString('en-CA')} ${node.mtime.toLocaleTimeString('en-GB')}`;
+    base.time = `${node.mtime.toLocaleDateString('en-CA')} ${node.mtime.toLocaleTimeString('en-GB')}`;
   }
 
   if (node.isDirectory) {
-    jsonNode.contents = node.children.map((child) =>
-      formatAsJson(child, options),
-    );
+    return {
+      ...base,
+      type: 'directory',
+      contents: node.children.map((child) => formatAsJson(child, options)),
+    };
   }
 
-  return jsonNode;
+  return { ...base, type: 'file' };
 }
