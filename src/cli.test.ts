@@ -234,10 +234,10 @@ describe('cli', () => {
     // Without sizes, just the filename
     expect(withoutSizes).toContain('alpha.txt');
     expect(withoutSizes).not.toMatch(/\dB/);
-    // With sizes, each line should have a size prefix like "0B" or "1kB"
+    // With sizes, each line should have a size prefix like "5B" or "4.1kB"
     const lines = withSizes.split('\n');
     for (const line of lines) {
-      expect(line).toMatch(/\dB/);
+      expect(line).toMatch(/\d+(\.\d+)?(B|kB|MB)/);
     }
   });
 
