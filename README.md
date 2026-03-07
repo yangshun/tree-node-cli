@@ -72,6 +72,12 @@ Options:
   -S, --line-ascii          Turn on ASCII line graphics.
   -v, --version-sort        Sort the output by version (natural sort of numbers
                             within text).
+  -t, --sort-mtime          Sort the output by last modification time.
+  -c, --sort-ctime          Sort the output by last status change time.
+  -U, --unsorted            Do not sort. List files in directory order.
+  --files-first             List files before directories.
+  --sort <type>             Sort the output by type: name, version, mtime,
+                            ctime, size.
   -h, --help                Display this message
   --version                 Display version number
 ```
@@ -97,7 +103,9 @@ const string = tree('path/to/dir', options);
 | `reverse`       | `false`                    | `boolean`  | Sort the output in reverse alphabetic order.                                                                                          |
 | `trailingSlash` | `false`                    | `boolean`  | Appends a trailing slash behind directories.                                                                                          |
 | `lineAscii`     | `false`                    | `boolean`  | Turn on ASCII line graphics.                                                                                                          |
-| `versionSort`   | `false`                    | `boolean`  | Sort the output by version (natural sort of numbers within text).                                                                     |
+| `filesFirst`    | `false`                    | `boolean`  | List files before directories.                                                                                                        |
+| `sortBy`        | `'name'`                   | `string`   | Sort the output. Options: `'name'`, `'version'`, `'mtime'`, `'ctime'`, `'size'`.                                                     |
+| `unsorted`      | `false`                    | `boolean`  | Do not sort. List files in directory order.                                                                                            |
 
 ```js
 import tree from 'tree-node-cli';

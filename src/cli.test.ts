@@ -2,8 +2,8 @@ import { execFile } from 'child_process';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 
-const TSX_PATH = path.resolve(__dirname, '../../node_modules/.bin/tsx');
-const CLI_PATH = path.resolve(__dirname, '../cli.ts');
+const TSX_PATH = path.resolve(__dirname, '../node_modules/.bin/tsx');
+const CLI_PATH = path.resolve(__dirname, 'cli.ts');
 const FIXTURES_PATH = path.join(__dirname, '__fixtures__');
 
 function run(
@@ -122,6 +122,22 @@ describe('cli', () => {
     expect(lastDirIndex).toBeLessThan(firstFileIndex);
   });
 
+  test('respects --dirsfirst alias', async () => {
+    const { stdout: withDash } = await run([
+      '--dirs-first',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    const { stdout: withoutDash } = await run([
+      '--dirsfirst',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    expect(withoutDash).toBe(withDash);
+  });
+
   test('respects -s sizes', async () => {
     const { stdout: withoutSizes } = await run([
       path.join(FIXTURES_PATH, 'single-file'),
@@ -143,6 +159,89 @@ describe('cli', () => {
   test('respects -v version sort', async () => {
     const { stdout } = await run([
       '-v',
+      path.join(FIXTURES_PATH, 'numbered-files'),
+    ]);
+    const lines = stdout.split('\n');
+    const fileLines = lines.filter((l) => l.includes('.txt'));
+    expect(fileLines[0]).toContain('file1.txt');
+    expect(fileLines[1]).toContain('file2.txt');
+    expect(fileLines[2]).toContain('file3.txt');
+    expect(fileLines[3]).toContain('file10.txt');
+    expect(fileLines[4]).toContain('file20.txt');
+  });
+
+  test('respects --files-first', async () => {
+    const { stdout } = await run([
+      '--files-first',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    const lines = stdout.split('\n');
+    const firstDirIndex = Math.min(
+      lines.findIndex((l) => /[├└]── beta/.test(l)),
+      lines.findIndex((l) => /[├└]── charlie/.test(l)),
+    );
+    const lastFileIndex = Math.max(
+      lines.findIndex((l) => l.includes('alpha.txt')),
+      lines.findIndex((l) => l.includes('delta.txt')),
+    );
+    expect(lastFileIndex).toBeLessThan(firstDirIndex);
+  });
+
+  test('respects --filesfirst alias', async () => {
+    const { stdout: withDash } = await run([
+      '--files-first',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    const { stdout: withoutDash } = await run([
+      '--filesfirst',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    expect(withoutDash).toBe(withDash);
+  });
+
+  test('respects -U unsorted', async () => {
+    const { stdout, exitCode } = await run([
+      '-U',
+      path.join(FIXTURES_PATH, 'multi-files'),
+    ]);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('alpha.txt');
+    expect(stdout).toContain('beta.txt');
+    expect(stdout).toContain('charlie.txt');
+  });
+
+  test('respects -t sort by mtime', async () => {
+    const { stdout, exitCode } = await run([
+      '-t',
+      path.join(FIXTURES_PATH, 'multi-files'),
+    ]);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('alpha.txt');
+    expect(stdout).toContain('beta.txt');
+    expect(stdout).toContain('charlie.txt');
+  });
+
+  test('respects -c sort by ctime', async () => {
+    const { stdout, exitCode } = await run([
+      '-c',
+      path.join(FIXTURES_PATH, 'multi-files'),
+    ]);
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('alpha.txt');
+    expect(stdout).toContain('beta.txt');
+    expect(stdout).toContain('charlie.txt');
+  });
+
+  test('respects --sort version', async () => {
+    const { stdout } = await run([
+      '--sort',
+      'version',
       path.join(FIXTURES_PATH, 'numbered-files'),
     ]);
     const lines = stdout.split('\n');

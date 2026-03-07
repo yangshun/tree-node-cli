@@ -3,7 +3,7 @@ import { isNotJunk } from 'junk';
 import os from 'os';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import tree from '../index';
+import tree from './index';
 
 const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
 const dirs = fs.readdirSync(PATH_TO_TEST).filter(isNotJunk);
@@ -173,6 +173,81 @@ describe('tree', () => {
     });
     expect(result).toMatchSnapshot();
   });
+
+  test('filesFirst', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      filesFirst: true,
+      maxDepth: 1,
+    });
+    const lines = result.split('\n');
+    const firstDirIndex = Math.min(
+      lines.findIndex((l) => /[├└]── beta/.test(l)),
+      lines.findIndex((l) => /[├└]── charlie/.test(l)),
+    );
+    const lastFileIndex = Math.max(
+      lines.findIndex((l) => l.includes('alpha.txt')),
+      lines.findIndex((l) => l.includes('delta.txt')),
+    );
+    expect(lastFileIndex).toBeLessThan(firstDirIndex);
+  });
+
+  test('unsorted', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      unsorted: true,
+    });
+    expect(result).toContain('alpha.txt');
+    expect(result).toContain('beta.txt');
+    expect(result).toContain('charlie.txt');
+  });
+
+  test('sortBy version', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'numbered-files'), {
+      sortBy: 'version',
+    });
+    const lines = result.split('\n');
+    const fileLines = lines.filter((l) => l.includes('.txt'));
+    expect(fileLines[0]).toContain('file1.txt');
+    expect(fileLines[1]).toContain('file2.txt');
+    expect(fileLines[2]).toContain('file3.txt');
+    expect(fileLines[3]).toContain('file10.txt');
+    expect(fileLines[4]).toContain('file20.txt');
+  });
+
+  test('sortBy mtime', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      sortBy: 'mtime',
+    });
+    expect(result).toContain('alpha.txt');
+    expect(result).toContain('beta.txt');
+    expect(result).toContain('charlie.txt');
+  });
+
+  test('sortBy ctime', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      sortBy: 'ctime',
+    });
+    expect(result).toContain('alpha.txt');
+    expect(result).toContain('beta.txt');
+    expect(result).toContain('charlie.txt');
+  });
+
+  test('sortBy size', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      sortBy: 'size',
+    });
+    expect(result).toContain('alpha.txt');
+    expect(result).toContain('beta.txt');
+    expect(result).toContain('charlie.txt');
+  });
+
+  test('combined: filesFirst + reverse', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      filesFirst: true,
+      reverse: true,
+      maxDepth: 1,
+    });
+    expect(result).toMatchSnapshot();
+  });
 });
 
 describe('tree error handling', () => {
@@ -181,9 +256,7 @@ describe('tree error handling', () => {
   });
 
   test('returns just the filename for a file path', () => {
-    const result = tree(
-      path.join(PATH_TO_TEST, 'single-file', 'alpha.txt'),
-    );
+    const result = tree(path.join(PATH_TO_TEST, 'single-file', 'alpha.txt'));
     const lines = result.split('\n');
     expect(lines).toHaveLength(1);
     expect(lines[0]).toBe('alpha.txt');

@@ -2,43 +2,51 @@ import fs from 'fs';
 import nodePath from 'path';
 import prettyBytes from 'pretty-bytes';
 
+export type SortBy = 'name' | 'version' | 'mtime' | 'ctime' | 'size';
+
 export interface Options {
   allFiles?: boolean;
   dirsFirst?: boolean;
   dirsOnly?: boolean;
+  filesFirst?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
   maxDepth?: number;
   reverse?: boolean;
+  sortBy?: SortBy;
   trailingSlash?: boolean;
   lineAscii?: boolean;
-  versionSort?: boolean;
+  unsorted?: boolean;
 }
 
 interface RequiredOptions {
   allFiles: boolean;
   dirsFirst: boolean;
   dirsOnly: boolean;
+  filesFirst: boolean;
   sizes: boolean;
   exclude: RegExp[];
   maxDepth: number;
   reverse: boolean;
+  sortBy: SortBy;
   trailingSlash: boolean;
   lineAscii: boolean;
-  versionSort: boolean;
+  unsorted: boolean;
 }
 
 const DEFAULT_OPTIONS: RequiredOptions = {
   allFiles: false,
   dirsFirst: false,
   dirsOnly: false,
+  filesFirst: false,
   sizes: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
   reverse: false,
+  sortBy: 'name',
   trailingSlash: false,
   lineAscii: false,
-  versionSort: false,
+  unsorted: false,
 };
 
 const SYMBOLS_ANSI = {
@@ -127,19 +135,24 @@ function print(
 
   // Handle current file.
   const line: string[] = [precedingSymbols];
+
   if (currentDepth >= 1) {
     line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
   }
+
   if (options.sizes) {
     const filesize = sizeCache.get(path) ?? 0;
     const prettifiedFilesize = prettyBytes(filesize);
     line.push(prettifiedFilesize.replace(' ', ''));
     line.push(' ');
   }
+
   line.push(filename);
+
   if (isDir && options.trailingSlash) {
     line.push('/');
   }
+
   lines.push(line.join(''));
 
   if (isFile) {
@@ -148,16 +161,45 @@ function print(
 
   // Contents of a directory.
   let contents = fs.readdirSync(path);
-  if (options.versionSort) {
-    contents.sort((a, b) =>
-      a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
-    );
-  } else {
-    contents.sort();
-  }
+  if (!options.unsorted) {
+    switch (options.sortBy) {
+      case 'version':
+        contents.sort((a, b) =>
+          a.localeCompare(b, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          }),
+        );
+        break;
+      case 'mtime':
+        contents.sort(
+          (a, b) =>
+            fs.lstatSync(nodePath.join(path, a)).mtimeMs -
+            fs.lstatSync(nodePath.join(path, b)).mtimeMs,
+        );
+        break;
+      case 'ctime':
+        contents.sort(
+          (a, b) =>
+            fs.lstatSync(nodePath.join(path, a)).ctimeMs -
+            fs.lstatSync(nodePath.join(path, b)).ctimeMs,
+        );
+        break;
+      case 'size':
+        contents.sort(
+          (a, b) =>
+            fs.lstatSync(nodePath.join(path, a)).size -
+            fs.lstatSync(nodePath.join(path, b)).size,
+        );
+        break;
+      default:
+        contents.sort();
+        break;
+    }
 
-  if (options.reverse) {
-    contents.reverse();
+    if (options.reverse) {
+      contents.reverse();
+    }
   }
 
   // Handle showing of all files.
@@ -165,7 +207,7 @@ function print(
     contents = contents.filter((content) => !isHiddenFile(content));
   }
 
-  if (options.dirsOnly || options.dirsFirst) {
+  if (options.dirsOnly || options.dirsFirst || options.filesFirst) {
     const dirSet = new Set(
       contents.filter((file) =>
         fs.lstatSync(nodePath.join(path, file)).isDirectory(),
@@ -181,6 +223,10 @@ function print(
       const dirs = contents.filter((content) => dirSet.has(content));
       const files = contents.filter((content) => !dirSet.has(content));
       contents = dirs.concat(files);
+    } else if (options.filesFirst) {
+      const dirs = contents.filter((content) => dirSet.has(content));
+      const files = contents.filter((content) => !dirSet.has(content));
+      contents = files.concat(dirs);
     }
   }
 
@@ -202,15 +248,18 @@ function print(
     );
     lines.push(...linesForFile);
   });
+
   return lines;
 }
 
 export default function tree(path: string, options?: Options): string {
   const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
   const sizeCache = new Map<string, number>();
+
   if (combinedOptions.sizes) {
     computeSizes(path, sizeCache);
   }
+
   return print(
     nodePath.basename(nodePath.join(process.cwd(), path)),
     path,

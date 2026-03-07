@@ -111,6 +111,14 @@ exports[`tree > combined: exclude + allFiles 1`] = `
 └── delta.txt"
 `;
 
+exports[`tree > combined: filesFirst + reverse 1`] = `
+"multi-level
+├── delta.txt
+├── alpha.txt
+├── charlie
+└── beta"
+`;
+
 exports[`tree > combined: trailingSlash + lineAscii + sizes 1`] = `
 "13B single-level/
 |-- 13B alpha.txt

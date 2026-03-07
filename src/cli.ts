@@ -13,7 +13,7 @@ const cli = cac('tree');
 
 cli
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
-  .option('--dirs-first', 'List directories before files.')
+  .option('--dirs-first, --dirsfirst', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
   .option(
     '-s, --sizes',
@@ -31,6 +31,14 @@ cli
   .option(
     '-v, --version-sort',
     'Sort the output by version (natural sort of numbers within text).',
+  )
+  .option('-t, --sort-mtime', 'Sort the output by last modification time.')
+  .option('-c, --sort-ctime', 'Sort the output by last status change time.')
+  .option('-U, --unsorted', 'Do not sort. List files in directory order.')
+  .option('--files-first, --filesfirst', 'List files before directories.')
+  .option(
+    '--sort <type>',
+    'Sort the output by type: name, version, mtime, ctime, size.',
   );
 
 cli.help();
@@ -45,10 +53,22 @@ if (parsed.options.help || parsed.options.version) {
 const path = cli.args[0] || '.';
 const opts = cli.options;
 
+// Resolve sortBy from shorthand flags (-v, -t, -c) or --sort flag.
+const sortBy = opts.sort
+  ? (opts.sort as Options['sortBy'])
+  : opts.versionSort
+    ? ('version' as const)
+    : opts.sortMtime
+      ? ('mtime' as const)
+      : opts.sortCtime
+        ? ('ctime' as const)
+        : undefined;
+
 const options: Options = {
   ...(opts.allFiles != null && { allFiles: opts.allFiles as boolean }),
   ...(opts.dirsFirst != null && { dirsFirst: opts.dirsFirst as boolean }),
   ...(opts.dirsOnly != null && { dirsOnly: opts.dirsOnly as boolean }),
+  ...(opts.filesFirst != null && { filesFirst: opts.filesFirst as boolean }),
   ...(opts.sizes != null && { sizes: opts.sizes as boolean }),
   ...(opts.exclude != null && {
     exclude: (opts.exclude as string)
@@ -57,13 +77,12 @@ const options: Options = {
   }),
   ...(opts.maxDepth != null && { maxDepth: parseInt(opts.maxDepth as string) }),
   ...(opts.reverse != null && { reverse: opts.reverse as boolean }),
+  ...(sortBy != null && { sortBy }),
   ...(opts.trailingSlash != null && {
     trailingSlash: opts.trailingSlash as boolean,
   }),
   ...(opts.lineAscii != null && { lineAscii: opts.lineAscii as boolean }),
-  ...(opts.versionSort != null && {
-    versionSort: opts.versionSort as boolean,
-  }),
+  ...(opts.unsorted != null && { unsorted: opts.unsorted as boolean }),
 };
 
 const output = tree(path, options);
