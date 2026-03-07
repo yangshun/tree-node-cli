@@ -76,21 +76,13 @@ function isHiddenFile(filename: string): boolean {
 }
 
 /**
- * Determines whether an entry should be excluded based on exclude patterns and max depth.
+ * Checks whether a path matches any of the configured exclude patterns.
  */
-function isExcluded(
-  path: string,
-  currentDepth: number,
-  options: RequiredOptions,
-): boolean {
+function matchesExcludePattern(path: string, options: RequiredOptions): boolean {
   for (const pattern of options.exclude) {
     if (pattern.test(path)) {
       return true;
     }
-  }
-
-  if (currentDepth > options.maxDepth) {
-    return true;
   }
 
   return false;
@@ -254,7 +246,7 @@ function buildTree(
   const isDir = stat.isDirectory();
   const isFile = !isDir;
 
-  if (isExcluded(path, currentDepth, options)) {
+  if (matchesExcludePattern(path, options)) {
     return null;
   }
 
@@ -268,7 +260,7 @@ function buildTree(
     children: [],
   };
 
-  if (isFile) {
+  if (isFile || currentDepth >= options.maxDepth) {
     return node;
   }
 
