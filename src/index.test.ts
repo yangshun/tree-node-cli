@@ -234,6 +234,180 @@ describe('tree', () => {
     expect(typeof parsed[0].contents[0].size).toBe('number');
   });
 
+  test('json with permissions', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      json: true,
+      maxDepth: 1,
+    });
+    const parsed = JSON.parse(result);
+    // Without permissions, mode should not be present
+    expect(parsed[0].mode).toBeUndefined();
+
+    const withPerms = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      json: true,
+      permissions: true,
+      maxDepth: 1,
+    });
+    const parsedPerms = JSON.parse(withPerms);
+    expect(parsedPerms[0].mode).toMatch(/\[d[rwx-]{9}\]/);
+    const file = parsedPerms[0].contents.find(
+      (c: { name: string }) => c.name === 'alpha.txt',
+    );
+    expect(file.mode).toMatch(/\[-[rwx-]{9}\]/);
+  });
+
+  test('json with date', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'single-file'), {
+      json: true,
+      date: true,
+    });
+    const parsed = JSON.parse(result);
+    expect(parsed[0].time).toMatch(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/);
+    expect(parsed[0].contents[0].time).toMatch(
+      /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/,
+    );
+  });
+
+  test('json with exclude', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      json: true,
+      exclude: [/beta/],
+    });
+    const parsed = JSON.parse(result);
+    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    expect(names).toContain('alpha.txt');
+    expect(names).not.toContain('beta.txt');
+    expect(names).toContain('charlie.txt');
+  });
+
+  test('json with dirsOnly', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      json: true,
+      dirsOnly: true,
+    });
+    const parsed = JSON.parse(result);
+    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    expect(names).toContain('beta');
+    expect(names).toContain('charlie');
+    expect(names).not.toContain('alpha.txt');
+    expect(names).not.toContain('delta.txt');
+  });
+
+  test('json with dirsFirst', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      json: true,
+      dirsFirst: true,
+      maxDepth: 1,
+    });
+    const parsed = JSON.parse(result);
+    const contents = parsed[0].contents;
+    const firstFileIdx = contents.findIndex(
+      (c: { type: string }) => c.type === 'file',
+    );
+    const lastDirIdx =
+      contents.length -
+      1 -
+      [...contents]
+        .reverse()
+        .findIndex((c: { type: string }) => c.type === 'directory');
+    expect(lastDirIdx).toBeLessThan(firstFileIdx);
+  });
+
+  test('json with filesFirst', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      json: true,
+      filesFirst: true,
+      maxDepth: 1,
+    });
+    const parsed = JSON.parse(result);
+    const contents = parsed[0].contents;
+    const firstDirIdx = contents.findIndex(
+      (c: { type: string }) => c.type === 'directory',
+    );
+    const lastFileIdx =
+      contents.length -
+      1 -
+      [...contents]
+        .reverse()
+        .findIndex((c: { type: string }) => c.type === 'file');
+    expect(lastFileIdx).toBeLessThan(firstDirIdx);
+  });
+
+  test('json with reverse', () => {
+    const normal = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      json: true,
+    });
+    const reversed = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      json: true,
+      reverse: true,
+    });
+    const normalNames = JSON.parse(normal)[0].contents.map(
+      (c: { name: string }) => c.name,
+    );
+    const reversedNames = JSON.parse(reversed)[0].contents.map(
+      (c: { name: string }) => c.name,
+    );
+    expect(reversedNames).toEqual([...normalNames].reverse());
+  });
+
+  test('json with sortBy version', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'numbered-files'), {
+      json: true,
+      sortBy: 'version',
+    });
+    const parsed = JSON.parse(result);
+    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    expect(names).toEqual([
+      'file1.txt',
+      'file2.txt',
+      'file3.txt',
+      'file10.txt',
+      'file20.txt',
+    ]);
+  });
+
+  test('json with sortBy mtime', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      json: true,
+      sortBy: 'mtime',
+    });
+    const parsed = JSON.parse(result);
+    expect(parsed[0].contents.length).toBe(3);
+  });
+
+  test('json with sortBy ctime', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      json: true,
+      sortBy: 'ctime',
+    });
+    const parsed = JSON.parse(result);
+    expect(parsed[0].contents.length).toBe(3);
+  });
+
+  test('json with sortBy size', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-files'), {
+      json: true,
+      sortBy: 'size',
+    });
+    const parsed = JSON.parse(result);
+    expect(parsed[0].contents.length).toBe(3);
+  });
+
+  test('json with prune', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-json-prune-'));
+    fs.mkdirSync(path.join(tmpDir, 'empty-dir'));
+    fs.mkdirSync(path.join(tmpDir, 'populated-dir'));
+    fs.writeFileSync(path.join(tmpDir, 'populated-dir', 'file.txt'), '');
+
+    const result = tree(tmpDir, { json: true, prune: true });
+    const parsed = JSON.parse(result);
+    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    expect(names).not.toContain('empty-dir');
+    expect(names).toContain('populated-dir');
+
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
   test('quote', () => {
     const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
       quote: true,

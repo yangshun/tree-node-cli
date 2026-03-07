@@ -44,7 +44,7 @@
     "typecheck": "tsc --noEmit",
     "format": "oxfmt",
     "lint": "oxlint",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "prepublishOnly": "pnpm check && pnpm build"
   },
   "dependencies": {
@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.3.5",
+    "@vitest/coverage-v8": "4.0.18",
     "junk": "^4.0.1",
     "oxfmt": "^0.36.0",
     "oxlint": "^1.51.0",
