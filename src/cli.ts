@@ -11,17 +11,26 @@ const PATTERN_SEPARATOR = '|';
 
 const cli = cac('tree');
 
+// Listing options
 cli
   .option('-a, --all-files', 'All files, including hidden files, are printed.')
-  .option('-D, --date', 'Show last modification time for each entry.')
-  .option('-f, --full-path', 'Print the full path prefix for each file.')
-  .option('-i, --no-indent', 'Print entries without tree indentation lines.')
-  .option('-J, --json', 'Output the tree as a JSON structure.')
-  .option('-p, --permissions', 'Show file type and permissions.')
-  .option('-Q, --quote', 'Quote filenames in double quotes.')
-  .option('--prune', 'Remove empty directories from output.')
-  .option('--dirs-first, --dirsfirst', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
+  .option('-f, --full-path', 'Print the full path prefix for each file.')
+  .option('-L, --max-depth <n>', 'Max display depth of the directory tree.')
+  .option(
+    '-I, --exclude <patterns>',
+    'Exclude files that match the pattern. | separates alternate patterns. ' +
+      'Wrap your entire pattern in double quotes. E.g. "node_modules|coverage".',
+  )
+  .option(
+    '--gitignore',
+    'Respect .gitignore files (enabled by default). Use --no-gitignore to disable.',
+  )
+  .option('--prune', 'Remove empty directories from output.')
+
+  // File options
+  .option('-Q, --quote', 'Quote filenames in double quotes.')
+  .option('-p, --permissions', 'Show file type and permissions.')
   .option(
     '-s, --sizes',
     'Print the size of each file in bytes along with the name.',
@@ -30,15 +39,10 @@ cli
     '--du',
     'For each directory report its size as the accumulation of sizes of all its files and sub-directories. Implies -s.',
   )
-  .option(
-    '-I, --exclude <patterns>',
-    'Exclude files that match the pattern. | separates alternate patterns. ' +
-      'Wrap your entire pattern in double quotes. E.g. "node_modules|coverage".',
-  )
-  .option('-L, --max-depth <n>', 'Max display depth of the directory tree.')
-  .option('-r, --reverse', 'Sort the output in reverse alphabetic order.')
+  .option('-D, --date', 'Show last modification time for each entry.')
   .option('-F, --trailing-slash', "Append a '/' for directories.")
-  .option('-S, --line-ascii', 'Turn on ASCII line graphics.')
+
+  // Sorting options
   .option(
     '-v, --version-sort',
     'Sort the output by version (natural sort of numbers within text).',
@@ -46,15 +50,20 @@ cli
   .option('-t, --sort-mtime', 'Sort the output by last modification time.')
   .option('-c, --sort-ctime', 'Sort the output by last status change time.')
   .option('-U, --unsorted', 'Do not sort. List files in directory order.')
+  .option('-r, --reverse', 'Sort the output in reverse alphabetic order.')
+  .option('--dirs-first, --dirsfirst', 'List directories before files.')
   .option('--files-first, --filesfirst', 'List files before directories.')
   .option(
     '--sort <type>',
     'Sort the output by type: name, version, mtime, ctime, size.',
   )
-  .option(
-    '--gitignore',
-    'Respect .gitignore files (enabled by default). Use --no-gitignore to disable.',
-  );
+
+  // Graphics options
+  .option('-i, --no-indent', 'Print entries without tree indentation lines.')
+  .option('-S, --line-ascii', 'Turn on ASCII line graphics.')
+
+  // JSON options
+  .option('-J, --json', 'Output the tree as a JSON structure.');
 
 cli.help();
 cli.version(version, '--version');
