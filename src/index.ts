@@ -50,7 +50,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   unsorted: false,
 };
 
-const EXCLUDED_PATTERNS = [/\.DS_Store/];
+const DEFAULT_EXCLUDE_PATTERNS: RegExp[] = [/\.DS_Store/];
 
 // ── Tree node ──────────────────────────────────────────────
 
@@ -72,20 +72,9 @@ function isHiddenFile(filename: string): boolean {
 
 function isExcluded(
   path: string,
-  isFile: boolean,
   currentDepth: number,
   options: RequiredOptions,
 ): boolean {
-  for (const pattern of EXCLUDED_PATTERNS) {
-    if (pattern.test(path)) {
-      return true;
-    }
-  }
-
-  if (isFile && options.dirsOnly) {
-    return true;
-  }
-
   for (const pattern of options.exclude) {
     if (pattern.test(path)) {
       return true;
@@ -112,6 +101,7 @@ function statEntries(
   return stats;
 }
 
+// Sorts `contents` in place. Callers must not reuse the input array.
 function sortContents(
   contents: string[],
   stats: Map<string, fs.Stats>,
@@ -156,10 +146,6 @@ function filterAndOrderContents(
   stats: Map<string, fs.Stats>,
   options: RequiredOptions,
 ): string[] {
-  if (!options.allFiles) {
-    contents = contents.filter((content) => !isHiddenFile(content));
-  }
-
   if (!options.dirsOnly && !options.dirsFirst && !options.filesFirst) {
     return contents;
   }
@@ -187,7 +173,13 @@ function getDirectoryContents(
   dirPath: string,
   options: RequiredOptions,
 ): { entries: string[]; stats: Map<string, fs.Stats> } {
-  const entries = fs.readdirSync(dirPath);
+  let entries = fs.readdirSync(dirPath);
+
+  // Filter hidden files before stat'ing to avoid unnecessary syscalls.
+  if (!options.allFiles) {
+    entries = entries.filter((entry) => !isHiddenFile(entry));
+  }
+
   const stats = statEntries(dirPath, entries);
   const sorted = sortContents(entries, stats, options);
   const filtered = filterAndOrderContents(sorted, stats, options);
@@ -227,7 +219,7 @@ function buildTree(
   const isDir = stat.isDirectory();
   const isFile = !isDir;
 
-  if (isExcluded(path, isFile, currentDepth, options)) {
+  if (isExcluded(path, currentDepth, options)) {
     return null;
   }
 
@@ -287,7 +279,11 @@ function buildTreeNode(
 }
 
 export function tree(path: string, options?: Options): string {
-  const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
+  const combinedOptions: RequiredOptions = {
+    ...DEFAULT_OPTIONS,
+    ...options,
+    exclude: [...DEFAULT_EXCLUDE_PATTERNS, ...(options?.exclude ?? [])],
+  };
   const root = buildTreeNode(path, combinedOptions);
 
   if (!root) {
@@ -301,7 +297,11 @@ export function treeJson(
   path: string,
   options?: Options,
 ): TreeJsonEntry | null {
-  const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
+  const combinedOptions: RequiredOptions = {
+    ...DEFAULT_OPTIONS,
+    ...options,
+    exclude: [...DEFAULT_EXCLUDE_PATTERNS, ...(options?.exclude ?? [])],
+  };
   const root = buildTreeNode(path, combinedOptions);
 
   return root ? formatAsJson(root, combinedOptions) : null;
