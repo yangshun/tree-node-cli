@@ -209,6 +209,17 @@ describe('tree', () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
+  test('permissions', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      permissions: true,
+      maxDepth: 1,
+    });
+    // Root dir should show directory permissions
+    expect(result).toMatch(/\[d[rwx-]{9}\] multi-level/);
+    // Files should show file permissions
+    expect(result).toMatch(/\[-[rwx-]{9}\] alpha\.txt/);
+  });
+
   test('noIndent', () => {
     const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
       noIndent: true,

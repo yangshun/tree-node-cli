@@ -11,6 +11,7 @@ export interface Options {
   filesFirst?: boolean;
   fullPath?: boolean;
   noIndent?: boolean;
+  permissions?: boolean;
   prune?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
@@ -29,6 +30,7 @@ interface RequiredOptions {
   filesFirst: boolean;
   fullPath: boolean;
   noIndent: boolean;
+  permissions: boolean;
   prune: boolean;
   sizes: boolean;
   exclude: RegExp[];
@@ -47,6 +49,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   filesFirst: false,
   fullPath: false,
   noIndent: false,
+  permissions: false,
   prune: false,
   sizes: false,
   exclude: [],
@@ -80,6 +83,15 @@ function isHiddenFile(filename: string): boolean {
   return filename[0] === '.';
 }
 
+function formatPermissions(mode: number, isDir: boolean): string {
+  const type = isDir ? 'd' : '-';
+  const rwx = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'];
+  const owner = rwx[(mode >> 6) & 7];
+  const group = rwx[(mode >> 3) & 7];
+  const others = rwx[mode & 7];
+  return `[${type}${owner}${group}${others}]`;
+}
+
 function computeSizes(dirPath: string, cache: Map<string, number>): number {
   let size = 0;
 
@@ -110,7 +122,8 @@ function print(
   rootPath: string,
   isLast?: boolean,
 ): string[] {
-  const isDir = fs.lstatSync(path).isDirectory();
+  const stat = fs.lstatSync(path);
+  const isDir = stat.isDirectory();
   // We treat all non-directory paths as files and don't
   // recurse into them, including symlinks, sockets, etc.
   const isFile = !isDir;
@@ -148,6 +161,11 @@ function print(
 
   if (!options.noIndent && currentDepth >= 1) {
     line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
+  }
+
+  if (options.permissions) {
+    line.push(formatPermissions(stat.mode, isDir));
+    line.push(' ');
   }
 
   if (options.sizes) {

@@ -108,6 +108,17 @@ describe('cli', () => {
     expect(stdout).not.toContain('└');
   });
 
+  test('respects -p permissions', async () => {
+    const { stdout } = await run([
+      '-p',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    expect(stdout).toMatch(/\[d[rwx-]{9}\]/);
+    expect(stdout).toMatch(/\[-[rwx-]{9}\]/);
+  });
+
   test('respects -i no indent', async () => {
     const { stdout } = await run([
       '-i',
