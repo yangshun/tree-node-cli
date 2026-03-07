@@ -16,6 +16,7 @@ cli
   .option('-D, --date', 'Show last modification time for each entry.')
   .option('-f, --full-path', 'Print the full path prefix for each file.')
   .option('-i, --no-indent', 'Print entries without tree indentation lines.')
+  .option('-J, --json', 'Output the tree as a JSON structure.')
   .option('-p, --permissions', 'Show file type and permissions.')
   .option('-Q, --quote', 'Quote filenames in double quotes.')
   .option('--prune', 'Remove empty directories from output.')
@@ -82,6 +83,7 @@ const options: Options = {
   ...((process.argv.includes('-i') || process.argv.includes('--no-indent')) && {
     noIndent: true,
   }),
+  ...(opts.json != null && { json: opts.json as boolean }),
   ...(opts.permissions != null && { permissions: opts.permissions as boolean }),
   ...(opts.prune != null && { prune: opts.prune as boolean }),
   ...(opts.quote != null && { quote: opts.quote as boolean }),

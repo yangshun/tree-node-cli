@@ -108,6 +108,20 @@ describe('cli', () => {
     expect(stdout).not.toContain('└');
   });
 
+  test('respects -J json output', async () => {
+    const { stdout } = await run([
+      '-J',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    const parsed = JSON.parse(stdout);
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].type).toBe('directory');
+    expect(parsed[0].name).toBe('multi-level');
+    expect(parsed[0].contents).toBeDefined();
+  });
+
   test('respects -Q quote', async () => {
     const { stdout } = await run([
       '-Q',

@@ -14,6 +14,7 @@ export interface Options {
   noIndent?: boolean;
   permissions?: boolean;
   prune?: boolean;
+  json?: boolean;
   quote?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
@@ -35,6 +36,7 @@ interface RequiredOptions {
   noIndent: boolean;
   permissions: boolean;
   prune: boolean;
+  json: boolean;
   quote: boolean;
   sizes: boolean;
   exclude: RegExp[];
@@ -55,6 +57,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   fullPath: false,
   noIndent: false,
   permissions: false,
+  json: false,
   prune: false,
   quote: false,
   sizes: false,
@@ -307,6 +310,153 @@ function print(
   return lines;
 }
 
+interface JsonNode {
+  type: 'directory' | 'file';
+  name: string;
+  size?: number;
+  mode?: string;
+  time?: string;
+  contents?: JsonNode[];
+}
+
+function buildJsonTree(
+  filename: string,
+  path: string,
+  currentDepth: number,
+  options: RequiredOptions,
+  sizeCache: Map<string, number>,
+): JsonNode | null {
+  const stat = fs.lstatSync(path);
+  const isDir = stat.isDirectory();
+  const isFile = !isDir;
+
+  for (const pattern of EXCLUDED_PATTERNS) {
+    if (pattern.test(path)) {
+      return null;
+    }
+  }
+
+  if (isFile && options.dirsOnly) {
+    return null;
+  }
+
+  for (const pattern of options.exclude) {
+    if (pattern.test(path)) {
+      return null;
+    }
+  }
+
+  if (currentDepth > options.maxDepth) {
+    return null;
+  }
+
+  const node: JsonNode = {
+    type: isDir ? 'directory' : 'file',
+    name: filename,
+  };
+
+  if (options.sizes) {
+    node.size = sizeCache.get(path) ?? stat.size;
+  }
+
+  if (options.permissions) {
+    node.mode = formatPermissions(stat.mode, isDir);
+  }
+
+  if (options.date) {
+    const mtime = stat.mtime;
+    node.time = `${mtime.toLocaleDateString('en-CA')} ${mtime.toLocaleTimeString('en-GB')}`;
+  }
+
+  if (isFile) {
+    return node;
+  }
+
+  let contents = fs.readdirSync(path);
+  if (!options.unsorted) {
+    switch (options.sortBy) {
+      case 'version':
+        contents.sort((a, b) =>
+          a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+        );
+        break;
+      case 'mtime':
+        contents.sort(
+          (a, b) =>
+            fs.lstatSync(nodePath.join(path, a)).mtimeMs -
+            fs.lstatSync(nodePath.join(path, b)).mtimeMs,
+        );
+        break;
+      case 'ctime':
+        contents.sort(
+          (a, b) =>
+            fs.lstatSync(nodePath.join(path, a)).ctimeMs -
+            fs.lstatSync(nodePath.join(path, b)).ctimeMs,
+        );
+        break;
+      case 'size':
+        contents.sort(
+          (a, b) =>
+            fs.lstatSync(nodePath.join(path, a)).size -
+            fs.lstatSync(nodePath.join(path, b)).size,
+        );
+        break;
+      default:
+        contents.sort();
+        break;
+    }
+
+    if (options.reverse) {
+      contents.reverse();
+    }
+  }
+
+  if (!options.allFiles) {
+    contents = contents.filter((content) => !isHiddenFile(content));
+  }
+
+  if (options.dirsOnly || options.dirsFirst || options.filesFirst) {
+    const dirSet = new Set(
+      contents.filter((file) =>
+        fs.lstatSync(nodePath.join(path, file)).isDirectory(),
+      ),
+    );
+
+    if (options.dirsOnly) {
+      contents = contents.filter((file) => dirSet.has(file));
+    } else if (options.dirsFirst) {
+      const dirs = contents.filter((c) => dirSet.has(c));
+      const files = contents.filter((c) => !dirSet.has(c));
+      contents = dirs.concat(files);
+    } else if (options.filesFirst) {
+      const dirs = contents.filter((c) => dirSet.has(c));
+      const files = contents.filter((c) => !dirSet.has(c));
+      contents = files.concat(dirs);
+    }
+  }
+
+  const children: JsonNode[] = [];
+  for (const entry of contents) {
+    const child = buildJsonTree(
+      entry,
+      nodePath.join(path, entry),
+      currentDepth + 1,
+      options,
+      sizeCache,
+    );
+    if (child) {
+      children.push(child);
+    }
+  }
+
+  if (options.prune && currentDepth > 0 && children.length === 0) {
+    return null;
+  }
+
+  node.contents = children;
+  return node;
+}
+
 export default function tree(path: string, options?: Options): string {
   const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
   const sizeCache = new Map<string, number>();
@@ -316,8 +466,15 @@ export default function tree(path: string, options?: Options): string {
   }
 
   const resolvedPath = nodePath.join(process.cwd(), path);
+  const rootName = nodePath.basename(resolvedPath);
+
+  if (combinedOptions.json) {
+    const jsonTree = buildJsonTree(rootName, path, 0, combinedOptions, sizeCache);
+    return JSON.stringify([jsonTree], null, 2);
+  }
+
   return print(
-    nodePath.basename(resolvedPath),
+    rootName,
     path,
     0,
     '',

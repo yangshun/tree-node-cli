@@ -209,6 +209,31 @@ describe('tree', () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
+  test('json', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      json: true,
+      maxDepth: 1,
+    });
+    const parsed = JSON.parse(result);
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].type).toBe('directory');
+    expect(parsed[0].name).toBe('multi-level');
+    expect(parsed[0].contents).toBeDefined();
+    const names = parsed[0].contents.map((c: { name: string }) => c.name);
+    expect(names).toContain('alpha.txt');
+    expect(names).toContain('beta');
+  });
+
+  test('json with sizes', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'single-file'), {
+      json: true,
+      sizes: true,
+    });
+    const parsed = JSON.parse(result);
+    expect(parsed[0].size).toBeDefined();
+    expect(typeof parsed[0].contents[0].size).toBe('number');
+  });
+
   test('quote', () => {
     const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
       quote: true,

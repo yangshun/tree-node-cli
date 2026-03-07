@@ -63,6 +63,7 @@ Options:
   -D, --date                Show last modification time for each entry.
   -f, --full-path           Print the full path prefix for each file.
   -i, --no-indent           Print entries without tree indentation lines.
+  -J, --json                Output the tree as a JSON structure.
   -p, --permissions         Show file type and permissions.
   -Q, --quote               Quote filenames in double quotes.
   --prune                   Remove empty directories from output.
@@ -103,6 +104,7 @@ const string = tree('path/to/dir', options);
 | `allFiles`      | `false`                    | `boolean`  | All files are printed. By default, tree does not print hidden files (those beginning with a dot).                                     |
 | `date`          | `false`                    | `boolean`  | Show last modification time for each entry.                                                                                           |
 | `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                        |
+| `json`          | `false`                    | `boolean`  | Output the tree as a JSON structure.                                                                                                  |
 | `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                             |
 | `noIndent`      | `false`                    | `boolean`  | Print entries without tree indentation lines.                                                                                         |
 | `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                |
