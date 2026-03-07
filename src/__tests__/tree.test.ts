@@ -1,6 +1,7 @@
 import fs from 'fs';
 import junk from 'junk';
 import path from 'path';
+import { describe, expect, test } from 'vitest';
 import tree from '../index';
 
 const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
