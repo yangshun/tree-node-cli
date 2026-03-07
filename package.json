@@ -40,7 +40,8 @@
   },
   "scripts": {
     "build": "tsdown",
-    "check": "pnpm format && pnpm lint && pnpm test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "typecheck": "tsc --noEmit",
     "format": "oxfmt",
     "lint": "oxlint",
     "test": "vitest run"
