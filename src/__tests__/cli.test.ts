@@ -21,8 +21,8 @@ function run(
 }
 
 describe('cli', () => {
-  test('displays version with -v', async () => {
-    const { stdout, exitCode } = await run(['-v']);
+  test('displays version with --version', async () => {
+    const { stdout, exitCode } = await run(['--version']);
     expect(stdout).toMatch(/\d+\.\d+\.\d+/);
     expect(exitCode).toBe(0);
   });
@@ -138,6 +138,20 @@ describe('cli', () => {
     for (const line of lines) {
       expect(line).toMatch(/\dB/);
     }
+  });
+
+  test('respects -v version sort', async () => {
+    const { stdout } = await run([
+      '-v',
+      path.join(FIXTURES_PATH, 'numbered-files'),
+    ]);
+    const lines = stdout.split('\n');
+    const fileLines = lines.filter((l) => l.includes('.txt'));
+    expect(fileLines[0]).toContain('file1.txt');
+    expect(fileLines[1]).toContain('file2.txt');
+    expect(fileLines[2]).toContain('file3.txt');
+    expect(fileLines[3]).toContain('file10.txt');
+    expect(fileLines[4]).toContain('file20.txt');
   });
 
   test('respects -a all files', async () => {

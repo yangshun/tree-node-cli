@@ -70,8 +70,10 @@ Options:
   -r, --reverse             Sort the output in reverse alphabetic order.
   -F, --trailing-slash      Append a '/' for directories.
   -S, --line-ascii          Turn on ASCII line graphics.
+  -v, --version-sort        Sort the output by version (natural sort of numbers
+                            within text).
   -h, --help                Display this message
-  -v, --version             Display version number
+  --version                 Display version number
 ```
 
 ## Node.js API
@@ -95,6 +97,7 @@ const string = tree('path/to/dir', options);
 | `reverse`       | `false`                    | `boolean`  | Sort the output in reverse alphabetic order.                                                                                          |
 | `trailingSlash` | `false`                    | `boolean`  | Appends a trailing slash behind directories.                                                                                          |
 | `lineAscii`     | `false`                    | `boolean`  | Turn on ASCII line graphics.                                                                                                          |
+| `versionSort`   | `false`                    | `boolean`  | Sort the output by version (natural sort of numbers within text).                                                                     |
 
 ```js
 import tree from 'tree-node-cli';

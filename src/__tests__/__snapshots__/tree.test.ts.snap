@@ -54,11 +54,20 @@ exports[`tree > allFiles 5`] = `
 `;
 
 exports[`tree > allFiles 6`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > allFiles 7`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > allFiles 7`] = `
+exports[`tree > allFiles 8`] = `
 "single-level
 ├── alpha.txt
 └── beta
@@ -157,11 +166,20 @@ exports[`tree > default 5`] = `
 `;
 
 exports[`tree > default 6`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > default 7`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > default 7`] = `
+exports[`tree > default 8`] = `
 "single-level
 ├── alpha.txt
 └── beta"
@@ -216,11 +234,20 @@ exports[`tree > dirsFirst 5`] = `
 `;
 
 exports[`tree > dirsFirst 6`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > dirsFirst 7`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > dirsFirst 7`] = `
+exports[`tree > dirsFirst 8`] = `
 "single-level
 ├── beta
 └── alpha.txt"
@@ -257,9 +284,11 @@ exports[`tree > dirsOnly 5`] = `
     └── beta"
 `;
 
-exports[`tree > dirsOnly 6`] = `"single-file"`;
+exports[`tree > dirsOnly 6`] = `"numbered-files"`;
 
-exports[`tree > dirsOnly 7`] = `
+exports[`tree > dirsOnly 7`] = `"single-file"`;
+
+exports[`tree > dirsOnly 8`] = `
 "single-level
 └── beta"
 `;
@@ -300,16 +329,25 @@ exports[`tree > exclude 5`] = `
 `;
 
 exports[`tree > exclude 6`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > exclude 7`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 7`] = `
+exports[`tree > exclude 8`] = `
 "single-level
 ├── alpha.txt"
 `;
 
-exports[`tree > exclude 8`] = `
+exports[`tree > exclude 9`] = `
 "chain
 └── alpha
     └── alpha
@@ -322,22 +360,22 @@ exports[`tree > exclude 8`] = `
                                 └── alpha.txt"
 `;
 
-exports[`tree > exclude 9`] = `
+exports[`tree > exclude 10`] = `
 "double-level
 ├── alpha.txt
 └── beta
     └── alpha.txt"
 `;
 
-exports[`tree > exclude 10`] = `"empty-dir"`;
+exports[`tree > exclude 11`] = `"empty-dir"`;
 
-exports[`tree > exclude 11`] = `
+exports[`tree > exclude 12`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt"
 `;
 
-exports[`tree > exclude 12`] = `
+exports[`tree > exclude 13`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -349,18 +387,27 @@ exports[`tree > exclude 12`] = `
 └── delta.txt"
 `;
 
-exports[`tree > exclude 13`] = `
+exports[`tree > exclude 14`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > exclude 15`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 14`] = `
+exports[`tree > exclude 16`] = `
 "single-level
 ├── alpha.txt
 └── beta"
 `;
 
-exports[`tree > exclude 15`] = `
+exports[`tree > exclude 17`] = `
 "chain
 └── alpha
     └── alpha
@@ -373,30 +420,39 @@ exports[`tree > exclude 15`] = `
                                 └── alpha.txt"
 `;
 
-exports[`tree > exclude 16`] = `
+exports[`tree > exclude 18`] = `
 "double-level
 ├── alpha.txt"
 `;
 
-exports[`tree > exclude 17`] = `"empty-dir"`;
+exports[`tree > exclude 19`] = `"empty-dir"`;
 
-exports[`tree > exclude 18`] = `
+exports[`tree > exclude 20`] = `
 "multi-files
 ├── alpha.txt"
 `;
 
-exports[`tree > exclude 19`] = `
+exports[`tree > exclude 21`] = `
 "multi-level
 ├── alpha.txt
 └── delta.txt"
 `;
 
-exports[`tree > exclude 20`] = `
+exports[`tree > exclude 22`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > exclude 23`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 21`] = `
+exports[`tree > exclude 24`] = `
 "single-level
 ├── alpha.txt"
 `;
@@ -450,17 +506,26 @@ exports[`tree > lineAscii 5`] = `
 `;
 
 exports[`tree > lineAscii 6`] = `
+"numbered-files
+|-- file1.txt
+|-- file10.txt
+|-- file2.txt
+|-- file20.txt
+\`-- file3.txt"
+`;
+
+exports[`tree > lineAscii 7`] = `
 "single-file
 \`-- alpha.txt"
 `;
 
-exports[`tree > lineAscii 7`] = `
+exports[`tree > lineAscii 8`] = `
 "single-level
 |-- alpha.txt
 \`-- beta"
 `;
 
-exports[`tree > lineAscii 8`] = `
+exports[`tree > lineAscii 9`] = `
 "chain
 └── alpha
     └── alpha
@@ -473,23 +538,23 @@ exports[`tree > lineAscii 8`] = `
                                 └── alpha.txt"
 `;
 
-exports[`tree > lineAscii 9`] = `
+exports[`tree > lineAscii 10`] = `
 "double-level
 ├── alpha.txt
 └── beta
     └── alpha.txt"
 `;
 
-exports[`tree > lineAscii 10`] = `"empty-dir"`;
+exports[`tree > lineAscii 11`] = `"empty-dir"`;
 
-exports[`tree > lineAscii 11`] = `
+exports[`tree > lineAscii 12`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > lineAscii 12`] = `
+exports[`tree > lineAscii 13`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -508,12 +573,21 @@ exports[`tree > lineAscii 12`] = `
 └── delta.txt"
 `;
 
-exports[`tree > lineAscii 13`] = `
+exports[`tree > lineAscii 14`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > lineAscii 15`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > lineAscii 14`] = `
+exports[`tree > lineAscii 16`] = `
 "single-level
 ├── alpha.txt
 └── beta"
@@ -548,39 +622,48 @@ exports[`tree > maxDepth 5`] = `
 `;
 
 exports[`tree > maxDepth 6`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > maxDepth 7`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > maxDepth 7`] = `
+exports[`tree > maxDepth 8`] = `
 "single-level
 ├── alpha.txt
 └── beta"
 `;
 
-exports[`tree > maxDepth 8`] = `
+exports[`tree > maxDepth 9`] = `
 "chain
 └── alpha
     └── alpha"
 `;
 
-exports[`tree > maxDepth 9`] = `
+exports[`tree > maxDepth 10`] = `
 "double-level
 ├── alpha.txt
 └── beta
     └── alpha.txt"
 `;
 
-exports[`tree > maxDepth 10`] = `"empty-dir"`;
+exports[`tree > maxDepth 11`] = `"empty-dir"`;
 
-exports[`tree > maxDepth 11`] = `
+exports[`tree > maxDepth 12`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > maxDepth 12`] = `
+exports[`tree > maxDepth 13`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -594,12 +677,21 @@ exports[`tree > maxDepth 12`] = `
 └── delta.txt"
 `;
 
-exports[`tree > maxDepth 13`] = `
+exports[`tree > maxDepth 14`] = `
+"numbered-files
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > maxDepth 15`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > maxDepth 14`] = `
+exports[`tree > maxDepth 16`] = `
 "single-level
 ├── alpha.txt
 └── beta"
@@ -654,11 +746,20 @@ exports[`tree > reverse 5`] = `
 `;
 
 exports[`tree > reverse 6`] = `
+"numbered-files
+├── file3.txt
+├── file20.txt
+├── file2.txt
+├── file10.txt
+└── file1.txt"
+`;
+
+exports[`tree > reverse 7`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > reverse 7`] = `
+exports[`tree > reverse 8`] = `
 "single-level
 ├── beta
 └── alpha.txt"
@@ -713,11 +814,20 @@ exports[`tree > sizes 5`] = `
 `;
 
 exports[`tree > sizes 6`] = `
+"0B numbered-files
+├── 0B file1.txt
+├── 0B file10.txt
+├── 0B file2.txt
+├── 0B file20.txt
+└── 0B file3.txt"
+`;
+
+exports[`tree > sizes 7`] = `
 "5B single-file
 └── 5B alpha.txt"
 `;
 
-exports[`tree > sizes 7`] = `
+exports[`tree > sizes 8`] = `
 "13B single-level
 ├── 13B alpha.txt
 └── 0B beta"
@@ -772,11 +882,20 @@ exports[`tree > trailingSlash 5`] = `
 `;
 
 exports[`tree > trailingSlash 6`] = `
+"numbered-files/
+├── file1.txt
+├── file10.txt
+├── file2.txt
+├── file20.txt
+└── file3.txt"
+`;
+
+exports[`tree > trailingSlash 7`] = `
 "single-file/
 └── alpha.txt"
 `;
 
-exports[`tree > trailingSlash 7`] = `
+exports[`tree > trailingSlash 8`] = `
 "single-level/
 ├── alpha.txt
 └── beta/"

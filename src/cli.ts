@@ -27,10 +27,14 @@ cli
   .option('-L, --max-depth <n>', 'Max display depth of the directory tree.')
   .option('-r, --reverse', 'Sort the output in reverse alphabetic order.')
   .option('-F, --trailing-slash', "Append a '/' for directories.")
-  .option('-S, --line-ascii', 'Turn on ASCII line graphics.');
+  .option('-S, --line-ascii', 'Turn on ASCII line graphics.')
+  .option(
+    '-v, --version-sort',
+    'Sort the output by version (natural sort of numbers within text).',
+  );
 
 cli.help();
-cli.version(version);
+cli.version(version, '--version');
 
 const parsed = cli.parse();
 
@@ -57,6 +61,9 @@ const options: Options = {
     trailingSlash: opts.trailingSlash as boolean,
   }),
   ...(opts.lineAscii != null && { lineAscii: opts.lineAscii as boolean }),
+  ...(opts.versionSort != null && {
+    versionSort: opts.versionSort as boolean,
+  }),
 };
 
 const output = tree(path, options);

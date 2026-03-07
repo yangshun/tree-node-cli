@@ -12,6 +12,7 @@ export interface Options {
   reverse?: boolean;
   trailingSlash?: boolean;
   lineAscii?: boolean;
+  versionSort?: boolean;
 }
 
 interface RequiredOptions {
@@ -24,6 +25,7 @@ interface RequiredOptions {
   reverse: boolean;
   trailingSlash: boolean;
   lineAscii: boolean;
+  versionSort: boolean;
 }
 
 const DEFAULT_OPTIONS: RequiredOptions = {
@@ -36,6 +38,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   reverse: false,
   trailingSlash: false,
   lineAscii: false,
+  versionSort: false,
 };
 
 const SYMBOLS_ANSI = {
@@ -145,7 +148,13 @@ function print(
 
   // Contents of a directory.
   let contents = fs.readdirSync(path);
-  contents.sort();
+  if (options.versionSort) {
+    contents.sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
+    );
+  } else {
+    contents.sort();
+  }
 
   if (options.reverse) {
     contents.reverse();
