@@ -25,7 +25,7 @@ npm install -g tree-node-cli
 ## Example
 
 ```bash
-$ tree -L 2 -I "node_modules"
+$ tree -L 2
 tree-node-cli
 ├── CNAME
 ├── LICENSE
@@ -42,13 +42,17 @@ tree-node-cli
 └── tsdown.config.ts
 ```
 
+> [!NOTE]
+> `gitignore` is respected by default so `node_modules` and other common files/directories are excluded automatically. Use `--no-gitignore` to show them.
+
 ## CLI
 
 ```bash
 tree [options] [path/to/dir]
 ```
 
-**Note:** Use the command `treee` on Windows and Linux to avoid conflicts with built-in `tree` command.
+> [!IMPORTANT]
+> Use the command `treee` on Windows and Linux to avoid conflicts with built-in `tree` command.
 
 The following options are available:
 
@@ -108,7 +112,10 @@ Misc options:
   --version                 Display version number
 ```
 
-**Note:** To exclude the contents of a directory while retaining the directory itself, use a trailing slash with the `-I` option (e.g., `-I "node_modules/"`). For the Node.js API, provide a regex matching the directory contents (e.g., `/node_modules\//`). See [#33](https://github.com/yangshun/tree-node-cli/issues/33) for more details.
+> [!TIP]
+> To exclude the contents of a directory while still printing the directory itself, use a trailing slash with the `-I` option (e.g., `-I "directory/"`).
+>
+> For the Node.js API, provide a regex matching the directory contents (e.g., `/directory\//`). Directories listed in `.gitignore` (e.g. `node_modules`) are already excluded by default, use `--no-gitignore` in combination with `-I "directory/"` if you want them to show up.
 
 ## Node.js API
 
@@ -121,7 +128,7 @@ import { tree } from 'tree-node-cli';
 
 const string = tree('path/to/dir', {
   allFiles: true,
-  exclude: [/node_modules/, /lcov/],
+  exclude: [/vendor/, /lcov/],
   maxDepth: 4,
 });
 
@@ -162,30 +169,30 @@ console.log(result);
 
 `options` is a configuration object with the following fields:
 
-| Field           | Default                    | Type       | Description                                                                                                                                                                                                                                                                                           |
-| --------------- | -------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `allFiles`      | `false`                    | `boolean`  | All files, including hidden files, are printed.                                                                                                                                                                                                                                                       |
-| `dirsOnly`      | `false`                    | `boolean`  | List directories only.                                                                                                                                                                                                                                                                                |
-| `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                                                                                                                                                                                             |
-| `maxDepth`      | `Number.POSITIVE_INFINITY` | `number`   | Max display depth of the directory tree.                                                                                                                                                                                                                                                              |
-| `exclude`       | `[]`                       | `RegExp[]` | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. To exclude a directory's contents while still showing the directory itself, use a regex that matches the path with a trailing slash (e.g., `/node_modules\//`). |
-| `gitignore`     | `true`                     | `boolean`  | Respect `.gitignore` files when inside a git repository. Use `--no-gitignore` to disable.                                                                                                                                                                                                             |
-| `prune`         | `false`                    | `boolean`  | Remove empty directories from output.                                                                                                                                                                                                                                                                 |
-| `quote`         | `false`                    | `boolean`  | Quote filenames in double quotes.                                                                                                                                                                                                                                                                     |
-| `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                                                                                                                                                                                 |
-| `sizes`         | `false`                    | `boolean`  | Print the size of each file in bytes along with the name.                                                                                                                                                                                                                                             |
-| `humanReadable` | `false`                    | `boolean`  | Print file sizes in human-readable format (powers of 1024). Implies `sizes`.                                                                                                                                                                                                                          |
-| `si`            | `false`                    | `boolean`  | Print file sizes using SI units (powers of 1000). Implies `sizes`.                                                                                                                                                                                                                                    |
-| `du`            | `false`                    | `boolean`  | For each directory, report its size as the accumulation of sizes of all its files and sub-directories. Implies `sizes`.                                                                                                                                                                               |
-| `date`          | `false`                    | `boolean`  | Show last modification time for each entry.                                                                                                                                                                                                                                                           |
-| `trailingSlash` | `false`                    | `boolean`  | Append a `/` for directories.                                                                                                                                                                                                                                                                         |
-| `sortBy`        | `'name'`                   | `string`   | Sort the output. Options: `'name'`, `'version'`, `'mtime'`, `'ctime'`, `'size'`.                                                                                                                                                                                                                      |
-| `unsorted`      | `false`                    | `boolean`  | Do not sort. List files in directory order.                                                                                                                                                                                                                                                           |
-| `reverse`       | `false`                    | `boolean`  | Sort the output in reverse alphabetic order.                                                                                                                                                                                                                                                          |
-| `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                                                                                                                                                                                        |
-| `filesFirst`    | `false`                    | `boolean`  | List files before directories.                                                                                                                                                                                                                                                                        |
-| `noIndent`      | `false`                    | `boolean`  | Print entries without tree indentation lines.                                                                                                                                                                                                                                                         |
-| `lineAscii`     | `false`                    | `boolean`  | Turn on ASCII line graphics.                                                                                                                                                                                                                                                                          |
+| Field           | Default                    | Type       | Description                                                                                                                                                                                                                                                                                     |
+| --------------- | -------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allFiles`      | `false`                    | `boolean`  | All files, including hidden files, are printed.                                                                                                                                                                                                                                                 |
+| `dirsOnly`      | `false`                    | `boolean`  | List directories only.                                                                                                                                                                                                                                                                          |
+| `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                                                                                                                                                                                       |
+| `maxDepth`      | `Number.POSITIVE_INFINITY` | `number`   | Max display depth of the directory tree.                                                                                                                                                                                                                                                        |
+| `exclude`       | `[]`                       | `RegExp[]` | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. To exclude a directory's contents while still showing the directory itself, use a regex that matches the path with a trailing slash (e.g., `/vendor\//`). |
+| `gitignore`     | `true`                     | `boolean`  | Respect `.gitignore` files when inside a git repository. Use `--no-gitignore` to disable.                                                                                                                                                                                                       |
+| `prune`         | `false`                    | `boolean`  | Remove empty directories from output.                                                                                                                                                                                                                                                           |
+| `quote`         | `false`                    | `boolean`  | Quote filenames in double quotes.                                                                                                                                                                                                                                                               |
+| `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                                                                                                                                                                           |
+| `sizes`         | `false`                    | `boolean`  | Print the size of each file in bytes along with the name.                                                                                                                                                                                                                                       |
+| `humanReadable` | `false`                    | `boolean`  | Print file sizes in human-readable format (powers of 1024). Implies `sizes`.                                                                                                                                                                                                                    |
+| `si`            | `false`                    | `boolean`  | Print file sizes using SI units (powers of 1000). Implies `sizes`.                                                                                                                                                                                                                              |
+| `du`            | `false`                    | `boolean`  | For each directory, report its size as the accumulation of sizes of all its files and sub-directories. Implies `sizes`.                                                                                                                                                                         |
+| `date`          | `false`                    | `boolean`  | Show last modification time for each entry.                                                                                                                                                                                                                                                     |
+| `trailingSlash` | `false`                    | `boolean`  | Append a `/` for directories.                                                                                                                                                                                                                                                                   |
+| `sortBy`        | `'name'`                   | `string`   | Sort the output. Options: `'name'`, `'version'`, `'mtime'`, `'ctime'`, `'size'`.                                                                                                                                                                                                                |
+| `unsorted`      | `false`                    | `boolean`  | Do not sort. List files in directory order.                                                                                                                                                                                                                                                     |
+| `reverse`       | `false`                    | `boolean`  | Sort the output in reverse alphabetic order.                                                                                                                                                                                                                                                    |
+| `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                                                                                                                                                                                  |
+| `filesFirst`    | `false`                    | `boolean`  | List files before directories.                                                                                                                                                                                                                                                                  |
+| `noIndent`      | `false`                    | `boolean`  | Print entries without tree indentation lines.                                                                                                                                                                                                                                                   |
+| `lineAscii`     | `false`                    | `boolean`  | Turn on ASCII line graphics.                                                                                                                                                                                                                                                                    |
 
 ## License
 
