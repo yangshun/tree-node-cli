@@ -58,6 +58,7 @@ $ tree -h
 Usage: tree [options]
 
 Options:
+  -V, --version             output the version number
   -a, --all-files           All files, include hidden files, are printed.
   --dirs-first              List directories before files.
   -d, --dirs-only           List directories only.

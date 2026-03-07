@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'module';
 import { Command } from 'commander';
 import tree from './index';
+
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
 
 const program = new Command();
 
 const PATTERN_SEPARATOR = '|';
 
 program
+  .version(version, '-V, --version')
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
   .option('--dirs-first', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
