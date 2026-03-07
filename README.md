@@ -64,6 +64,7 @@ Options:
   -f, --full-path           Print the full path prefix for each file.
   -i, --no-indent           Print entries without tree indentation lines.
   -p, --permissions         Show file type and permissions.
+  -Q, --quote               Quote filenames in double quotes.
   --prune                   Remove empty directories from output.
   --dirs-first              List directories before files.
   -d, --dirs-only           List directories only.
@@ -105,6 +106,7 @@ const string = tree('path/to/dir', options);
 | `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                             |
 | `noIndent`      | `false`                    | `boolean`  | Print entries without tree indentation lines.                                                                                         |
 | `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                |
+| `quote`         | `false`                    | `boolean`  | Quote filenames in double quotes.                                                                                                     |
 | `prune`         | `false`                    | `boolean`  | Remove empty directories from output.                                                                                                 |
 | `dirsOnly`      | `false`                    | `boolean`  | List directories only.                                                                                                                |
 | `sizes`         | `false`                    | `boolean`  | Show filesizes as well.                                                                                                               |

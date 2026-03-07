@@ -108,6 +108,18 @@ describe('cli', () => {
     expect(stdout).not.toContain('└');
   });
 
+  test('respects -Q quote', async () => {
+    const { stdout } = await run([
+      '-Q',
+      '-L',
+      '1',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    expect(stdout).toContain('"multi-level"');
+    expect(stdout).toContain('"alpha.txt"');
+    expect(stdout).toContain('"beta"');
+  });
+
   test('respects -D date', async () => {
     const { stdout } = await run([
       '-D',

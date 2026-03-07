@@ -209,6 +209,16 @@ describe('tree', () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
+  test('quote', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      quote: true,
+      maxDepth: 1,
+    });
+    expect(result).toContain('"multi-level"');
+    expect(result).toContain('"alpha.txt"');
+    expect(result).toContain('"beta"');
+  });
+
   test('date', () => {
     const result = tree(path.join(PATH_TO_TEST, 'single-file'), {
       date: true,

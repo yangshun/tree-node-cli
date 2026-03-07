@@ -14,6 +14,7 @@ export interface Options {
   noIndent?: boolean;
   permissions?: boolean;
   prune?: boolean;
+  quote?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
   maxDepth?: number;
@@ -34,6 +35,7 @@ interface RequiredOptions {
   noIndent: boolean;
   permissions: boolean;
   prune: boolean;
+  quote: boolean;
   sizes: boolean;
   exclude: RegExp[];
   maxDepth: number;
@@ -54,6 +56,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   noIndent: false,
   permissions: false,
   prune: false,
+  quote: false,
   sizes: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
@@ -188,7 +191,7 @@ function print(
   const displayName = options.fullPath
     ? nodePath.relative(nodePath.dirname(rootPath), path)
     : filename;
-  line.push(displayName);
+  line.push(options.quote ? `"${displayName}"` : displayName);
 
   if (isDir && options.trailingSlash) {
     line.push('/');

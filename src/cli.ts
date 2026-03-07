@@ -17,6 +17,7 @@ cli
   .option('-f, --full-path', 'Print the full path prefix for each file.')
   .option('-i, --no-indent', 'Print entries without tree indentation lines.')
   .option('-p, --permissions', 'Show file type and permissions.')
+  .option('-Q, --quote', 'Quote filenames in double quotes.')
   .option('--prune', 'Remove empty directories from output.')
   .option('--dirs-first, --dirsfirst', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
@@ -83,6 +84,7 @@ const options: Options = {
   }),
   ...(opts.permissions != null && { permissions: opts.permissions as boolean }),
   ...(opts.prune != null && { prune: opts.prune as boolean }),
+  ...(opts.quote != null && { quote: opts.quote as boolean }),
   ...(opts.sizes != null && { sizes: opts.sizes as boolean }),
   ...(opts.exclude != null && {
     exclude: (opts.exclude as string)
