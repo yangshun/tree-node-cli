@@ -55,22 +55,23 @@ The following options are available:
 ```txt
 $ tree -h
 
-Usage: tree [options]
+Usage:
+  $ tree <command> [options]
 
 Options:
-  -V, --version             output the version number
   -a, --all-files           All files, include hidden files, are printed.
   --dirs-first              List directories before files.
   -d, --dirs-only           List directories only.
   -s, --sizes               Print the size of each file in bytes along with the name.
-  -I, --exclude [patterns]  Exclude files that match the pattern. | separates
+  -I, --exclude <patterns>  Exclude files that match the pattern. | separates
                             alternate patterns. Wrap your entire pattern in double
                             quotes. E.g. "node_modules|coverage".
   -L, --max-depth <n>       Max display depth of the directory tree.
   -r, --reverse             Sort the output in reverse alphabetic order.
   -F, --trailing-slash      Append a '/' for directories.
   -S, --line-ascii          Turn on ASCII line graphics.
-  -h, --help                display help for command
+  -h, --help                Display this message
+  -v, --version             Display version number
 ```
 
 ## Node.js API

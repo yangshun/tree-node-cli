@@ -46,7 +46,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "commander": "^14.0.3",
+    "cac": "^7.0.0",
     "fast-folder-size": "2.4.0",
     "pretty-bytes": "^7.1.0"
   },
