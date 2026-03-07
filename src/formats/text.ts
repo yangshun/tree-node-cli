@@ -49,8 +49,13 @@ export function formatAsText(
   }
 
   if (options.sizes) {
-    const prettifiedFilesize = prettyBytes(node.size);
-    line.push(prettifiedFilesize.replace(' ', ''));
+    if (options.si) {
+      line.push(prettyBytes(node.size).replace(' ', ''));
+    } else if (options.humanReadable) {
+      line.push(prettyBytes(node.size, { binary: true }).replace(' ', ''));
+    } else {
+      line.push(`[${String(node.size).padStart(10)}]`);
+    }
     line.push(' ');
   }
 

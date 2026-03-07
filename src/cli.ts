@@ -36,6 +36,14 @@ cli
     'Print the size of each file in bytes along with the name.',
   )
   .option(
+    '-h, --human-readable',
+    'Print file sizes in human-readable format (powers of 1024). Implies -s.',
+  )
+  .option(
+    '--si',
+    'Print file sizes using SI units (powers of 1000). Implies -s.',
+  )
+  .option(
     '--du',
     'For each directory report its size as the accumulation of sizes of all its files and sub-directories. Implies -s.',
   )
@@ -65,12 +73,18 @@ cli
   // JSON options
   .option('-J, --json', 'Output the tree as a JSON structure.');
 
-cli.help();
+// Register --help without -h shortcut so -h can be reclaimed for other use.
+cli.option('--help', 'Display this message');
 cli.version(version, '--version');
 
 const parsed = cli.parse();
 
-if (parsed.options.help || parsed.options.version) {
+if (parsed.options.help) {
+  cli.outputHelp();
+  process.exit(0);
+}
+
+if (parsed.options.version) {
   process.exit(0);
 }
 
@@ -104,6 +118,10 @@ const options: Options = {
   ...(opts.prune != null && { prune: opts.prune as boolean }),
   ...(opts.quote != null && { quote: opts.quote as boolean }),
   ...(opts.sizes != null && { sizes: opts.sizes as boolean }),
+  ...(opts.humanReadable != null && {
+    humanReadable: opts.humanReadable as boolean,
+  }),
+  ...(opts.si != null && { si: opts.si as boolean }),
   ...(opts.du != null && { du: opts.du as boolean }),
   ...(opts.exclude != null && {
     exclude: (opts.exclude as string)

@@ -10,12 +10,15 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   dirsOnly: false,
   du: false,
   filesFirst: false,
+  humanReadable: false,
   fullPath: false,
+  gitignore: true,
   noIndent: false,
   permissions: false,
   prune: false,
   quote: false,
   sizes: false,
+  si: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
   reverse: false,
@@ -145,10 +148,26 @@ describe('formatAsText', () => {
     expect(lines[1]).toBe('└── [-rw-r--r--] a.ts');
   });
 
-  test('sizes shows file size', () => {
+  test('sizes shows file size in raw bytes', () => {
     const node = makeFile('a.ts', { size: 2048 });
     const lines = formatAsText(node, opts({ sizes: true }), '.');
+    expect(lines[0]).toBe('[      2048] a.ts');
+  });
+
+  test('sizes with si shows human-readable size (powers of 1000)', () => {
+    const node = makeFile('a.ts', { size: 2048 });
+    const lines = formatAsText(node, opts({ sizes: true, si: true }), '.');
     expect(lines[0]).toContain('2.05kB');
+  });
+
+  test('sizes with humanReadable shows binary size (powers of 1024)', () => {
+    const node = makeFile('a.ts', { size: 2048 });
+    const lines = formatAsText(
+      node,
+      opts({ sizes: true, humanReadable: true }),
+      '.',
+    );
+    expect(lines[0]).toContain('2KiB');
   });
 
   test('fullPath shows relative path', () => {

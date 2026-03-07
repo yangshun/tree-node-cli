@@ -18,12 +18,14 @@ export interface Options {
   dirsOnly?: boolean;
   du?: boolean;
   filesFirst?: boolean;
+  humanReadable?: boolean;
   fullPath?: boolean;
   noIndent?: boolean;
   permissions?: boolean;
   prune?: boolean;
   quote?: boolean;
   sizes?: boolean;
+  si?: boolean;
   exclude?: RegExp[];
   maxDepth?: number;
   reverse?: boolean;
@@ -43,12 +45,14 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   dirsOnly: false,
   du: false,
   filesFirst: false,
+  humanReadable: false,
   fullPath: false,
   noIndent: false,
   permissions: false,
   prune: false,
   quote: false,
   sizes: false,
+  si: false,
   exclude: [],
   gitignore: true,
   maxDepth: Number.POSITIVE_INFINITY,
@@ -412,6 +416,8 @@ function resolveOptions(options?: Options): RequiredOptions {
     ...options,
     exclude: [...DEFAULT_EXCLUDE_PATTERNS, ...(options?.exclude ?? [])],
     ...(options?.du && { sizes: true }),
+    ...(options?.humanReadable && { sizes: true }),
+    ...(options?.si && { sizes: true }),
   };
 }
 

@@ -29,8 +29,8 @@ describe('cli', () => {
     expect(exitCode).toBe(0);
   });
 
-  test('displays help with -h', async () => {
-    const { stdout, exitCode } = await run(['-h']);
+  test('displays help with --help', async () => {
+    const { stdout, exitCode } = await run(['--help']);
     expect(stdout).toContain('--all-files');
     expect(stdout).toContain('--exclude');
     expect(exitCode).toBe(0);
@@ -233,11 +233,11 @@ describe('cli', () => {
     ]);
     // Without sizes, just the filename
     expect(withoutSizes).toContain('alpha.txt');
-    expect(withoutSizes).not.toMatch(/\dB/);
-    // With sizes, each line should have a size prefix like "5B" or "4.1kB"
+    expect(withoutSizes).not.toMatch(/\[\s*\d+\]/);
+    // With sizes, each line should have a bracketed size prefix like [     1024]
     const lines = withSizes.split('\n');
     for (const line of lines) {
-      expect(line).toMatch(/\d+(\.\d+)?(B|kB|MB)/);
+      expect(line).toMatch(/\[\s*\d+\]/);
     }
   });
 
@@ -249,7 +249,7 @@ describe('cli', () => {
     // --du implies -s, so sizes should be shown
     const lines = stdout.split('\n');
     for (const line of lines) {
-      expect(line).toMatch(/\dB/);
+      expect(line).toMatch(/\[\s*\d+\]/);
     }
   });
 
@@ -363,7 +363,7 @@ describe('cli', () => {
   });
 
   test('help includes --gitignore option', async () => {
-    const { stdout } = await run(['-h']);
+    const { stdout } = await run(['--help']);
     expect(stdout).toContain('--gitignore');
   });
 

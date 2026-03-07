@@ -416,105 +416,105 @@ exports[`tree > dirsOnly 11`] = `
 exports[`tree > dirsOnly 12`] = `"varied-sizes"`;
 
 exports[`tree > du 1`] = `
-"24B chain
-└── 24B alpha
-    └── 24B alpha
-        └── 24B alpha
-            └── 24B alpha
-                └── 24B alpha
-                    └── 24B alpha
-                        └── 24B alpha
-                            └── 24B alpha
-                                └── 24B alpha.txt"
+"[        24] chain
+└── [        24] alpha
+    └── [        24] alpha
+        └── [        24] alpha
+            └── [        24] alpha
+                └── [        24] alpha
+                    └── [        24] alpha
+                        └── [        24] alpha
+                            └── [        24] alpha
+                                └── [        24] alpha.txt"
 `;
 
 exports[`tree > du 2`] = `
-"29B double-level
-├── 9B alpha.txt
-└── 20B beta
-    └── 20B alpha.txt"
+"[        29] double-level
+├── [         9] alpha.txt
+└── [        20] beta
+    └── [        20] alpha.txt"
 `;
 
-exports[`tree > du 3`] = `"0B empty-dir"`;
+exports[`tree > du 3`] = `"[         0] empty-dir"`;
 
 exports[`tree > du 4`] = `
-"30B hidden-files
-├── 8B another.txt
-└── 8B visible.txt"
+"[        30] hidden-files
+├── [         8] another.txt
+└── [         8] visible.txt"
 `;
 
 exports[`tree > du 5`] = `
-"5B mixed-content
-├── 1B alpha.txt
-├── 1B bravo-dir
-│   └── 1B inner.txt
-├── 1B charlie.txt
-├── 1B delta-dir
-│   └── 1B inner.txt
-└── 1B echo.txt"
+"[         5] mixed-content
+├── [         1] alpha.txt
+├── [         1] bravo-dir
+│   └── [         1] inner.txt
+├── [         1] charlie.txt
+├── [         1] delta-dir
+│   └── [         1] inner.txt
+└── [         1] echo.txt"
 `;
 
 exports[`tree > du 6`] = `
-"68B multi-files
-├── 5B alpha.txt
-├── 17B beta.txt
-└── 46B charlie.txt"
+"[        68] multi-files
+├── [         5] alpha.txt
+├── [        17] beta.txt
+└── [        46] charlie.txt"
 `;
 
 exports[`tree > du 7`] = `
-"127B multi-level
-├── 10B alpha.txt
-├── 48B beta
-│   ├── 27B alpha
-│   │   ├── 16B alpha.txt
-│   │   └── 11B beta
-│   │       └── 11B alpha.txt
-│   ├── 9B beta.txt
-│   └── 12B charlie
-│       └── 12B alpha.txt
-├── 54B charlie
-│   ├── 13B alpha.txt
-│   ├── 18B beta
-│   │   └── 18B alpha.txt
-│   └── 23B charlie.txt
-└── 15B delta.txt"
+"[       127] multi-level
+├── [        10] alpha.txt
+├── [        48] beta
+│   ├── [        27] alpha
+│   │   ├── [        16] alpha.txt
+│   │   └── [        11] beta
+│   │       └── [        11] alpha.txt
+│   ├── [         9] beta.txt
+│   └── [        12] charlie
+│       └── [        12] alpha.txt
+├── [        54] charlie
+│   ├── [        13] alpha.txt
+│   ├── [        18] beta
+│   │   └── [        18] alpha.txt
+│   └── [        23] charlie.txt
+└── [        15] delta.txt"
 `;
 
 exports[`tree > du 8`] = `
-"0B numbered-files
-├── 0B file1.txt
-├── 0B file10.txt
-├── 0B file2.txt
-├── 0B file20.txt
-└── 0B file3.txt"
+"[         0] numbered-files
+├── [         0] file1.txt
+├── [         0] file10.txt
+├── [         0] file2.txt
+├── [         0] file20.txt
+└── [         0] file3.txt"
 `;
 
 exports[`tree > du 9`] = `
-"5B single-file
-└── 5B alpha.txt"
+"[         5] single-file
+└── [         5] alpha.txt"
 `;
 
 exports[`tree > du 10`] = `
-"13B single-level
-├── 13B alpha.txt
-└── 0B beta"
+"[        13] single-level
+├── [        13] alpha.txt
+└── [         0] beta"
 `;
 
 exports[`tree > du 11`] = `
-"4B unicode-names
-├── 1B café.txt
-├── 1B emoji-🎉.txt
-├── 1B über.txt
-└── 1B 日本語
-    └── 1B ファイル.txt"
+"[         4] unicode-names
+├── [         1] café.txt
+├── [         1] emoji-🎉.txt
+├── [         1] über.txt
+└── [         1] 日本語
+    └── [         1] ファイル.txt"
 `;
 
 exports[`tree > du 12`] = `
-"11.1kB varied-sizes
-├── 10kB large.txt
-├── 1kB medium.txt
-├── 100B small.txt
-└── 1B tiny.txt"
+"[     11101] varied-sizes
+├── [     10000] large.txt
+├── [      1000] medium.txt
+├── [       100] small.txt
+└── [         1] tiny.txt"
 `;
 
 exports[`tree > exclude 1`] = `

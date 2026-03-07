@@ -52,15 +52,15 @@ describe('tree', () => {
       sizes: true,
     });
     const lines = result.split('\n');
-    // Every line should have a size prefix.
+    // Every line should have a bracketed size prefix like [     10240].
     for (const line of lines) {
-      expect(line).toMatch(/\d+(\.\d+)?(B|kB|MB)/);
+      expect(line).toMatch(/\[\s*\d+\]/);
     }
-    // File sizes are deterministic.
-    expect(result).toContain('10kB large.txt');
-    expect(result).toContain('1kB medium.txt');
-    expect(result).toContain('100B small.txt');
-    expect(result).toContain('1B tiny.txt');
+    // File sizes are deterministic (raw bytes).
+    expect(result).toContain('[     10000] large.txt');
+    expect(result).toContain('[      1000] medium.txt');
+    expect(result).toContain('[       100] small.txt');
+    expect(result).toContain('[         1] tiny.txt');
   });
 
   test('du', () => {
@@ -192,12 +192,12 @@ describe('tree', () => {
       sizes: true,
     });
     const lines = result.split('\n');
-    // Root directory with trailing slash and size prefix.
-    expect(lines[0]).toMatch(/^\S+ single-level\/$/);
-    // File entry with ASCII branch and size.
-    expect(result).toContain('13B alpha.txt');
+    // Root directory with trailing slash and bracketed size prefix.
+    expect(lines[0]).toMatch(/^\[\s*\d+\] single-level\/$/);
+    // File entry with ASCII branch and raw byte size.
+    expect(result).toContain('[        13] alpha.txt');
     // Subdirectory with trailing slash.
-    expect(lines[2]).toMatch(/`-- \S+ beta\/$/);
+    expect(lines[2]).toMatch(/`-- \[\s*\d+\] beta\/$/);
   });
 
   test('combined: exclude + allFiles', () => {
@@ -609,7 +609,7 @@ describe('tree', () => {
 
     // du without sizes should still show sizes
     const result = tree(tmpDir, { du: true });
-    expect(result).toMatch(/\d+B/);
+    expect(result).toMatch(/\[\s*\d+\]/);
 
     const jsonResult = asDir(treeJson(tmpDir, { du: true }));
     expect(jsonResult.size).toBeDefined();

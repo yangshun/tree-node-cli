@@ -53,7 +53,7 @@ tree [options] [path/to/dir]
 The following options are available:
 
 ```txt
-$ tree -h
+$ tree --help
 
 Usage:
   $ tree <command> [options]
@@ -75,6 +75,10 @@ File options:
   -Q, --quote               Quote filenames in double quotes.
   -p, --permissions         Show file type and permissions.
   -s, --sizes               Print the size of each file in bytes along with the name.
+  -h, --human-readable      Print file sizes in human-readable format (powers
+                            of 1024). Implies -s.
+  --si                      Print file sizes using SI units (powers of 1000).
+                            Implies -s.
   --du                      For each directory report its size as the accumulation
                             of sizes of all its files and sub-directories. Implies -s.
   -D, --date                Show last modification time for each entry.
@@ -100,7 +104,7 @@ Output options:
   -J, --json                Output the tree as a JSON structure.
 
 Misc options:
-  -h, --help                Display this message
+  --help                    Display this message
   --version                 Display version number
 ```
 
@@ -170,6 +174,8 @@ console.log(result);
 | `quote`         | `false`                    | `boolean`  | Quote filenames in double quotes.                                                                                                                                                                                                                                                                     |
 | `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                                                                                                                                                                                 |
 | `sizes`         | `false`                    | `boolean`  | Print the size of each file in bytes along with the name.                                                                                                                                                                                                                                             |
+| `humanReadable` | `false`                    | `boolean`  | Print file sizes in human-readable format (powers of 1024). Implies `sizes`.                                                                                                                                                                                                                          |
+| `si`            | `false`                    | `boolean`  | Print file sizes using SI units (powers of 1000). Implies `sizes`.                                                                                                                                                                                                                                    |
 | `du`            | `false`                    | `boolean`  | For each directory, report its size as the accumulation of sizes of all its files and sub-directories. Implies `sizes`.                                                                                                                                                                               |
 | `date`          | `false`                    | `boolean`  | Show last modification time for each entry.                                                                                                                                                                                                                                                           |
 | `trailingSlash` | `false`                    | `boolean`  | Append a `/` for directories.                                                                                                                                                                                                                                                                         |
