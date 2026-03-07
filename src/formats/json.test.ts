@@ -8,6 +8,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   date: false,
   dirsFirst: false,
   dirsOnly: false,
+  du: false,
   filesFirst: false,
   fullPath: false,
   noIndent: false,

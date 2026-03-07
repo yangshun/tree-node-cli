@@ -59,7 +59,7 @@ Usage:
   $ tree <command> [options]
 
 Options:
-  -a, --all-files           All files, include hidden files, are printed.
+  -a, --all-files           All files, including hidden files, are printed.
   -D, --date                Show last modification time for each entry.
   -f, --full-path           Print the full path prefix for each file.
   -i, --no-indent           Print entries without tree indentation lines.
@@ -70,6 +70,8 @@ Options:
   --dirs-first              List directories before files.
   -d, --dirs-only           List directories only.
   -s, --sizes               Print the size of each file in bytes along with the name.
+  --du                      For each directory report its size as the accumulation
+                            of sizes of all its files and sub-directories. Implies -s.
   -I, --exclude <patterns>  Exclude files that match the pattern. | separates
                             alternate patterns. Wrap your entire pattern in double
                             quotes. E.g. "node_modules|coverage".
@@ -144,7 +146,7 @@ console.log(result);
 
 | Field           | Default                    | Type       | Description                                                                                                                           |
 | --------------- | -------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `allFiles`      | `false`                    | `boolean`  | All files are printed. By default, tree does not print hidden files (those beginning with a dot).                                     |
+| `allFiles`      | `false`                    | `boolean`  | All files, including hidden files, are printed.                                                                                       |
 | `date`          | `false`                    | `boolean`  | Show last modification time for each entry.                                                                                           |
 | `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                        |
 | `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                             |
@@ -153,11 +155,12 @@ console.log(result);
 | `quote`         | `false`                    | `boolean`  | Quote filenames in double quotes.                                                                                                     |
 | `prune`         | `false`                    | `boolean`  | Remove empty directories from output.                                                                                                 |
 | `dirsOnly`      | `false`                    | `boolean`  | List directories only.                                                                                                                |
-| `sizes`         | `false`                    | `boolean`  | Show filesizes as well.                                                                                                               |
+| `sizes`         | `false`                    | `boolean`  | Print the size of each file in bytes along with the name.                                                                             |
+| `du`            | `false`                    | `boolean`  | For each directory, report its size as the accumulation of sizes of all its files and sub-directories. Implies `sizes`.                |
 | `exclude`       | `[]`                       | `RegExp[]` | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. To exclude a directory's contents while still showing the directory itself, use a regex that matches the path with a trailing slash (e.g., `/node_modules\//`). |
 | `maxDepth`      | `Number.POSITIVE_INFINITY` | `number`   | Max display depth of the directory tree.                                                                                              |
 | `reverse`       | `false`                    | `boolean`  | Sort the output in reverse alphabetic order.                                                                                          |
-| `trailingSlash` | `false`                    | `boolean`  | Appends a trailing slash behind directories.                                                                                          |
+| `trailingSlash` | `false`                    | `boolean`  | Append a `/` for directories.                                                                                                         |
 | `lineAscii`     | `false`                    | `boolean`  | Turn on ASCII line graphics.                                                                                                          |
 | `filesFirst`    | `false`                    | `boolean`  | List files before directories.                                                                                                        |
 | `sortBy`        | `'name'`                   | `string`   | Sort the output. Options: `'name'`, `'version'`, `'mtime'`, `'ctime'`, `'size'`.                                                      |

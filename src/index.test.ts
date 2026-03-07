@@ -52,6 +52,16 @@ describe('tree', () => {
     });
   });
 
+  test('du', () => {
+    dirs.forEach((dir) => {
+      expect(
+        tree(path.join(PATH_TO_TEST, dir), {
+          du: true,
+        }),
+      ).toMatchSnapshot();
+    });
+  });
+
   test('dirsOnly', () => {
     dirs.forEach((dir) => {
       expect(
@@ -505,21 +515,21 @@ describe('tree', () => {
     expect(result).toMatchSnapshot();
   });
 
-  test('combined: sizes + exclude', () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-sizes-excl-'));
+  test('combined: du + exclude', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-du-excl-'));
     fs.mkdirSync(path.join(tmpDir, 'included'));
     fs.writeFileSync(path.join(tmpDir, 'included', 'a.txt'), 'hello');
     fs.mkdirSync(path.join(tmpDir, 'excluded'));
     fs.writeFileSync(path.join(tmpDir, 'excluded', 'big.txt'), 'x'.repeat(10000));
     fs.writeFileSync(path.join(tmpDir, 'root.txt'), 'root');
 
-    const result = tree(tmpDir, { sizes: true, exclude: [/excluded/] });
+    const result = tree(tmpDir, { du: true, exclude: [/excluded/] });
     expect(result).not.toContain('excluded');
     expect(result).toContain('included');
     expect(result).toContain('root.txt');
 
     // Directory sizes should still reflect real filesystem size (including excluded contents)
-    const jsonResult = asDir(treeJson(tmpDir, { sizes: true, exclude: [/excluded/] }));
+    const jsonResult = asDir(treeJson(tmpDir, { du: true, exclude: [/excluded/] }));
     expect(jsonResult.size).toBeDefined();
     // Root size should include the excluded directory's contents
     expect(jsonResult.size!).toBeGreaterThan(10000);
@@ -527,19 +537,19 @@ describe('tree', () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
-  test('combined: sizes + maxDepth', () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-sizes-depth-'));
+  test('combined: du + maxDepth', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-du-depth-'));
     fs.mkdirSync(path.join(tmpDir, 'level1', 'level2'), { recursive: true });
     fs.writeFileSync(path.join(tmpDir, 'level1', 'level2', 'deep.txt'), 'x'.repeat(5000));
     fs.writeFileSync(path.join(tmpDir, 'level1', 'shallow.txt'), 'hi');
 
-    const result = tree(tmpDir, { sizes: true, maxDepth: 1 });
+    const result = tree(tmpDir, { du: true, maxDepth: 1 });
     // deep.txt should not be shown (beyond maxDepth)
     expect(result).not.toContain('deep.txt');
     expect(result).toContain('level1');
 
     // But directory size should still include deep files
-    const jsonResult = asDir(treeJson(tmpDir, { sizes: true, maxDepth: 1 }));
+    const jsonResult = asDir(treeJson(tmpDir, { du: true, maxDepth: 1 }));
     const level1 = jsonResult.contents.find((c) => c.name === 'level1');
     expect(level1).toBeDefined();
     expect(level1!.size).toBeGreaterThan(5000);
@@ -547,22 +557,51 @@ describe('tree', () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
-  test('combined: sizes + dirsOnly', () => {
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-sizes-dirs-'));
+  test('combined: du + dirsOnly', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-du-dirs-'));
     fs.mkdirSync(path.join(tmpDir, 'subdir'));
     fs.writeFileSync(path.join(tmpDir, 'subdir', 'file.txt'), 'x'.repeat(3000));
     fs.writeFileSync(path.join(tmpDir, 'root.txt'), 'root');
 
-    const result = tree(tmpDir, { sizes: true, dirsOnly: true });
+    const result = tree(tmpDir, { du: true, dirsOnly: true });
     expect(result).not.toContain('file.txt');
     expect(result).not.toContain('root.txt');
     expect(result).toContain('subdir');
 
     // Directory sizes should include file contents even though files aren't displayed
-    const jsonResult = asDir(treeJson(tmpDir, { sizes: true, dirsOnly: true }));
+    const jsonResult = asDir(treeJson(tmpDir, { du: true, dirsOnly: true }));
     const subdir = jsonResult.contents.find((c) => c.name === 'subdir');
     expect(subdir).toBeDefined();
     expect(subdir!.size).toBeGreaterThanOrEqual(3000);
+
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('du implies sizes', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-du-implies-'));
+    fs.writeFileSync(path.join(tmpDir, 'file.txt'), 'hello');
+
+    // du without sizes should still show sizes
+    const result = tree(tmpDir, { du: true });
+    expect(result).toMatch(/\d+B/);
+
+    const jsonResult = asDir(treeJson(tmpDir, { du: true }));
+    expect(jsonResult.size).toBeDefined();
+
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('sizes uses stat.size (not recursive)', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-sizes-stat-'));
+    fs.mkdirSync(path.join(tmpDir, 'subdir'));
+    fs.writeFileSync(path.join(tmpDir, 'subdir', 'big.txt'), 'x'.repeat(10000));
+
+    // With sizes (not du), directory size should be the inode size, not recursive sum
+    const jsonResult = asDir(treeJson(tmpDir, { sizes: true }));
+    const subdir = jsonResult.contents.find((c) => c.name === 'subdir');
+    expect(subdir).toBeDefined();
+    // Directory stat.size is typically small (64-4096 bytes), not 10000+
+    expect(subdir!.size).toBeLessThan(10000);
 
     fs.rmSync(tmpDir, { recursive: true });
   });

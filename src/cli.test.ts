@@ -241,6 +241,18 @@ describe('cli', () => {
     }
   });
 
+  test('respects --du', async () => {
+    const { stdout } = await run([
+      '--du',
+      path.join(FIXTURES_PATH, 'single-file'),
+    ]);
+    // --du implies -s, so sizes should be shown
+    const lines = stdout.split('\n');
+    for (const line of lines) {
+      expect(line).toMatch(/\dB/);
+    }
+  });
+
   test('respects -v version sort', async () => {
     const { stdout } = await run([
       '-v',

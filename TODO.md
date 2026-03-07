@@ -59,7 +59,7 @@ Track progress of implementing Linux `tree` options in tree-node-cli.
 ## Code Improvements
 
 - [x] **Filter before stat** — `statEntries` stats all entries including hidden files that will be filtered out when `allFiles: false`. Filter hidden files before stat'ing to avoid unnecessary syscalls.
-- [ ] **Match Linux `tree -s` size behavior** — `computeSizes` recursively sums file sizes into parent directories, but Linux `tree -s` shows each entry's own `stat.size` (inode size for directories, not recursive sum). Remove `computeSizes` and use `stat.size` directly.
+- [x] **Match Linux `tree -s` size behavior** — `computeSizes` recursively sums file sizes into parent directories, but Linux `tree -s` shows each entry's own `stat.size` (inode size for directories, not recursive sum). `-s` now uses `stat.size` directly; recursive sums moved to new `--du` flag.
 - [x] **Merge `EXCLUDED_PATTERNS` into exclude** — The hardcoded `.DS_Store` pattern is checked in a separate loop for every entry. Merge it into the user's `exclude` array at initialization to simplify `isExcluded`.
 - [x] **Clarify `dirsOnly` filtering** — `dirsOnly` is checked in both `isExcluded` (skips files early) and `filterAndOrderContents` (filters file entries). The `isExcluded` check is a performance optimization that avoids stat'ing files, but the dual responsibility could be clearer.
 - [x] **Avoid mutating input arrays** — `sortContents` calls `contents.sort()` which mutates the caller's array in place. Using `[...contents].sort(...)` would be safer, though not currently a bug since callers don't reuse the array.

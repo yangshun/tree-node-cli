@@ -12,7 +12,7 @@ const PATTERN_SEPARATOR = '|';
 const cli = cac('tree');
 
 cli
-  .option('-a, --all-files', 'All files, include hidden files, are printed.')
+  .option('-a, --all-files', 'All files, including hidden files, are printed.')
   .option('-D, --date', 'Show last modification time for each entry.')
   .option('-f, --full-path', 'Print the full path prefix for each file.')
   .option('-i, --no-indent', 'Print entries without tree indentation lines.')
@@ -25,6 +25,10 @@ cli
   .option(
     '-s, --sizes',
     'Print the size of each file in bytes along with the name.',
+  )
+  .option(
+    '--du',
+    'For each directory report its size as the accumulation of sizes of all its files and sub-directories. Implies -s.',
   )
   .option(
     '-I, --exclude <patterns>',
@@ -87,6 +91,7 @@ const options: Options = {
   ...(opts.prune != null && { prune: opts.prune as boolean }),
   ...(opts.quote != null && { quote: opts.quote as boolean }),
   ...(opts.sizes != null && { sizes: opts.sizes as boolean }),
+  ...(opts.du != null && { du: opts.du as boolean }),
   ...(opts.exclude != null && {
     exclude: (opts.exclude as string)
       .split(PATTERN_SEPARATOR)

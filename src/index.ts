@@ -11,6 +11,7 @@ export interface Options {
   date?: boolean;
   dirsFirst?: boolean;
   dirsOnly?: boolean;
+  du?: boolean;
   filesFirst?: boolean;
   fullPath?: boolean;
   noIndent?: boolean;
@@ -34,6 +35,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   date: false,
   dirsFirst: false,
   dirsOnly: false,
+  du: false,
   filesFirst: false,
   fullPath: false,
   noIndent: false,
@@ -66,10 +68,12 @@ export interface TreeNode {
 
 // ── Build tree ─────────────────────────────────────────────
 
+/** Checks whether a filename starts with a dot (hidden file convention). */
 function isHiddenFile(filename: string): boolean {
   return filename[0] === '.';
 }
 
+/** Determines whether an entry should be excluded based on exclude patterns and max depth. */
 function isExcluded(
   path: string,
   currentDepth: number,
@@ -88,6 +92,10 @@ function isExcluded(
   return false;
 }
 
+/**
+ * Calls `lstatSync` on each entry and returns a map of filename to stats.
+ * Uses `lstatSync` (not `statSync`) so symlinks are not followed.
+ */
 function statEntries(
   dirPath: string,
   entries: string[],
@@ -101,7 +109,11 @@ function statEntries(
   return stats;
 }
 
-// Sorts `contents` in place. Callers must not reuse the input array.
+/**
+ * Sorts directory entries according to the configured sort strategy.
+ * Mutates `contents` in place — callers must not reuse the input array.
+ * Assumes every entry in `contents` has a corresponding key in `stats`.
+ */
 function sortContents(
   contents: string[],
   stats: Map<string, fs.Stats>,
@@ -141,6 +153,7 @@ function sortContents(
   return contents;
 }
 
+/** Filters out files (when `dirsOnly`) and reorders entries (when `dirsFirst` or `filesFirst`). */
 function filterAndOrderContents(
   contents: string[],
   stats: Map<string, fs.Stats>,
@@ -151,15 +164,15 @@ function filterAndOrderContents(
   }
 
   const dirSet = new Set(
-    contents.filter((file) => stats.get(file)!.isDirectory()),
+    contents.filter((entry) => stats.get(entry)!.isDirectory()),
   );
+  const dirs = contents.filter((entry) => dirSet.has(entry));
 
   if (options.dirsOnly) {
-    return contents.filter((file) => dirSet.has(file));
+    return dirs;
   }
 
-  const dirs = contents.filter((content) => dirSet.has(content));
-  const files = contents.filter((content) => !dirSet.has(content));
+  const files = contents.filter((entry) => !dirSet.has(entry));
 
   if (options.dirsFirst) {
     return dirs.concat(files);
@@ -169,6 +182,7 @@ function filterAndOrderContents(
   return files.concat(dirs);
 }
 
+/** Reads, filters, stats, sorts, and orders directory entries in a single pass. */
 function getDirectoryContents(
   dirPath: string,
   options: RequiredOptions,
@@ -187,6 +201,12 @@ function getDirectoryContents(
   return { entries: filtered, stats };
 }
 
+/**
+ * Recursively computes the total size of a directory's contents (like `du`).
+ * Populates `cache` with the cumulative size for each path.
+ * Walks the entire directory tree independently of filtering options
+ * (exclude, maxDepth, dirsOnly) so that reported sizes are accurate.
+ */
 function computeSizes(dirPath: string, cache: Map<string, number>): number {
   let size = 0;
 
@@ -207,6 +227,13 @@ function computeSizes(dirPath: string, cache: Map<string, number>): number {
   return size;
 }
 
+/**
+ * Recursively builds a tree node for the given path.
+ * Returns `null` if the entry is excluded or pruned.
+ * Accepts an optional `cachedStat` to avoid redundant `lstatSync` calls.
+ * When `du` is enabled, `sizeCache` overrides `stat.size` for directories
+ * with their recursively computed totals; otherwise `stat.size` is used as-is.
+ */
 function buildTree(
   filename: string,
   path: string,
@@ -262,13 +289,17 @@ function buildTree(
   return node;
 }
 
+/**
+ * Entry point for building the tree. Pre-computes recursive sizes when `du` is enabled.
+ * Assumes `path` is relative to `process.cwd()`.
+ */
 function buildTreeNode(
   path: string,
   options: RequiredOptions,
 ): TreeNode | null {
   const sizeCache = new Map<string, number>();
 
-  if (options.sizes) {
+  if (options.du) {
     computeSizes(path, sizeCache);
   }
 
@@ -278,30 +309,34 @@ function buildTreeNode(
   return buildTree(rootName, path, 0, options, sizeCache);
 }
 
-export function tree(path: string, options?: Options): string {
-  const combinedOptions: RequiredOptions = {
+/** Merges user options with defaults, applies implicit flags (e.g. `du` implies `sizes`). */
+function resolveOptions(options?: Options): RequiredOptions {
+  return {
     ...DEFAULT_OPTIONS,
     ...options,
     exclude: [...DEFAULT_EXCLUDE_PATTERNS, ...(options?.exclude ?? [])],
+    ...(options?.du && { sizes: true }),
   };
+}
+
+/** Returns the directory tree as a formatted string. */
+export function tree(path: string, options?: Options): string {
+  const combinedOptions = resolveOptions(options);
   const root = buildTreeNode(path, combinedOptions);
 
-  if (!root) {
+  if (root == null) {
     return '';
   }
 
   return formatAsText(root, combinedOptions, path).join('\n');
 }
 
+/** Returns the directory tree as a structured JSON entry, or `null` if the root is excluded. */
 export function treeJson(
   path: string,
   options?: Options,
 ): TreeJsonEntry | null {
-  const combinedOptions: RequiredOptions = {
-    ...DEFAULT_OPTIONS,
-    ...options,
-    exclude: [...DEFAULT_EXCLUDE_PATTERNS, ...(options?.exclude ?? [])],
-  };
+  const combinedOptions = resolveOptions(options);
   const root = buildTreeNode(path, combinedOptions);
 
   return root ? formatAsJson(root, combinedOptions) : null;
