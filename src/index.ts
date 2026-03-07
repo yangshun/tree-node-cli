@@ -1,6 +1,8 @@
 import fs from 'fs';
 import nodePath from 'path';
-import prettyBytes from 'pretty-bytes';
+
+import { formatAsJson } from './formats/json';
+import { formatAsText } from './formats/text';
 
 export type SortBy = 'name' | 'version' | 'mtime' | 'ctime' | 'size';
 
@@ -26,7 +28,7 @@ export interface Options {
   unsorted?: boolean;
 }
 
-type RequiredOptions = Required<Options>;
+export type RequiredOptions = Required<Options>;
 
 const DEFAULT_OPTIONS: RequiredOptions = {
   allFiles: false,
@@ -50,27 +52,11 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   unsorted: false,
 };
 
-const SYMBOLS_ANSI = {
-  BRANCH: '├── ',
-  EMPTY: '',
-  INDENT: '    ',
-  LAST_BRANCH: '└── ',
-  VERTICAL: '│   ',
-};
-
-const SYMBOLS_ASCII = {
-  BRANCH: '|-- ',
-  EMPTY: '',
-  INDENT: '    ',
-  LAST_BRANCH: '`-- ',
-  VERTICAL: '|   ',
-};
-
 const EXCLUDED_PATTERNS = [/\.DS_Store/];
 
 // ── Tree node ──────────────────────────────────────────────
 
-interface TreeNode {
+export interface TreeNode {
   name: string;
   path: string;
   isDirectory: boolean;
@@ -279,124 +265,6 @@ function buildTree(
   }
 
   return node;
-}
-
-// ── Format as text ─────────────────────────────────────────
-
-function formatPermissions(mode: number, isDir: boolean): string {
-  const type = isDir ? 'd' : '-';
-  const rwx = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'];
-  const owner = rwx[(mode >> 6) & 7];
-  const group = rwx[(mode >> 3) & 7];
-  const others = rwx[mode & 7];
-  return `[${type}${owner}${group}${others}]`;
-}
-
-function formatAsText(
-  node: TreeNode,
-  options: RequiredOptions,
-  rootPath: string,
-  precedingSymbols: string = '',
-  currentDepth: number = 0,
-  isLast?: boolean,
-): string[] {
-  const SYMBOLS = options.lineAscii ? SYMBOLS_ASCII : SYMBOLS_ANSI;
-
-  // Build the line for this entry.
-  const line: string[] = options.noIndent ? [] : [precedingSymbols];
-
-  if (!options.noIndent && currentDepth >= 1) {
-    line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
-  }
-
-  if (options.permissions) {
-    line.push(formatPermissions(node.mode, node.isDirectory));
-    line.push(' ');
-  }
-
-  if (options.date) {
-    const dateStr = `[${node.mtime.toLocaleDateString('en-CA')} ${node.mtime.toLocaleTimeString('en-GB')}]`;
-    line.push(dateStr);
-    line.push(' ');
-  }
-
-  if (options.sizes) {
-    const prettifiedFilesize = prettyBytes(node.size);
-    line.push(prettifiedFilesize.replace(' ', ''));
-    line.push(' ');
-  }
-
-  const displayName = options.fullPath
-    ? nodePath.relative(nodePath.dirname(rootPath), node.path)
-    : node.name;
-  line.push(options.quote ? `"${displayName}"` : displayName);
-
-  if (node.isDirectory && options.trailingSlash) {
-    line.push('/');
-  }
-
-  const lines = [line.join('')];
-
-  // Recurse into children.
-  node.children.forEach((child, index) => {
-    const isCurrentLast = index === node.children.length - 1;
-    const childLines = formatAsText(
-      child,
-      options,
-      rootPath,
-      options.noIndent
-        ? ''
-        : precedingSymbols +
-          (currentDepth >= 1
-            ? isLast
-              ? SYMBOLS.INDENT
-              : SYMBOLS.VERTICAL
-            : SYMBOLS.EMPTY),
-      currentDepth + 1,
-      isCurrentLast,
-    );
-    lines.push(...childLines);
-  });
-
-  return lines;
-}
-
-// ── Format as JSON ─────────────────────────────────────────
-
-interface JsonNode {
-  type: 'directory' | 'file';
-  name: string;
-  size?: number;
-  mode?: string;
-  time?: string;
-  contents?: JsonNode[];
-}
-
-function formatAsJson(node: TreeNode, options: RequiredOptions): JsonNode {
-  const jsonNode: JsonNode = {
-    type: node.isDirectory ? 'directory' : 'file',
-    name: node.name,
-  };
-
-  if (options.sizes) {
-    jsonNode.size = node.size;
-  }
-
-  if (options.permissions) {
-    jsonNode.mode = formatPermissions(node.mode, node.isDirectory);
-  }
-
-  if (options.date) {
-    jsonNode.time = `${node.mtime.toLocaleDateString('en-CA')} ${node.mtime.toLocaleTimeString('en-GB')}`;
-  }
-
-  if (node.isDirectory) {
-    jsonNode.contents = node.children.map((child) =>
-      formatAsJson(child, options),
-    );
-  }
-
-  return jsonNode;
 }
 
 // ── Public API ─────────────────────────────────────────────
