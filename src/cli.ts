@@ -2,17 +2,30 @@
 
 import { createRequire } from 'module';
 import { Command } from 'commander';
-import tree from './index';
+import tree, { type Options } from './index';
 
 const require = createRequire(import.meta.url);
 const { version } = require('../package.json');
 
-const program = new Command();
+interface CliOptions {
+  allFiles?: boolean;
+  dirsFirst?: boolean;
+  dirsOnly?: boolean;
+  sizes?: boolean;
+  exclude?: string[];
+  maxDepth?: number;
+  reverse?: boolean;
+  trailingSlash?: boolean;
+  lineAscii?: boolean;
+}
 
 const PATTERN_SEPARATOR = '|';
 
+const program = new Command();
+
 program
   .version(version, '-V, --version')
+  .argument('[path]', 'Directory to list', '.')
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
   .option('--dirs-first', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
@@ -36,33 +49,23 @@ program
   .option('-S, --line-ascii', 'Turn on ASCII line graphics.');
 
 program.parse(process.argv);
-const path = program.args[0] || '.'; // Defaults to CWD if not specified.
+const path = program.processedArgs[0] as string;
 
-const opts = program.opts();
+const opts = program.opts<CliOptions>();
 
-const options: Record<string, unknown> = {
-  allFiles: opts.allFiles,
-  dirsFirst: opts.dirsFirst,
-  dirsOnly: opts.dirsOnly,
-  sizes: opts.sizes,
-  exclude: opts.exclude,
-  maxDepth: opts.maxDepth,
-  reverse: opts.reverse,
-  trailingSlash: opts.trailingSlash,
-  lineAscii: opts.lineAscii,
+const options: Options = {
+  ...(opts.allFiles != null && { allFiles: opts.allFiles }),
+  ...(opts.dirsFirst != null && { dirsFirst: opts.dirsFirst }),
+  ...(opts.dirsOnly != null && { dirsOnly: opts.dirsOnly }),
+  ...(opts.sizes != null && { sizes: opts.sizes }),
+  ...(opts.exclude != null && {
+    exclude: opts.exclude.map((pattern) => new RegExp(pattern)),
+  }),
+  ...(opts.maxDepth != null && { maxDepth: opts.maxDepth }),
+  ...(opts.reverse != null && { reverse: opts.reverse }),
+  ...(opts.trailingSlash != null && { trailingSlash: opts.trailingSlash }),
+  ...(opts.lineAscii != null && { lineAscii: opts.lineAscii }),
 };
-
-Object.keys(options).forEach((key) => {
-  if (options[key] === undefined) {
-    delete options[key];
-  }
-});
-
-if (options.exclude) {
-  options.exclude = (options.exclude as string[]).map(
-    (pattern) => new RegExp(pattern),
-  );
-}
 
 const output = tree(path, options);
 console.log(output);
