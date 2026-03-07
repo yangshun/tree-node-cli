@@ -10,6 +10,7 @@ export interface Options {
   dirsOnly?: boolean;
   filesFirst?: boolean;
   fullPath?: boolean;
+  prune?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
   maxDepth?: number;
@@ -26,6 +27,7 @@ interface RequiredOptions {
   dirsOnly: boolean;
   filesFirst: boolean;
   fullPath: boolean;
+  prune: boolean;
   sizes: boolean;
   exclude: RegExp[];
   maxDepth: number;
@@ -42,6 +44,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   dirsOnly: false,
   filesFirst: false,
   fullPath: false,
+  prune: false,
   sizes: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
@@ -160,9 +163,8 @@ function print(
     line.push('/');
   }
 
-  lines.push(line.join(''));
-
   if (isFile) {
+    lines.push(line.join(''));
     return lines;
   }
 
@@ -237,6 +239,7 @@ function print(
     }
   }
 
+  const childLines: string[] = [];
   contents.forEach((content, index) => {
     const isCurrentLast = index === contents.length - 1;
     const linesForFile = print(
@@ -254,8 +257,16 @@ function print(
       rootPath,
       isCurrentLast,
     );
-    lines.push(...linesForFile);
+    childLines.push(...linesForFile);
   });
+
+  // Prune empty directories (except root).
+  if (options.prune && currentDepth > 0 && childLines.length === 0) {
+    return lines;
+  }
+
+  lines.push(line.join(''));
+  lines.push(...childLines);
 
   return lines;
 }

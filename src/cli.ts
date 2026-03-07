@@ -14,6 +14,7 @@ const cli = cac('tree');
 cli
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
   .option('-f, --full-path', 'Print the full path prefix for each file.')
+  .option('--prune', 'Remove empty directories from output.')
   .option('--dirs-first, --dirsfirst', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
   .option(
@@ -71,6 +72,7 @@ const options: Options = {
   ...(opts.dirsOnly != null && { dirsOnly: opts.dirsOnly as boolean }),
   ...(opts.filesFirst != null && { filesFirst: opts.filesFirst as boolean }),
   ...(opts.fullPath != null && { fullPath: opts.fullPath as boolean }),
+  ...(opts.prune != null && { prune: opts.prune as boolean }),
   ...(opts.sizes != null && { sizes: opts.sizes as boolean }),
   ...(opts.exclude != null && {
     exclude: (opts.exclude as string)

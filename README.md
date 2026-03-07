@@ -61,6 +61,7 @@ Usage:
 Options:
   -a, --all-files           All files, include hidden files, are printed.
   -f, --full-path           Print the full path prefix for each file.
+  --prune                   Remove empty directories from output.
   --dirs-first              List directories before files.
   -d, --dirs-only           List directories only.
   -s, --sizes               Print the size of each file in bytes along with the name.
@@ -98,6 +99,7 @@ const string = tree('path/to/dir', options);
 | `allFiles`      | `false`                    | `boolean`  | All files are printed. By default, tree does not print hidden files (those beginning with a dot).                                     |
 | `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                        |
 | `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                             |
+| `prune`         | `false`                    | `boolean`  | Remove empty directories from output.                                                                                                 |
 | `dirsOnly`      | `false`                    | `boolean`  | List directories only.                                                                                                                |
 | `sizes`         | `false`                    | `boolean`  | Show filesizes as well.                                                                                                               |
 | `exclude`       | `[]`                       | `RegExp[]` | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. |

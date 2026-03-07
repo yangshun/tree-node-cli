@@ -174,6 +174,41 @@ describe('tree', () => {
     expect(result).toMatchSnapshot();
   });
 
+  test('prune', () => {
+    // multi-level has charlie dir with .gitkeep (hidden) and visible files
+    // Create a temp dir with an empty subdirectory to test pruning
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-prune-'));
+    fs.mkdirSync(path.join(tmpDir, 'empty-dir'));
+    fs.mkdirSync(path.join(tmpDir, 'populated-dir'));
+    fs.writeFileSync(path.join(tmpDir, 'populated-dir', 'file.txt'), '');
+    fs.writeFileSync(path.join(tmpDir, 'root-file.txt'), '');
+
+    const withoutPrune = tree(tmpDir);
+    expect(withoutPrune).toContain('empty-dir');
+    expect(withoutPrune).toContain('populated-dir');
+
+    const withPrune = tree(tmpDir, { prune: true });
+    expect(withPrune).not.toContain('empty-dir');
+    expect(withPrune).toContain('populated-dir');
+    expect(withPrune).toContain('root-file.txt');
+
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('prune removes nested empty dirs', () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-prune-'));
+    fs.mkdirSync(path.join(tmpDir, 'empty-parent', 'empty-child', 'empty-leaf'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, 'file.txt'), '');
+
+    const result = tree(tmpDir, { prune: true });
+    expect(result).not.toContain('empty-parent');
+    expect(result).not.toContain('empty-child');
+    expect(result).not.toContain('empty-leaf');
+    expect(result).toContain('file.txt');
+
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
   test('fullPath', () => {
     const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
       fullPath: true,

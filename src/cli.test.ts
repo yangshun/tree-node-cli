@@ -1,4 +1,6 @@
 import { execFile } from 'child_process';
+import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 
@@ -104,6 +106,19 @@ describe('cli', () => {
     expect(stdout).toContain('`--');
     expect(stdout).not.toContain('├');
     expect(stdout).not.toContain('└');
+  });
+
+  test('respects --prune', async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-prune-'));
+    fs.mkdirSync(path.join(tmpDir, 'empty-dir'));
+    fs.mkdirSync(path.join(tmpDir, 'populated-dir'));
+    fs.writeFileSync(path.join(tmpDir, 'populated-dir', 'file.txt'), '');
+
+    const { stdout } = await run(['--prune', tmpDir]);
+    expect(stdout).not.toContain('empty-dir');
+    expect(stdout).toContain('populated-dir');
+
+    fs.rmSync(tmpDir, { recursive: true });
   });
 
   test('respects -f full path', async () => {
