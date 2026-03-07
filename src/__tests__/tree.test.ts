@@ -1,7 +1,8 @@
 import fs from 'fs';
 import { isNotJunk } from 'junk';
+import os from 'os';
 import path from 'path';
-import { describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import tree from '../index';
 
 const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
@@ -128,5 +129,146 @@ describe('tree', () => {
       });
       expect(result).toMatchSnapshot();
     });
+  });
+
+  test('maxDepth 0 shows only root', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      maxDepth: 0,
+    });
+    const lines = result.split('\n');
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toBe('multi-level');
+  });
+
+  test('combined: dirsFirst + reverse', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      dirsFirst: true,
+      reverse: true,
+      maxDepth: 1,
+    });
+    expect(result).toMatchSnapshot();
+  });
+
+  test('combined: allFiles + dirsOnly', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      allFiles: true,
+      dirsOnly: true,
+    });
+    expect(result).toMatchSnapshot();
+  });
+
+  test('combined: trailingSlash + lineAscii + sizes', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'single-level'), {
+      trailingSlash: true,
+      lineAscii: true,
+      sizes: true,
+    });
+    expect(result).toMatchSnapshot();
+  });
+
+  test('combined: exclude + allFiles', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      allFiles: true,
+      exclude: [/\.gitkeep/],
+    });
+    expect(result).toMatchSnapshot();
+  });
+});
+
+describe('tree error handling', () => {
+  test('throws on non-existent path', () => {
+    expect(() => tree('/non/existent/path')).toThrow();
+  });
+
+  test('returns just the filename for a file path', () => {
+    const result = tree(
+      path.join(PATH_TO_TEST, 'single-file', 'alpha.txt'),
+    );
+    const lines = result.split('\n');
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toBe('alpha.txt');
+  });
+});
+
+describe('tree with symlinks', () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-test-'));
+    fs.writeFileSync(path.join(tmpDir, 'real-file.txt'), 'hello');
+    fs.mkdirSync(path.join(tmpDir, 'real-dir'));
+    fs.writeFileSync(path.join(tmpDir, 'real-dir', 'nested.txt'), 'world');
+    fs.symlinkSync(
+      path.join(tmpDir, 'real-file.txt'),
+      path.join(tmpDir, 'link-to-file.txt'),
+    );
+    fs.symlinkSync(
+      path.join(tmpDir, 'real-dir'),
+      path.join(tmpDir, 'link-to-dir'),
+    );
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('lists symlinks but does not follow them into directories', () => {
+    const result = tree(tmpDir);
+    expect(result).toContain('link-to-file.txt');
+    expect(result).toContain('link-to-dir');
+    // The symlinked dir should appear but its contents should not,
+    // because lstatSync treats it as a non-directory (symlink).
+    const lines = result.split('\n');
+    const linkDirLine = lines.find((l) => l.includes('link-to-dir'));
+    expect(linkDirLine).toBeDefined();
+    // nested.txt should only appear once (under real-dir, not under link-to-dir)
+    const nestedOccurrences = lines.filter((l) => l.includes('nested.txt'));
+    expect(nestedOccurrences).toHaveLength(1);
+  });
+
+  test('symlinks are excluded by dirsOnly', () => {
+    const result = tree(tmpDir, { dirsOnly: true });
+    // Symlinks are treated as files by lstatSync, so they should be excluded
+    expect(result).not.toContain('link-to-file.txt');
+    expect(result).not.toContain('link-to-dir');
+    expect(result).toContain('real-dir');
+  });
+});
+
+describe('tree with special characters in filenames', () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-test-'));
+    fs.writeFileSync(path.join(tmpDir, 'file with spaces.txt'), '');
+    fs.writeFileSync(path.join(tmpDir, 'file-with-dashes.txt'), '');
+    fs.writeFileSync(path.join(tmpDir, "file'with'quotes.txt"), '');
+    fs.writeFileSync(path.join(tmpDir, 'file(with)parens.txt'), '');
+    fs.mkdirSync(path.join(tmpDir, 'dir with spaces'));
+    fs.writeFileSync(
+      path.join(tmpDir, 'dir with spaces', 'inner.txt'),
+      'content',
+    );
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('handles filenames with special characters', () => {
+    const result = tree(tmpDir);
+    expect(result).toContain('file with spaces.txt');
+    expect(result).toContain('file-with-dashes.txt');
+    expect(result).toContain("file'with'quotes.txt");
+    expect(result).toContain('file(with)parens.txt');
+    expect(result).toContain('dir with spaces');
+    expect(result).toContain('inner.txt');
+  });
+
+  test('special characters work with exclude patterns', () => {
+    const result = tree(tmpDir, { exclude: [/spaces/] });
+    expect(result).not.toContain('file with spaces.txt');
+    expect(result).not.toContain('dir with spaces');
+    expect(result).toContain('file-with-dashes.txt');
   });
 });

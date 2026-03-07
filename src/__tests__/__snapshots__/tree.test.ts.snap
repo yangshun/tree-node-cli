@@ -65,6 +65,49 @@ exports[`tree > allFiles 7`] = `
     └── .gitkeep"
 `;
 
+exports[`tree > combined: allFiles + dirsOnly 1`] = `
+"multi-level
+├── beta
+│   ├── alpha
+│   │   └── beta
+│   └── charlie
+└── charlie
+    └── beta"
+`;
+
+exports[`tree > combined: dirsFirst + reverse 1`] = `
+"multi-level
+├── charlie
+├── beta
+├── delta.txt
+└── alpha.txt"
+`;
+
+exports[`tree > combined: exclude + allFiles 1`] = `
+"multi-level
+├── alpha.txt
+├── beta
+│   ├── alpha
+│   │   ├── alpha.txt
+│   │   └── beta
+│   │       └── alpha.txt
+│   ├── beta.txt
+│   └── charlie
+│       └── alpha.txt
+├── charlie
+│   ├── alpha.txt
+│   ├── beta
+│   │   └── alpha.txt
+│   └── charlie.txt
+└── delta.txt"
+`;
+
+exports[`tree > combined: trailingSlash + lineAscii + sizes 1`] = `
+"13B single-level/
+|-- 13B alpha.txt
+\`-- 0B beta/"
+`;
+
 exports[`tree > default 1`] = `
 "chain
 └── alpha
