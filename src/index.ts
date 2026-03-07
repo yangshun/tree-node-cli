@@ -26,27 +26,7 @@ export interface Options {
   unsorted?: boolean;
 }
 
-interface RequiredOptions {
-  allFiles: boolean;
-  date: boolean;
-  dirsFirst: boolean;
-  dirsOnly: boolean;
-  filesFirst: boolean;
-  fullPath: boolean;
-  noIndent: boolean;
-  permissions: boolean;
-  prune: boolean;
-  json: boolean;
-  quote: boolean;
-  sizes: boolean;
-  exclude: RegExp[];
-  maxDepth: number;
-  reverse: boolean;
-  sortBy: SortBy;
-  trailingSlash: boolean;
-  lineAscii: boolean;
-  unsorted: boolean;
-}
+type RequiredOptions = Required<Options>;
 
 const DEFAULT_OPTIONS: RequiredOptions = {
   allFiles: false,
@@ -88,17 +68,145 @@ const SYMBOLS_ASCII = {
 
 const EXCLUDED_PATTERNS = [/\.DS_Store/];
 
+// ── Tree node ──────────────────────────────────────────────
+
+interface TreeNode {
+  name: string;
+  path: string;
+  isDirectory: boolean;
+  mode: number;
+  mtime: Date;
+  size: number;
+  children: TreeNode[];
+}
+
+// ── Build tree ─────────────────────────────────────────────
+
 function isHiddenFile(filename: string): boolean {
   return filename[0] === '.';
 }
 
-function formatPermissions(mode: number, isDir: boolean): string {
-  const type = isDir ? 'd' : '-';
-  const rwx = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'];
-  const owner = rwx[(mode >> 6) & 7];
-  const group = rwx[(mode >> 3) & 7];
-  const others = rwx[mode & 7];
-  return `[${type}${owner}${group}${others}]`;
+function isExcluded(
+  path: string,
+  isFile: boolean,
+  currentDepth: number,
+  options: RequiredOptions,
+): boolean {
+  for (const pattern of EXCLUDED_PATTERNS) {
+    if (pattern.test(path)) {
+      return true;
+    }
+  }
+
+  if (isFile && options.dirsOnly) {
+    return true;
+  }
+
+  for (const pattern of options.exclude) {
+    if (pattern.test(path)) {
+      return true;
+    }
+  }
+
+  if (currentDepth > options.maxDepth) {
+    return true;
+  }
+
+  return false;
+}
+
+function sortContents(
+  contents: string[],
+  dirPath: string,
+  options: RequiredOptions,
+): string[] {
+  if (options.unsorted) {
+    return contents;
+  }
+
+  switch (options.sortBy) {
+    case 'version':
+      contents.sort((a, b) =>
+        a.localeCompare(b, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        }),
+      );
+      break;
+    case 'mtime':
+      contents.sort(
+        (a, b) =>
+          fs.lstatSync(nodePath.join(dirPath, a)).mtimeMs -
+          fs.lstatSync(nodePath.join(dirPath, b)).mtimeMs,
+      );
+      break;
+    case 'ctime':
+      contents.sort(
+        (a, b) =>
+          fs.lstatSync(nodePath.join(dirPath, a)).ctimeMs -
+          fs.lstatSync(nodePath.join(dirPath, b)).ctimeMs,
+      );
+      break;
+    case 'size':
+      contents.sort(
+        (a, b) =>
+          fs.lstatSync(nodePath.join(dirPath, a)).size -
+          fs.lstatSync(nodePath.join(dirPath, b)).size,
+      );
+      break;
+    default:
+      contents.sort();
+      break;
+  }
+
+  if (options.reverse) {
+    contents.reverse();
+  }
+
+  return contents;
+}
+
+function filterAndOrderContents(
+  contents: string[],
+  dirPath: string,
+  options: RequiredOptions,
+): string[] {
+  if (!options.allFiles) {
+    contents = contents.filter((content) => !isHiddenFile(content));
+  }
+
+  if (!options.dirsOnly && !options.dirsFirst && !options.filesFirst) {
+    return contents;
+  }
+
+  const dirSet = new Set(
+    contents.filter((file) =>
+      fs.lstatSync(nodePath.join(dirPath, file)).isDirectory(),
+    ),
+  );
+
+  if (options.dirsOnly) {
+    return contents.filter((file) => dirSet.has(file));
+  }
+
+  const dirs = contents.filter((content) => dirSet.has(content));
+  const files = contents.filter((content) => !dirSet.has(content));
+
+  if (options.dirsFirst) {
+    return dirs.concat(files);
+  }
+
+  // filesFirst
+  return files.concat(dirs);
+}
+
+function getDirectoryContents(
+  dirPath: string,
+  options: RequiredOptions,
+): string[] {
+  const contents = fs.readdirSync(dirPath);
+  const sorted = sortContents(contents, dirPath, options);
+  return filterAndOrderContents(sorted, dirPath, options);
 }
 
 function computeSizes(dirPath: string, cache: Map<string, number>): number {
@@ -121,51 +229,80 @@ function computeSizes(dirPath: string, cache: Map<string, number>): number {
   return size;
 }
 
-function print(
+function buildTree(
   filename: string,
   path: string,
   currentDepth: number,
-  precedingSymbols: string,
   options: RequiredOptions,
   sizeCache: Map<string, number>,
-  rootPath: string,
-  isLast?: boolean,
-): string[] {
+): TreeNode | null {
   const stat = fs.lstatSync(path);
   const isDir = stat.isDirectory();
-  // We treat all non-directory paths as files and don't
-  // recurse into them, including symlinks, sockets, etc.
   const isFile = !isDir;
 
-  const lines: string[] = [];
+  if (isExcluded(path, isFile, currentDepth, options)) {
+    return null;
+  }
 
+  const node: TreeNode = {
+    name: filename,
+    path,
+    isDirectory: isDir,
+    mode: stat.mode,
+    mtime: stat.mtime,
+    size: sizeCache.get(path) ?? stat.size,
+    children: [],
+  };
+
+  if (isFile) {
+    return node;
+  }
+
+  const contents = getDirectoryContents(path, options);
+
+  for (const entry of contents) {
+    const child = buildTree(
+      entry,
+      nodePath.join(path, entry),
+      currentDepth + 1,
+      options,
+      sizeCache,
+    );
+    if (child) {
+      node.children.push(child);
+    }
+  }
+
+  // Prune empty directories (except root).
+  if (options.prune && currentDepth > 0 && node.children.length === 0) {
+    return null;
+  }
+
+  return node;
+}
+
+// ── Format as text ─────────────────────────────────────────
+
+function formatPermissions(mode: number, isDir: boolean): string {
+  const type = isDir ? 'd' : '-';
+  const rwx = ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'];
+  const owner = rwx[(mode >> 6) & 7];
+  const group = rwx[(mode >> 3) & 7];
+  const others = rwx[mode & 7];
+  return `[${type}${owner}${group}${others}]`;
+}
+
+function formatAsText(
+  node: TreeNode,
+  options: RequiredOptions,
+  rootPath: string,
+  precedingSymbols: string = '',
+  currentDepth: number = 0,
+  isLast?: boolean,
+): string[] {
   const SYMBOLS = options.lineAscii ? SYMBOLS_ASCII : SYMBOLS_ANSI;
 
-  // Do not show these regardless.
-  for (let i = 0; i < EXCLUDED_PATTERNS.length; i++) {
-    if (EXCLUDED_PATTERNS[i].test(path)) {
-      return lines;
-    }
-  }
-
-  // Handle directories only.
-  if (isFile && options.dirsOnly) {
-    return lines;
-  }
-
-  // Handle excluded patterns.
-  for (let i = 0; i < options.exclude.length; i++) {
-    if (options.exclude[i].test(path)) {
-      return lines;
-    }
-  }
-
-  // Handle max depth.
-  if (currentDepth > options.maxDepth) {
-    return lines;
-  }
-
-  // Handle current file.
+  // Build the line for this entry.
   const line: string[] = options.noIndent ? [] : [precedingSymbols];
 
   if (!options.noIndent && currentDepth >= 1) {
@@ -173,116 +310,40 @@ function print(
   }
 
   if (options.permissions) {
-    line.push(formatPermissions(stat.mode, isDir));
+    line.push(formatPermissions(node.mode, node.isDirectory));
     line.push(' ');
   }
 
   if (options.date) {
-    const mtime = stat.mtime;
-    const dateStr = `[${mtime.toLocaleDateString('en-CA')} ${mtime.toLocaleTimeString('en-GB')}]`;
+    const dateStr = `[${node.mtime.toLocaleDateString('en-CA')} ${node.mtime.toLocaleTimeString('en-GB')}]`;
     line.push(dateStr);
     line.push(' ');
   }
 
   if (options.sizes) {
-    const filesize = sizeCache.get(path) ?? 0;
-    const prettifiedFilesize = prettyBytes(filesize);
+    const prettifiedFilesize = prettyBytes(node.size);
     line.push(prettifiedFilesize.replace(' ', ''));
     line.push(' ');
   }
 
   const displayName = options.fullPath
-    ? nodePath.relative(nodePath.dirname(rootPath), path)
-    : filename;
+    ? nodePath.relative(nodePath.dirname(rootPath), node.path)
+    : node.name;
   line.push(options.quote ? `"${displayName}"` : displayName);
 
-  if (isDir && options.trailingSlash) {
+  if (node.isDirectory && options.trailingSlash) {
     line.push('/');
   }
 
-  if (isFile) {
-    lines.push(line.join(''));
-    return lines;
-  }
+  const lines = [line.join('')];
 
-  // Contents of a directory.
-  let contents = fs.readdirSync(path);
-  if (!options.unsorted) {
-    switch (options.sortBy) {
-      case 'version':
-        contents.sort((a, b) =>
-          a.localeCompare(b, undefined, {
-            numeric: true,
-            sensitivity: 'base',
-          }),
-        );
-        break;
-      case 'mtime':
-        contents.sort(
-          (a, b) =>
-            fs.lstatSync(nodePath.join(path, a)).mtimeMs -
-            fs.lstatSync(nodePath.join(path, b)).mtimeMs,
-        );
-        break;
-      case 'ctime':
-        contents.sort(
-          (a, b) =>
-            fs.lstatSync(nodePath.join(path, a)).ctimeMs -
-            fs.lstatSync(nodePath.join(path, b)).ctimeMs,
-        );
-        break;
-      case 'size':
-        contents.sort(
-          (a, b) =>
-            fs.lstatSync(nodePath.join(path, a)).size -
-            fs.lstatSync(nodePath.join(path, b)).size,
-        );
-        break;
-      default:
-        contents.sort();
-        break;
-    }
-
-    if (options.reverse) {
-      contents.reverse();
-    }
-  }
-
-  // Handle showing of all files.
-  if (!options.allFiles) {
-    contents = contents.filter((content) => !isHiddenFile(content));
-  }
-
-  if (options.dirsOnly || options.dirsFirst || options.filesFirst) {
-    const dirSet = new Set(
-      contents.filter((file) =>
-        fs.lstatSync(nodePath.join(path, file)).isDirectory(),
-      ),
-    );
-
-    if (options.dirsOnly) {
-      // We have to filter here instead of at the start of the function
-      // because we need to know how many non-directories there are before
-      // we even start recursing.
-      contents = contents.filter((file) => dirSet.has(file));
-    } else if (options.dirsFirst) {
-      const dirs = contents.filter((content) => dirSet.has(content));
-      const files = contents.filter((content) => !dirSet.has(content));
-      contents = dirs.concat(files);
-    } else if (options.filesFirst) {
-      const dirs = contents.filter((content) => dirSet.has(content));
-      const files = contents.filter((content) => !dirSet.has(content));
-      contents = files.concat(dirs);
-    }
-  }
-
-  const childLines: string[] = [];
-  contents.forEach((content, index) => {
-    const isCurrentLast = index === contents.length - 1;
-    const linesForFile = print(
-      content,
-      nodePath.join(path, content),
-      currentDepth + 1,
+  // Recurse into children.
+  node.children.forEach((child, index) => {
+    const isCurrentLast = index === node.children.length - 1;
+    const childLines = formatAsText(
+      child,
+      options,
+      rootPath,
       options.noIndent
         ? ''
         : precedingSymbols +
@@ -291,24 +352,16 @@ function print(
               ? SYMBOLS.INDENT
               : SYMBOLS.VERTICAL
             : SYMBOLS.EMPTY),
-      options,
-      sizeCache,
-      rootPath,
+      currentDepth + 1,
       isCurrentLast,
     );
-    childLines.push(...linesForFile);
+    lines.push(...childLines);
   });
-
-  // Prune empty directories (except root).
-  if (options.prune && currentDepth > 0 && childLines.length === 0) {
-    return lines;
-  }
-
-  lines.push(line.join(''));
-  lines.push(...childLines);
 
   return lines;
 }
+
+// ── Format as JSON ─────────────────────────────────────────
 
 interface JsonNode {
   type: 'directory' | 'file';
@@ -319,143 +372,34 @@ interface JsonNode {
   contents?: JsonNode[];
 }
 
-function buildJsonTree(
-  filename: string,
-  path: string,
-  currentDepth: number,
-  options: RequiredOptions,
-  sizeCache: Map<string, number>,
-): JsonNode | null {
-  const stat = fs.lstatSync(path);
-  const isDir = stat.isDirectory();
-  const isFile = !isDir;
-
-  for (const pattern of EXCLUDED_PATTERNS) {
-    if (pattern.test(path)) {
-      return null;
-    }
-  }
-
-  if (isFile && options.dirsOnly) {
-    return null;
-  }
-
-  for (const pattern of options.exclude) {
-    if (pattern.test(path)) {
-      return null;
-    }
-  }
-
-  if (currentDepth > options.maxDepth) {
-    return null;
-  }
-
-  const node: JsonNode = {
-    type: isDir ? 'directory' : 'file',
-    name: filename,
+function formatAsJson(node: TreeNode, options: RequiredOptions): JsonNode {
+  const jsonNode: JsonNode = {
+    type: node.isDirectory ? 'directory' : 'file',
+    name: node.name,
   };
 
   if (options.sizes) {
-    node.size = sizeCache.get(path) ?? stat.size;
+    jsonNode.size = node.size;
   }
 
   if (options.permissions) {
-    node.mode = formatPermissions(stat.mode, isDir);
+    jsonNode.mode = formatPermissions(node.mode, node.isDirectory);
   }
 
   if (options.date) {
-    const mtime = stat.mtime;
-    node.time = `${mtime.toLocaleDateString('en-CA')} ${mtime.toLocaleTimeString('en-GB')}`;
+    jsonNode.time = `${node.mtime.toLocaleDateString('en-CA')} ${node.mtime.toLocaleTimeString('en-GB')}`;
   }
 
-  if (isFile) {
-    return node;
-  }
-
-  let contents = fs.readdirSync(path);
-  if (!options.unsorted) {
-    switch (options.sortBy) {
-      case 'version':
-        contents.sort((a, b) =>
-          a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }),
-        );
-        break;
-      case 'mtime':
-        contents.sort(
-          (a, b) =>
-            fs.lstatSync(nodePath.join(path, a)).mtimeMs -
-            fs.lstatSync(nodePath.join(path, b)).mtimeMs,
-        );
-        break;
-      case 'ctime':
-        contents.sort(
-          (a, b) =>
-            fs.lstatSync(nodePath.join(path, a)).ctimeMs -
-            fs.lstatSync(nodePath.join(path, b)).ctimeMs,
-        );
-        break;
-      case 'size':
-        contents.sort(
-          (a, b) =>
-            fs.lstatSync(nodePath.join(path, a)).size -
-            fs.lstatSync(nodePath.join(path, b)).size,
-        );
-        break;
-      default:
-        contents.sort();
-        break;
-    }
-
-    if (options.reverse) {
-      contents.reverse();
-    }
-  }
-
-  if (!options.allFiles) {
-    contents = contents.filter((content) => !isHiddenFile(content));
-  }
-
-  if (options.dirsOnly || options.dirsFirst || options.filesFirst) {
-    const dirSet = new Set(
-      contents.filter((file) =>
-        fs.lstatSync(nodePath.join(path, file)).isDirectory(),
-      ),
+  if (node.isDirectory) {
+    jsonNode.contents = node.children.map((child) =>
+      formatAsJson(child, options),
     );
-
-    if (options.dirsOnly) {
-      contents = contents.filter((file) => dirSet.has(file));
-    } else if (options.dirsFirst) {
-      const dirs = contents.filter((c) => dirSet.has(c));
-      const files = contents.filter((c) => !dirSet.has(c));
-      contents = dirs.concat(files);
-    } else if (options.filesFirst) {
-      const dirs = contents.filter((c) => dirSet.has(c));
-      const files = contents.filter((c) => !dirSet.has(c));
-      contents = files.concat(dirs);
-    }
   }
 
-  const children: JsonNode[] = [];
-  for (const entry of contents) {
-    const child = buildJsonTree(
-      entry,
-      nodePath.join(path, entry),
-      currentDepth + 1,
-      options,
-      sizeCache,
-    );
-    if (child) {
-      children.push(child);
-    }
-  }
-
-  if (options.prune && currentDepth > 0 && children.length === 0) {
-    return null;
-  }
-
-  node.contents = children;
-  return node;
+  return jsonNode;
 }
+
+// ── Public API ─────────────────────────────────────────────
 
 export default function tree(path: string, options?: Options): string {
   const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
@@ -467,19 +411,16 @@ export default function tree(path: string, options?: Options): string {
 
   const resolvedPath = nodePath.join(process.cwd(), path);
   const rootName = nodePath.basename(resolvedPath);
+  const root = buildTree(rootName, path, 0, combinedOptions, sizeCache);
 
   if (combinedOptions.json) {
-    const jsonTree = buildJsonTree(rootName, path, 0, combinedOptions, sizeCache);
+    const jsonTree = root ? formatAsJson(root, combinedOptions) : null;
     return JSON.stringify([jsonTree], null, 2);
   }
 
-  return print(
-    rootName,
-    path,
-    0,
-    '',
-    combinedOptions,
-    sizeCache,
-    path,
-  ).join('\n');
+  if (!root) {
+    return '';
+  }
+
+  return formatAsText(root, combinedOptions, path).join('\n');
 }
