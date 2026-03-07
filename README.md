@@ -8,7 +8,7 @@ Note: Symlinks are not followed.
 
 ## Quickstart
 
-Instantly execute the command in your current directory via `npx`:
+Instantly execute the command in your current directory via `npx` / `pnpx` / `bunx` / `yarn dlx`:
 
 ```bash
 npx tree-node-cli -I "node_modules" # ignore node_modules
@@ -89,6 +89,8 @@ Options:
   --version                 Display version number
 ```
 
+**Note:** To exclude the contents of a directory while retaining the directory itself, use a trailing slash with the `-I` option (e.g., `-I "node_modules/"`). For the Node.js API, provide a regex matching the directory contents (e.g., `/node_modules\//`). See [#33](https://github.com/yangshun/tree-node-cli/issues/33) for more details.
+
 ## Node.js API
 
 ### `tree(path, options?)`
@@ -114,10 +116,15 @@ Returns the tree as a structured `TreeJsonEntry` object (or `null` if the path i
 ```ts
 // Discriminated union — `contents` only exists on directories
 type TreeJsonEntry =
-  | { type: 'directory'; name: string; contents: TreeJsonEntry[];
-      size?: number; mode?: string; time?: string }
-  | { type: 'file'; name: string;
-      size?: number; mode?: string; time?: string }
+  | {
+      type: 'directory';
+      name: string;
+      contents: TreeJsonEntry[];
+      size?: number;
+      mode?: string;
+      time?: string;
+    }
+  | { type: 'file'; name: string; size?: number; mode?: string; time?: string };
 // size: present when `sizes: true`
 // mode: present when `permissions: true`
 // time: present when `date: true`
@@ -142,21 +149,19 @@ console.log(result);
 | `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                        |
 | `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                             |
 | `noIndent`      | `false`                    | `boolean`  | Print entries without tree indentation lines.                                                                                         |
-| `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                |
+| `permissions`   | `false`                    | `boolean`  | Show file type and permissions (e.g. `[drwxr-xr-x]`).                                                                                 |
 | `quote`         | `false`                    | `boolean`  | Quote filenames in double quotes.                                                                                                     |
 | `prune`         | `false`                    | `boolean`  | Remove empty directories from output.                                                                                                 |
 | `dirsOnly`      | `false`                    | `boolean`  | List directories only.                                                                                                                |
 | `sizes`         | `false`                    | `boolean`  | Show filesizes as well.                                                                                                               |
-| `exclude`       | `[]`                       | `RegExp[]` | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. |
+| `exclude`       | `[]`                       | `RegExp[]` | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. To exclude a directory's contents while still showing the directory itself, use a regex that matches the path with a trailing slash (e.g., `/node_modules\//`). |
 | `maxDepth`      | `Number.POSITIVE_INFINITY` | `number`   | Max display depth of the directory tree.                                                                                              |
 | `reverse`       | `false`                    | `boolean`  | Sort the output in reverse alphabetic order.                                                                                          |
 | `trailingSlash` | `false`                    | `boolean`  | Appends a trailing slash behind directories.                                                                                          |
 | `lineAscii`     | `false`                    | `boolean`  | Turn on ASCII line graphics.                                                                                                          |
 | `filesFirst`    | `false`                    | `boolean`  | List files before directories.                                                                                                        |
-| `sortBy`        | `'name'`                   | `string`   | Sort the output. Options: `'name'`, `'version'`, `'mtime'`, `'ctime'`, `'size'`.                                                     |
-| `unsorted`      | `false`                    | `boolean`  | Do not sort. List files in directory order.                                                                                            |
-
-**Note:** To exclude the contents of a directory while retaining the directory itself, use a trailing slash with the `-I` option (e.g., `-I "node_modules/"`). For the Node.js API, provide a regex matching the directory contents (e.g., `/node_modules\//`). See [#33](https://github.com/yangshun/tree-node-cli/issues/33) for more details.
+| `sortBy`        | `'name'`                   | `string`   | Sort the output. Options: `'name'`, `'version'`, `'mtime'`, `'ctime'`, `'size'`.                                                      |
+| `unsorted`      | `false`                    | `boolean`  | Do not sort. List files in directory order.                                                                                           |
 
 ## License
 

@@ -99,9 +99,22 @@ function isExcluded(
   return false;
 }
 
+function statEntries(
+  dirPath: string,
+  entries: string[],
+): Map<string, fs.Stats> {
+  const stats = new Map<string, fs.Stats>();
+
+  for (const entry of entries) {
+    stats.set(entry, fs.lstatSync(nodePath.join(dirPath, entry)));
+  }
+
+  return stats;
+}
+
 function sortContents(
   contents: string[],
-  dirPath: string,
+  stats: Map<string, fs.Stats>,
   options: RequiredOptions,
 ): string[] {
   if (options.unsorted) {
@@ -118,25 +131,13 @@ function sortContents(
       );
       break;
     case 'mtime':
-      contents.sort(
-        (a, b) =>
-          fs.lstatSync(nodePath.join(dirPath, a)).mtimeMs -
-          fs.lstatSync(nodePath.join(dirPath, b)).mtimeMs,
-      );
+      contents.sort((a, b) => stats.get(a)!.mtimeMs - stats.get(b)!.mtimeMs);
       break;
     case 'ctime':
-      contents.sort(
-        (a, b) =>
-          fs.lstatSync(nodePath.join(dirPath, a)).ctimeMs -
-          fs.lstatSync(nodePath.join(dirPath, b)).ctimeMs,
-      );
+      contents.sort((a, b) => stats.get(a)!.ctimeMs - stats.get(b)!.ctimeMs);
       break;
     case 'size':
-      contents.sort(
-        (a, b) =>
-          fs.lstatSync(nodePath.join(dirPath, a)).size -
-          fs.lstatSync(nodePath.join(dirPath, b)).size,
-      );
+      contents.sort((a, b) => stats.get(a)!.size - stats.get(b)!.size);
       break;
     default:
       contents.sort();
@@ -152,7 +153,7 @@ function sortContents(
 
 function filterAndOrderContents(
   contents: string[],
-  dirPath: string,
+  stats: Map<string, fs.Stats>,
   options: RequiredOptions,
 ): string[] {
   if (!options.allFiles) {
@@ -164,9 +165,7 @@ function filterAndOrderContents(
   }
 
   const dirSet = new Set(
-    contents.filter((file) =>
-      fs.lstatSync(nodePath.join(dirPath, file)).isDirectory(),
-    ),
+    contents.filter((file) => stats.get(file)!.isDirectory()),
   );
 
   if (options.dirsOnly) {
@@ -187,10 +186,13 @@ function filterAndOrderContents(
 function getDirectoryContents(
   dirPath: string,
   options: RequiredOptions,
-): string[] {
-  const contents = fs.readdirSync(dirPath);
-  const sorted = sortContents(contents, dirPath, options);
-  return filterAndOrderContents(sorted, dirPath, options);
+): { entries: string[]; stats: Map<string, fs.Stats> } {
+  const entries = fs.readdirSync(dirPath);
+  const stats = statEntries(dirPath, entries);
+  const sorted = sortContents(entries, stats, options);
+  const filtered = filterAndOrderContents(sorted, stats, options);
+
+  return { entries: filtered, stats };
 }
 
 function computeSizes(dirPath: string, cache: Map<string, number>): number {
@@ -219,8 +221,9 @@ function buildTree(
   currentDepth: number,
   options: RequiredOptions,
   sizeCache: Map<string, number>,
+  cachedStat?: fs.Stats,
 ): TreeNode | null {
-  const stat = fs.lstatSync(path);
+  const stat = cachedStat ?? fs.lstatSync(path);
   const isDir = stat.isDirectory();
   const isFile = !isDir;
 
@@ -242,16 +245,18 @@ function buildTree(
     return node;
   }
 
-  const contents = getDirectoryContents(path, options);
+  const { entries, stats } = getDirectoryContents(path, options);
 
-  for (const entry of contents) {
+  for (const entry of entries) {
     const child = buildTree(
       entry,
       nodePath.join(path, entry),
       currentDepth + 1,
       options,
       sizeCache,
+      stats.get(entry),
     );
+
     if (child) {
       node.children.push(child);
     }
@@ -277,6 +282,7 @@ function buildTreeNode(
 
   const resolvedPath = nodePath.join(process.cwd(), path);
   const rootName = nodePath.basename(resolvedPath);
+
   return buildTree(rootName, path, 0, options, sizeCache);
 }
 
@@ -291,7 +297,10 @@ export function tree(path: string, options?: Options): string {
   return formatAsText(root, combinedOptions, path).join('\n');
 }
 
-export function treeJson(path: string, options?: Options): TreeJsonEntry | null {
+export function treeJson(
+  path: string,
+  options?: Options,
+): TreeJsonEntry | null {
   const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
   const root = buildTreeNode(path, combinedOptions);
 
