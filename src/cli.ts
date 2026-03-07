@@ -1,15 +1,13 @@
 #!/usr/bin/env node
-'use strict';
 
-const program = require('commander');
+import { Command } from 'commander';
+import tree from './index';
 
-const pkg = require('../package.json');
-const tree = require('../src/index');
+const program = new Command();
 
 const PATTERN_SEPARATOR = '|';
 
 program
-  .version(pkg.version)
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
   .option('--dirs-first', 'List directories before files.')
   .option('-d, --dirs-only', 'List directories only.')
@@ -21,7 +19,7 @@ program
     '-I, --exclude [patterns]',
     'Exclude files that match the pattern. | separates alternate patterns. ' +
       'Wrap your entire pattern in double quotes. E.g. `"node_modules|coverage".',
-    (string) => string.split(PATTERN_SEPARATOR),
+    (string: string) => string.split(PATTERN_SEPARATOR),
   )
   .option(
     '-L, --max-depth <n>',
@@ -35,16 +33,18 @@ program
 program.parse(process.argv);
 const path = program.args[0] || '.'; // Defaults to CWD if not specified.
 
-const options = {
-  allFiles: program.allFiles,
-  dirsFirst: program.dirsFirst,
-  dirsOnly: program.dirsOnly,
-  sizes: program.sizes,
-  exclude: program.exclude,
-  maxDepth: program.maxDepth,
-  reverse: program.reverse,
-  trailingSlash: program.trailingSlash,
-  ascii: program.lineAscii,
+const opts = program.opts();
+
+const options: Record<string, unknown> = {
+  allFiles: opts.allFiles,
+  dirsFirst: opts.dirsFirst,
+  dirsOnly: opts.dirsOnly,
+  sizes: opts.sizes,
+  exclude: opts.exclude,
+  maxDepth: opts.maxDepth,
+  reverse: opts.reverse,
+  trailingSlash: opts.trailingSlash,
+  lineAscii: opts.lineAscii,
 };
 
 Object.keys(options).forEach((key) => {
@@ -54,7 +54,9 @@ Object.keys(options).forEach((key) => {
 });
 
 if (options.exclude) {
-  options.exclude = options.exclude.map((pattern) => new RegExp(pattern));
+  options.exclude = (options.exclude as string[]).map(
+    (pattern) => new RegExp(pattern),
+  );
 }
 
 const output = tree(path, options);

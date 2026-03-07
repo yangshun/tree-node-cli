@@ -1,7 +1,7 @@
-const fs = require('fs');
-const junk = require('junk');
-const path = require('path');
-const tree = require('../');
+import fs from 'fs';
+import junk from 'junk';
+import path from 'path';
+import tree from '../index';
 
 const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
 const dirs = fs.readdirSync(PATH_TO_TEST).filter(junk.not);
@@ -128,5 +128,4 @@ describe('tree', () => {
       expect(result).toMatchSnapshot();
     });
   });
-  
 });

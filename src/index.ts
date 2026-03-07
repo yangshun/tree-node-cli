@@ -1,11 +1,33 @@
-'use strict';
+import fs from 'fs';
+import nodePath from 'path';
+import prettyBytes from 'pretty-bytes';
+import folderSize from 'fast-folder-size/sync';
 
-const fs = require('fs');
-const nodePath = require('path');
-const prettyBytes = require('pretty-bytes');
-const folderSize = require('fast-folder-size/sync');
+export interface Options {
+  allFiles?: boolean;
+  dirsFirst?: boolean;
+  dirsOnly?: boolean;
+  sizes?: boolean;
+  exclude?: RegExp[];
+  maxDepth?: number;
+  reverse?: boolean;
+  trailingSlash?: boolean;
+  lineAscii?: boolean;
+}
 
-const DEFAULT_OPTIONS = {
+interface RequiredOptions {
+  allFiles: boolean;
+  dirsFirst: boolean;
+  dirsOnly: boolean;
+  sizes: boolean;
+  exclude: RegExp[];
+  maxDepth: number;
+  reverse: boolean;
+  trailingSlash: boolean;
+  lineAscii: boolean;
+}
+
+const DEFAULT_OPTIONS: RequiredOptions = {
   allFiles: false,
   dirsFirst: false,
   dirsOnly: false,
@@ -35,24 +57,24 @@ const SYMBOLS_ASCII = {
 
 const EXCLUDED_PATTERNS = [/\.DS_Store/];
 
-function isHiddenFile(filename) {
+function isHiddenFile(filename: string): boolean {
   return filename[0] === '.';
 }
 
 function print(
-  filename,
-  path,
-  currentDepth,
-  precedingSymbols,
-  options,
-  isLast,
-) {
+  filename: string,
+  path: string,
+  currentDepth: number,
+  precedingSymbols: string,
+  options: RequiredOptions,
+  isLast?: boolean,
+): string[] {
   const isDir = fs.lstatSync(path).isDirectory();
   // We treat all non-directory paths as files and don't
   // recurse into them, including symlinks, sockets, etc.
   const isFile = !isDir;
 
-  const lines = [];
+  const lines: string[] = [];
 
   const SYMBOLS = options.lineAscii ? SYMBOLS_ASCII : SYMBOLS_ANSI;
 
@@ -81,7 +103,7 @@ function print(
   }
 
   // Handle current file.
-  const line = [precedingSymbols];
+  const line: string[] = [precedingSymbols];
   if (currentDepth >= 1) {
     line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
   }
@@ -132,7 +154,7 @@ function print(
     const files = contents.filter(
       (content) => !fs.lstatSync(nodePath.join(path, content)).isDirectory(),
     );
-    contents = [].concat(dirs, files);
+    contents = ([] as string[]).concat(dirs, files);
   }
 
   contents.forEach((content, index) => {
@@ -150,13 +172,13 @@ function print(
       options,
       isCurrentLast,
     );
-    lines.push.apply(lines, linesForFile);
+    lines.push(...linesForFile);
   });
   return lines;
 }
 
-function tree(path, options) {
-  const combinedOptions = Object.assign({}, DEFAULT_OPTIONS, options);
+export default function tree(path: string, options?: Options): string {
+  const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
   return print(
     nodePath.basename(nodePath.join(process.cwd(), path)),
     path,
@@ -165,5 +187,3 @@ function tree(path, options) {
     combinedOptions,
   ).join('\n');
 }
-
-module.exports = tree;
