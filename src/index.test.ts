@@ -174,6 +174,15 @@ describe('tree', () => {
     expect(result).toMatchSnapshot();
   });
 
+  test('fullPath', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
+      fullPath: true,
+    });
+    expect(result).toContain('multi-level/alpha.txt');
+    expect(result).toContain('multi-level/beta/beta.txt');
+    expect(result).toContain('multi-level/beta/alpha/alpha.txt');
+  });
+
   test('filesFirst', () => {
     const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
       filesFirst: true,

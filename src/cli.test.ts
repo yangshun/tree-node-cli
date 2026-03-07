@@ -106,6 +106,15 @@ describe('cli', () => {
     expect(stdout).not.toContain('└');
   });
 
+  test('respects -f full path', async () => {
+    const { stdout } = await run([
+      '-f',
+      path.join(FIXTURES_PATH, 'multi-level'),
+    ]);
+    expect(stdout).toContain('multi-level/alpha.txt');
+    expect(stdout).toContain('multi-level/beta/beta.txt');
+  });
+
   test('respects --dirs-first', async () => {
     const { stdout } = await run([
       '--dirs-first',

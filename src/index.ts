@@ -9,6 +9,7 @@ export interface Options {
   dirsFirst?: boolean;
   dirsOnly?: boolean;
   filesFirst?: boolean;
+  fullPath?: boolean;
   sizes?: boolean;
   exclude?: RegExp[];
   maxDepth?: number;
@@ -24,6 +25,7 @@ interface RequiredOptions {
   dirsFirst: boolean;
   dirsOnly: boolean;
   filesFirst: boolean;
+  fullPath: boolean;
   sizes: boolean;
   exclude: RegExp[];
   maxDepth: number;
@@ -39,6 +41,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   dirsFirst: false,
   dirsOnly: false,
   filesFirst: false,
+  fullPath: false,
   sizes: false,
   exclude: [],
   maxDepth: Number.POSITIVE_INFINITY,
@@ -98,6 +101,7 @@ function print(
   precedingSymbols: string,
   options: RequiredOptions,
   sizeCache: Map<string, number>,
+  rootPath: string,
   isLast?: boolean,
 ): string[] {
   const isDir = fs.lstatSync(path).isDirectory();
@@ -147,7 +151,10 @@ function print(
     line.push(' ');
   }
 
-  line.push(filename);
+  const displayName = options.fullPath
+    ? nodePath.relative(nodePath.dirname(rootPath), path)
+    : filename;
+  line.push(displayName);
 
   if (isDir && options.trailingSlash) {
     line.push('/');
@@ -244,6 +251,7 @@ function print(
           : SYMBOLS.EMPTY),
       options,
       sizeCache,
+      rootPath,
       isCurrentLast,
     );
     lines.push(...linesForFile);
@@ -260,12 +268,14 @@ export default function tree(path: string, options?: Options): string {
     computeSizes(path, sizeCache);
   }
 
+  const resolvedPath = nodePath.join(process.cwd(), path);
   return print(
-    nodePath.basename(nodePath.join(process.cwd(), path)),
+    nodePath.basename(resolvedPath),
     path,
     0,
     '',
     combinedOptions,
     sizeCache,
+    path,
   ).join('\n');
 }
