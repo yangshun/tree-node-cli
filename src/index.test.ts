@@ -209,6 +209,14 @@ describe('tree', () => {
     fs.rmSync(tmpDir, { recursive: true });
   });
 
+  test('date', () => {
+    const result = tree(path.join(PATH_TO_TEST, 'single-file'), {
+      date: true,
+    });
+    // Should contain a date/time pattern like [2025-03-07 15:23:00]
+    expect(result).toMatch(/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/);
+  });
+
   test('permissions', () => {
     const result = tree(path.join(PATH_TO_TEST, 'multi-level'), {
       permissions: true,

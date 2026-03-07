@@ -60,6 +60,7 @@ Usage:
 
 Options:
   -a, --all-files           All files, include hidden files, are printed.
+  -D, --date                Show last modification time for each entry.
   -f, --full-path           Print the full path prefix for each file.
   -i, --no-indent           Print entries without tree indentation lines.
   -p, --permissions         Show file type and permissions.
@@ -99,6 +100,7 @@ const string = tree('path/to/dir', options);
 | Field           | Default                    | Type       | Description                                                                                                                           |
 | --------------- | -------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `allFiles`      | `false`                    | `boolean`  | All files are printed. By default, tree does not print hidden files (those beginning with a dot).                                     |
+| `date`          | `false`                    | `boolean`  | Show last modification time for each entry.                                                                                           |
 | `dirsFirst`     | `false`                    | `boolean`  | List directories before files.                                                                                                        |
 | `fullPath`      | `false`                    | `boolean`  | Print the full path prefix for each file.                                                                                             |
 | `noIndent`      | `false`                    | `boolean`  | Print entries without tree indentation lines.                                                                                         |

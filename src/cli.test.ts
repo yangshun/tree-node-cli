@@ -108,6 +108,14 @@ describe('cli', () => {
     expect(stdout).not.toContain('└');
   });
 
+  test('respects -D date', async () => {
+    const { stdout } = await run([
+      '-D',
+      path.join(FIXTURES_PATH, 'single-file'),
+    ]);
+    expect(stdout).toMatch(/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/);
+  });
+
   test('respects -p permissions', async () => {
     const { stdout } = await run([
       '-p',

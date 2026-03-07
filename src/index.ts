@@ -6,6 +6,7 @@ export type SortBy = 'name' | 'version' | 'mtime' | 'ctime' | 'size';
 
 export interface Options {
   allFiles?: boolean;
+  date?: boolean;
   dirsFirst?: boolean;
   dirsOnly?: boolean;
   filesFirst?: boolean;
@@ -25,6 +26,7 @@ export interface Options {
 
 interface RequiredOptions {
   allFiles: boolean;
+  date: boolean;
   dirsFirst: boolean;
   dirsOnly: boolean;
   filesFirst: boolean;
@@ -44,6 +46,7 @@ interface RequiredOptions {
 
 const DEFAULT_OPTIONS: RequiredOptions = {
   allFiles: false,
+  date: false,
   dirsFirst: false,
   dirsOnly: false,
   filesFirst: false,
@@ -165,6 +168,13 @@ function print(
 
   if (options.permissions) {
     line.push(formatPermissions(stat.mode, isDir));
+    line.push(' ');
+  }
+
+  if (options.date) {
+    const mtime = stat.mtime;
+    const dateStr = `[${mtime.toLocaleDateString('en-CA')} ${mtime.toLocaleTimeString('en-GB')}]`;
+    line.push(dateStr);
     line.push(' ');
   }
 

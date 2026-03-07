@@ -13,6 +13,7 @@ const cli = cac('tree');
 
 cli
   .option('-a, --all-files', 'All files, include hidden files, are printed.')
+  .option('-D, --date', 'Show last modification time for each entry.')
   .option('-f, --full-path', 'Print the full path prefix for each file.')
   .option('-i, --no-indent', 'Print entries without tree indentation lines.')
   .option('-p, --permissions', 'Show file type and permissions.')
@@ -70,6 +71,7 @@ const sortBy = opts.sort
 
 const options: Options = {
   ...(opts.allFiles != null && { allFiles: opts.allFiles as boolean }),
+  ...(opts.date != null && { date: opts.date as boolean }),
   ...(opts.dirsFirst != null && { dirsFirst: opts.dirsFirst as boolean }),
   ...(opts.dirsOnly != null && { dirsOnly: opts.dirsOnly as boolean }),
   ...(opts.filesFirst != null && { filesFirst: opts.filesFirst as boolean }),
