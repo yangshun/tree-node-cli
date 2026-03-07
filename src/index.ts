@@ -1,7 +1,6 @@
 import fs from 'fs';
 import nodePath from 'path';
 import prettyBytes from 'pretty-bytes';
-import folderSize from 'fast-folder-size/sync';
 
 export interface Options {
   allFiles?: boolean;
@@ -61,12 +60,33 @@ function isHiddenFile(filename: string): boolean {
   return filename[0] === '.';
 }
 
+function computeSizes(dirPath: string, cache: Map<string, number>): number {
+  let size = 0;
+
+  for (const entry of fs.readdirSync(dirPath)) {
+    const entryPath = nodePath.join(dirPath, entry);
+    const stat = fs.lstatSync(entryPath);
+
+    if (stat.isDirectory()) {
+      size += computeSizes(entryPath, cache);
+    } else {
+      const fileSize = stat.size;
+      cache.set(entryPath, fileSize);
+      size += fileSize;
+    }
+  }
+
+  cache.set(dirPath, size);
+  return size;
+}
+
 function print(
   filename: string,
   path: string,
   currentDepth: number,
   precedingSymbols: string,
   options: RequiredOptions,
+  sizeCache: Map<string, number>,
   isLast?: boolean,
 ): string[] {
   const isDir = fs.lstatSync(path).isDirectory();
@@ -108,7 +128,7 @@ function print(
     line.push(isLast ? SYMBOLS.LAST_BRANCH : SYMBOLS.BRANCH);
   }
   if (options.sizes) {
-    const filesize = isDir ? folderSize(path) : fs.statSync(path).size;
+    const filesize = sizeCache.get(path) ?? 0;
     const prettifiedFilesize = prettyBytes(filesize);
     line.push(prettifiedFilesize.replace(' ', ''));
     line.push(' ');
@@ -168,6 +188,7 @@ function print(
             : SYMBOLS.VERTICAL
           : SYMBOLS.EMPTY),
       options,
+      sizeCache,
       isCurrentLast,
     );
     lines.push(...linesForFile);
@@ -177,11 +198,16 @@ function print(
 
 export default function tree(path: string, options?: Options): string {
   const combinedOptions: RequiredOptions = { ...DEFAULT_OPTIONS, ...options };
+  const sizeCache = new Map<string, number>();
+  if (combinedOptions.sizes) {
+    computeSizes(path, sizeCache);
+  }
   return print(
     nodePath.basename(nodePath.join(process.cwd(), path)),
     path,
     0,
     '',
     combinedOptions,
+    sizeCache,
   ).join('\n');
 }

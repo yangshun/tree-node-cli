@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "cac": "^7.0.0",
-    "fast-folder-size": "2.4.0",
     "pretty-bytes": "^7.1.0"
   },
   "devDependencies": {

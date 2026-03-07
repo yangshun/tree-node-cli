@@ -121,6 +121,24 @@ describe('cli', () => {
     expect(lastDirIndex).toBeLessThan(firstFileIndex);
   });
 
+  test('respects -s sizes', async () => {
+    const { stdout: withoutSizes } = await run([
+      path.join(FIXTURES_PATH, 'single-file'),
+    ]);
+    const { stdout: withSizes } = await run([
+      '-s',
+      path.join(FIXTURES_PATH, 'single-file'),
+    ]);
+    // Without sizes, just the filename
+    expect(withoutSizes).toContain('alpha.txt');
+    expect(withoutSizes).not.toMatch(/\dB/);
+    // With sizes, each line should have a size prefix like "0B" or "1kB"
+    const lines = withSizes.split('\n');
+    for (const line of lines) {
+      expect(line).toMatch(/\dB/);
+    }
+  });
+
   test('respects -a all files', async () => {
     const { stdout: withoutAll } = await run([
       path.join(FIXTURES_PATH, 'single-level'),

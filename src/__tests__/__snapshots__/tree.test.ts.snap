@@ -622,61 +622,61 @@ exports[`tree > reverse 7`] = `
 `;
 
 exports[`tree > sizes 1`] = `
-"0B chain
-└── 0B alpha
-    └── 0B alpha
-        └── 0B alpha
-            └── 0B alpha
-                └── 0B alpha
-                    └── 0B alpha
-                        └── 0B alpha
-                            └── 0B alpha
-                                └── 0B alpha.txt"
+"24B chain
+└── 24B alpha
+    └── 24B alpha
+        └── 24B alpha
+            └── 24B alpha
+                └── 24B alpha
+                    └── 24B alpha
+                        └── 24B alpha
+                            └── 24B alpha
+                                └── 24B alpha.txt"
 `;
 
 exports[`tree > sizes 2`] = `
-"0B double-level
-├── 0B alpha.txt
-└── 0B beta
-    └── 0B alpha.txt"
+"29B double-level
+├── 9B alpha.txt
+└── 20B beta
+    └── 20B alpha.txt"
 `;
 
 exports[`tree > sizes 3`] = `"0B empty-dir"`;
 
 exports[`tree > sizes 4`] = `
-"0B multi-files
-├── 0B alpha.txt
-├── 0B beta.txt
-└── 0B charlie.txt"
+"68B multi-files
+├── 5B alpha.txt
+├── 17B beta.txt
+└── 46B charlie.txt"
 `;
 
 exports[`tree > sizes 5`] = `
-"0B multi-level
-├── 0B alpha.txt
-├── 0B beta
-│   ├── 0B alpha
-│   │   ├── 0B alpha.txt
-│   │   └── 0B beta
-│   │       └── 0B alpha.txt
-│   ├── 0B beta.txt
-│   └── 0B charlie
-│       └── 0B alpha.txt
-├── 0B charlie
-│   ├── 0B alpha.txt
-│   ├── 0B beta
-│   │   └── 0B alpha.txt
-│   └── 0B charlie.txt
-└── 0B delta.txt"
+"127B multi-level
+├── 10B alpha.txt
+├── 48B beta
+│   ├── 27B alpha
+│   │   ├── 16B alpha.txt
+│   │   └── 11B beta
+│   │       └── 11B alpha.txt
+│   ├── 9B beta.txt
+│   └── 12B charlie
+│       └── 12B alpha.txt
+├── 54B charlie
+│   ├── 13B alpha.txt
+│   ├── 18B beta
+│   │   └── 18B alpha.txt
+│   └── 23B charlie.txt
+└── 15B delta.txt"
 `;
 
 exports[`tree > sizes 6`] = `
-"0B single-file
-└── 0B alpha.txt"
+"5B single-file
+└── 5B alpha.txt"
 `;
 
 exports[`tree > sizes 7`] = `
-"0B single-level
-├── 0B alpha.txt
+"13B single-level
+├── 13B alpha.txt
 └── 0B beta"
 `;
 
