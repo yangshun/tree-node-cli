@@ -2,14 +2,15 @@ import { execFile } from 'child_process';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 
-const CLI_PATH = path.resolve(__dirname, '../../dist/cli.cjs');
+const TSX_PATH = path.resolve(__dirname, '../../node_modules/.bin/tsx');
+const CLI_PATH = path.resolve(__dirname, '../cli.ts');
 const FIXTURES_PATH = path.join(__dirname, '__fixtures__');
 
 function run(
   args: string[] = [],
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   return new Promise((resolve) => {
-    execFile('node', [CLI_PATH, ...args], (error, stdout, stderr) => {
+    execFile(TSX_PATH, [CLI_PATH, ...args], (error, stdout, stderr) => {
       resolve({
         stdout: stdout.trimEnd(),
         stderr: stderr.trimEnd(),
