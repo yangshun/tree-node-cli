@@ -3,6 +3,11 @@ import nodePath from 'path';
 
 import { type TreeJsonEntry, formatAsJson } from './formats/json';
 import { formatAsText } from './formats/text';
+import {
+  type GitignoreFilter,
+  createGitignoreFilter,
+  findGitRoot,
+} from './utils/gitignore';
 
 export type SortBy = 'name' | 'version' | 'mtime' | 'ctime' | 'size';
 
@@ -25,6 +30,7 @@ export interface Options {
   sortBy?: SortBy;
   trailingSlash?: boolean;
   lineAscii?: boolean;
+  gitignore?: boolean;
   unsorted?: boolean;
 }
 
@@ -44,6 +50,7 @@ const DEFAULT_OPTIONS: RequiredOptions = {
   quote: false,
   sizes: false,
   exclude: [],
+  gitignore: true,
   maxDepth: Number.POSITIVE_INFINITY,
   reverse: false,
   sortBy: 'name',
@@ -65,6 +72,14 @@ export interface TreeNode {
   size: number;
   children: TreeNode[];
   openError?: boolean;
+}
+
+// ── Build context ─────────────────────────────────────────
+
+interface BuildContext {
+  sizeCache: Map<string, number>;
+  gitignoreFilter: GitignoreFilter | null;
+  gitRoot: string | null;
 }
 
 // ── Build tree ─────────────────────────────────────────────
@@ -196,6 +211,7 @@ function filterAndOrderContents(
 function getDirectoryContents(
   dirPath: string,
   options: RequiredOptions,
+  ctx: BuildContext,
 ): { entries: string[]; stats: Map<string, fs.Stats>; openError: boolean } {
   let entries: string[];
 
@@ -210,8 +226,37 @@ function getDirectoryContents(
     entries = entries.filter((entry) => !isHiddenFile(entry));
   }
 
+  // Load nested .gitignore and filter ignored entries before stat'ing.
+  if (ctx.gitignoreFilter && ctx.gitRoot) {
+    const absDirPath = nodePath.resolve(dirPath);
+    ctx.gitignoreFilter.loadNestedGitignore(absDirPath);
+    entries = entries.filter((entry) => {
+      const relPath = nodePath.relative(
+        ctx.gitRoot!,
+        nodePath.join(absDirPath, entry),
+      );
+      return !ctx.gitignoreFilter!.ignores(relPath, false);
+    });
+  }
+
   const { stats, accessible } = statEntries(dirPath, entries);
-  const sorted = sortContentsInPlace(accessible, stats, options);
+
+  // Secondary gitignore check for directory-only patterns (e.g. "logs/").
+  let finalAccessible = accessible;
+  if (ctx.gitignoreFilter && ctx.gitRoot) {
+    const absDirPath = nodePath.resolve(dirPath);
+    finalAccessible = accessible.filter((entry) => {
+      const stat = stats.get(entry);
+      if (!stat?.isDirectory()) return true;
+      const relPath = nodePath.relative(
+        ctx.gitRoot!,
+        nodePath.join(absDirPath, entry),
+      );
+      return !ctx.gitignoreFilter!.ignores(relPath, true);
+    });
+  }
+
+  const sorted = sortContentsInPlace(finalAccessible, stats, options);
   const filtered = filterAndOrderContents(sorted, stats, options);
 
   return { entries: filtered, stats, openError: false };
@@ -269,7 +314,7 @@ function buildTree(
   path: string,
   currentDepth: number,
   options: RequiredOptions,
-  sizeCache: Map<string, number>,
+  ctx: BuildContext,
   cachedStat?: fs.Stats,
 ): TreeNode | null {
   const stat = cachedStat ?? fs.lstatSync(path);
@@ -286,7 +331,7 @@ function buildTree(
     isDirectory: isDir,
     mode: stat.mode,
     mtime: stat.mtime,
-    size: sizeCache.get(path) ?? stat.size,
+    size: ctx.sizeCache.get(path) ?? stat.size,
     children: [],
   };
 
@@ -294,7 +339,11 @@ function buildTree(
     return node;
   }
 
-  const { entries, stats, openError } = getDirectoryContents(path, options);
+  const { entries, stats, openError } = getDirectoryContents(
+    path,
+    options,
+    ctx,
+  );
 
   if (openError) {
     node.openError = true;
@@ -306,7 +355,7 @@ function buildTree(
       nodePath.join(path, entry),
       currentDepth + 1,
       options,
-      sizeCache,
+      ctx,
       stats.get(entry),
     );
 
@@ -337,10 +386,21 @@ function buildTreeNode(
     computeSizes(path, sizeCache);
   }
 
-  const resolvedPath = nodePath.join(process.cwd(), path);
+  const resolvedPath = nodePath.resolve(path);
   const rootName = nodePath.basename(resolvedPath);
 
-  return buildTree(rootName, path, 0, options, sizeCache);
+  let gitignoreFilter: GitignoreFilter | null = null;
+  let gitRoot: string | null = null;
+  if (options.gitignore) {
+    gitRoot = findGitRoot(resolvedPath);
+    if (gitRoot) {
+      gitignoreFilter = createGitignoreFilter(gitRoot);
+    }
+  }
+
+  const ctx: BuildContext = { sizeCache, gitignoreFilter, gitRoot };
+
+  return buildTree(rootName, path, 0, options, ctx);
 }
 
 /**

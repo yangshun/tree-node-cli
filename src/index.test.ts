@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import fs from 'fs';
 import { isNotJunk } from 'junk';
 import os from 'os';
@@ -772,5 +773,82 @@ describe('tree with special characters in filenames', () => {
     expect(result).not.toContain('file with spaces.txt');
     expect(result).not.toContain('dir with spaces');
     expect(result).toContain('file-with-dashes.txt');
+  });
+});
+
+describe('tree with gitignore', () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-gitignore-'));
+    execSync('git init', { cwd: tmpDir });
+    fs.writeFileSync(
+      path.join(tmpDir, '.gitignore'),
+      'ignored-dir/\nignored-file.txt\n',
+    );
+    fs.mkdirSync(path.join(tmpDir, 'ignored-dir'));
+    fs.writeFileSync(path.join(tmpDir, 'ignored-dir', 'file.txt'), '');
+    fs.writeFileSync(path.join(tmpDir, 'ignored-file.txt'), '');
+    fs.writeFileSync(path.join(tmpDir, 'visible-file.txt'), '');
+    fs.mkdirSync(path.join(tmpDir, 'visible-dir'));
+    fs.writeFileSync(path.join(tmpDir, 'visible-dir', 'nested.txt'), '');
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true });
+  });
+
+  test('excludes gitignored files by default', () => {
+    const result = tree(tmpDir);
+    expect(result).not.toContain('ignored-dir');
+    expect(result).not.toContain('ignored-file.txt');
+    expect(result).toContain('visible-file.txt');
+    expect(result).toContain('visible-dir');
+  });
+
+  test('shows gitignored files when gitignore is false', () => {
+    const result = tree(tmpDir, { gitignore: false });
+    expect(result).toContain('ignored-dir');
+    expect(result).toContain('ignored-file.txt');
+    expect(result).toContain('visible-file.txt');
+  });
+
+  test('works with nested .gitignore', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, 'visible-dir', '.gitignore'),
+      'nested.txt\n',
+    );
+    const result = tree(tmpDir, { allFiles: true });
+    expect(result).not.toContain('nested.txt');
+    expect(result).toContain('visible-dir');
+  });
+
+  test('gitignore has no effect outside git repo', () => {
+    const nonGitDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-nogit-'));
+    fs.writeFileSync(path.join(nonGitDir, '.gitignore'), '*.txt\n');
+    fs.writeFileSync(path.join(nonGitDir, 'file.txt'), '');
+
+    const result = tree(nonGitDir);
+    expect(result).toContain('file.txt');
+
+    fs.rmSync(nonGitDir, { recursive: true });
+  });
+
+  test('gitignore works together with exclude option', () => {
+    const result = tree(tmpDir, { exclude: [/visible-dir/] });
+    expect(result).not.toContain('ignored-dir');
+    expect(result).not.toContain('ignored-file.txt');
+    expect(result).not.toContain('visible-dir');
+    expect(result).toContain('visible-file.txt');
+  });
+
+  test('gitignore works with treeJson', () => {
+    const result = treeJson(tmpDir);
+    const dir = asDir(result);
+    const names = dir.contents.map((c) => c.name);
+    expect(names).not.toContain('ignored-dir');
+    expect(names).not.toContain('ignored-file.txt');
+    expect(names).toContain('visible-file.txt');
+    expect(names).toContain('visible-dir');
   });
 });

@@ -181,10 +181,7 @@ describe('formatAsText', () => {
       makeDir('forbidden', [], { path: 'root/forbidden', openError: true }),
     ]);
     const lines = formatAsText(node, opts({ trailingSlash: true }), '.');
-    expect(lines).toEqual([
-      'root/',
-      '└── forbidden/ [error opening dir]',
-    ]);
+    expect(lines).toEqual(['root/', '└── forbidden/ [error opening dir]']);
   });
 
   test('vertical line for non-last siblings', () => {

@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "cac": "^7.0.0",
+    "ignore": "^7.0.5",
     "pretty-bytes": "^7.1.0"
   },
   "devDependencies": {

@@ -11,7 +11,7 @@ Note: Symlinks are not followed. Directories that cannot be opened (e.g. due to 
 Instantly execute the command in your current directory via `npx` / `pnpx` / `bunx` / `yarn dlx`:
 
 ```bash
-npx tree-node-cli -I "node_modules" # ignore node_modules
+npx tree-node-cli
 ```
 
 ## Installation
@@ -87,6 +87,8 @@ Options:
   --files-first             List files before directories.
   --sort <type>             Sort the output by type: name, version, mtime,
                             ctime, size.
+  --gitignore               Respect .gitignore files (enabled by default).
+                            Use --no-gitignore to disable.
   -h, --help                Display this message
   --version                 Display version number
 ```
@@ -158,6 +160,7 @@ console.log(result);
 | `dirsOnly`      | `false`                    | `boolean`  | List directories only.                                                                                                                                                                                                                                                                                |
 | `sizes`         | `false`                    | `boolean`  | Print the size of each file in bytes along with the name.                                                                                                                                                                                                                                             |
 | `du`            | `false`                    | `boolean`  | For each directory, report its size as the accumulation of sizes of all its files and sub-directories. Implies `sizes`.                                                                                                                                                                               |
+| `gitignore`     | `true`                     | `boolean`  | Respect `.gitignore` files when inside a git repository. Use `--no-gitignore` to disable.                                                                                                                                                                                                             |
 | `exclude`       | `[]`                       | `RegExp[]` | An array of regex to test each filename against. Matching files will be excluded and matching directories will not be traversed into. To exclude a directory's contents while still showing the directory itself, use a regex that matches the path with a trailing slash (e.g., `/node_modules\//`). |
 | `maxDepth`      | `Number.POSITIVE_INFINITY` | `number`   | Max display depth of the directory tree.                                                                                                                                                                                                                                                              |
 | `reverse`       | `false`                    | `boolean`  | Sort the output in reverse alphabetic order.                                                                                                                                                                                                                                                          |

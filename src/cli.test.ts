@@ -1,8 +1,8 @@
-import { execFile } from 'child_process';
+import { execFile, execSync } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 const TSX_PATH = path.resolve(__dirname, '../node_modules/.bin/tsx');
 const CLI_PATH = path.resolve(__dirname, 'cli.ts');
@@ -360,5 +360,38 @@ describe('cli', () => {
     ]);
     expect(withoutAll).not.toContain('.gitkeep');
     expect(withAll).toContain('.gitkeep');
+  });
+
+  test('help includes --gitignore option', async () => {
+    const { stdout } = await run(['-h']);
+    expect(stdout).toContain('--gitignore');
+  });
+
+  describe('--no-gitignore', () => {
+    let tmpDir: string;
+
+    beforeEach(() => {
+      tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-cli-gitignore-'));
+      execSync('git init', { cwd: tmpDir });
+      fs.writeFileSync(path.join(tmpDir, '.gitignore'), 'secret.txt\n');
+      fs.writeFileSync(path.join(tmpDir, 'secret.txt'), '');
+      fs.writeFileSync(path.join(tmpDir, 'visible.txt'), '');
+    });
+
+    afterEach(() => {
+      fs.rmSync(tmpDir, { recursive: true });
+    });
+
+    test('excludes gitignored files by default', async () => {
+      const { stdout } = await run([tmpDir]);
+      expect(stdout).not.toContain('secret.txt');
+      expect(stdout).toContain('visible.txt');
+    });
+
+    test('shows gitignored files with --no-gitignore', async () => {
+      const { stdout } = await run(['--no-gitignore', tmpDir]);
+      expect(stdout).toContain('secret.txt');
+      expect(stdout).toContain('visible.txt');
+    });
   });
 });

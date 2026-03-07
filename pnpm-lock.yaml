@@ -11,6 +11,9 @@ importers:
       cac:
         specifier: ^7.0.0
         version: 7.0.0
+      ignore:
+        specifier: ^7.0.5
+        version: 7.0.5
       pretty-bytes:
         specifier: ^7.1.0
         version: 7.1.0
@@ -897,6 +900,10 @@ packages:
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
 
+  ignore@7.0.5:
+    resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
+    engines: {node: '>= 4'}
+
   import-without-cache@0.2.5:
     resolution: {integrity: sha512-B6Lc2s6yApwnD2/pMzFh/d5AVjdsDXjgkeJ766FmFuJELIGHNycKRj+l3A39yZPM4CchqNCB4RITEAYB1KUM6A==}
     engines: {node: '>=20.19.0'}
@@ -1746,6 +1753,8 @@ snapshots:
   hookable@6.0.1: {}
 
   html-escaper@2.0.2: {}
+
+  ignore@7.0.5: {}
 
   import-without-cache@0.2.5: {}
 

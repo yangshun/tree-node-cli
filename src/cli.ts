@@ -50,6 +50,10 @@ cli
   .option(
     '--sort <type>',
     'Sort the output by type: name, version, mtime, ctime, size.',
+  )
+  .option(
+    '--gitignore',
+    'Respect .gitignore files (enabled by default). Use --no-gitignore to disable.',
   );
 
 cli.help();
@@ -105,6 +109,7 @@ const options: Options = {
   }),
   ...(opts.lineAscii != null && { lineAscii: opts.lineAscii as boolean }),
   ...(opts.unsorted != null && { unsorted: opts.unsorted as boolean }),
+  ...(opts.gitignore != null && { gitignore: opts.gitignore as boolean }),
 };
 
 if (opts.json) {
