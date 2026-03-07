@@ -9,7 +9,10 @@ import { tree, treeJson } from './index';
 function asDir(entry: TreeJsonEntry | null) {
   expect(entry).not.toBeNull();
   expect(entry!.type).toBe('directory');
-  return entry as TreeJsonEntry & { type: 'directory'; contents: TreeJsonEntry[] };
+  return entry as TreeJsonEntry & {
+    type: 'directory';
+    contents: TreeJsonEntry[];
+  };
 }
 
 const PATH_TO_TEST = path.join(__dirname, '__fixtures__');
@@ -214,7 +217,10 @@ describe('tree', () => {
 
   test('prune removes nested empty dirs', () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-prune-'));
-    fs.mkdirSync(path.join(tmpDir, 'empty-parent', 'empty-child', 'empty-leaf'), { recursive: true });
+    fs.mkdirSync(
+      path.join(tmpDir, 'empty-parent', 'empty-child', 'empty-leaf'),
+      { recursive: true },
+    );
     fs.writeFileSync(path.join(tmpDir, 'file.txt'), '');
 
     const result = tree(tmpDir, { prune: true });
@@ -326,9 +332,7 @@ describe('tree', () => {
   });
 
   test('json with reverse', () => {
-    const normal = asDir(
-      treeJson(path.join(PATH_TO_TEST, 'multi-files')),
-    );
+    const normal = asDir(treeJson(path.join(PATH_TO_TEST, 'multi-files')));
     const reversed = asDir(
       treeJson(path.join(PATH_TO_TEST, 'multi-files'), { reverse: true }),
     );
@@ -520,7 +524,10 @@ describe('tree', () => {
     fs.mkdirSync(path.join(tmpDir, 'included'));
     fs.writeFileSync(path.join(tmpDir, 'included', 'a.txt'), 'hello');
     fs.mkdirSync(path.join(tmpDir, 'excluded'));
-    fs.writeFileSync(path.join(tmpDir, 'excluded', 'big.txt'), 'x'.repeat(10000));
+    fs.writeFileSync(
+      path.join(tmpDir, 'excluded', 'big.txt'),
+      'x'.repeat(10000),
+    );
     fs.writeFileSync(path.join(tmpDir, 'root.txt'), 'root');
 
     const result = tree(tmpDir, { du: true, exclude: [/excluded/] });
@@ -529,7 +536,9 @@ describe('tree', () => {
     expect(result).toContain('root.txt');
 
     // Directory sizes should still reflect real filesystem size (including excluded contents)
-    const jsonResult = asDir(treeJson(tmpDir, { du: true, exclude: [/excluded/] }));
+    const jsonResult = asDir(
+      treeJson(tmpDir, { du: true, exclude: [/excluded/] }),
+    );
     expect(jsonResult.size).toBeDefined();
     // Root size should include the excluded directory's contents
     expect(jsonResult.size!).toBeGreaterThan(10000);
@@ -540,7 +549,10 @@ describe('tree', () => {
   test('combined: du + maxDepth', () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tree-du-depth-'));
     fs.mkdirSync(path.join(tmpDir, 'level1', 'level2'), { recursive: true });
-    fs.writeFileSync(path.join(tmpDir, 'level1', 'level2', 'deep.txt'), 'x'.repeat(5000));
+    fs.writeFileSync(
+      path.join(tmpDir, 'level1', 'level2', 'deep.txt'),
+      'x'.repeat(5000),
+    );
     fs.writeFileSync(path.join(tmpDir, 'level1', 'shallow.txt'), 'hi');
 
     const result = tree(tmpDir, { du: true, maxDepth: 1 });

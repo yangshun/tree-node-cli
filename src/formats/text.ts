@@ -75,11 +75,11 @@ export function formatAsText(
       options.noIndent
         ? ''
         : precedingSymbols +
-          (currentDepth >= 1
-            ? isLast
-              ? SYMBOLS.INDENT
-              : SYMBOLS.VERTICAL
-            : SYMBOLS.EMPTY),
+            (currentDepth >= 1
+              ? isLast
+                ? SYMBOLS.INDENT
+                : SYMBOLS.VERTICAL
+              : SYMBOLS.EMPTY),
       currentDepth + 1,
       isCurrentLast,
     );

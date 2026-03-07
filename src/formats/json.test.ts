@@ -71,10 +71,7 @@ describe('formatAsJson', () => {
   });
 
   test('formats a directory with children', () => {
-    const node = makeDir('src', [
-      makeFile('a.ts'),
-      makeFile('b.ts'),
-    ]);
+    const node = makeDir('src', [makeFile('a.ts'), makeFile('b.ts')]);
     expect(formatAsJson(node, opts())).toEqual({
       type: 'directory',
       name: 'src',
@@ -135,9 +132,7 @@ describe('formatAsJson', () => {
   });
 
   test('nested directories', () => {
-    const node = makeDir('root', [
-      makeDir('sub', [makeFile('file.txt')]),
-    ]);
+    const node = makeDir('root', [makeDir('sub', [makeFile('file.txt')])]);
     const result = formatAsJson(node, opts());
     expect(result.type).toBe('directory');
     if (result.type === 'directory') {

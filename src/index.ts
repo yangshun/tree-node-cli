@@ -68,12 +68,16 @@ export interface TreeNode {
 
 // ── Build tree ─────────────────────────────────────────────
 
-/** Checks whether a filename starts with a dot (hidden file convention). */
+/**
+ * Checks whether a filename starts with a dot (hidden file convention).
+ */
 function isHiddenFile(filename: string): boolean {
   return filename[0] === '.';
 }
 
-/** Determines whether an entry should be excluded based on exclude patterns and max depth. */
+/**
+ * Determines whether an entry should be excluded based on exclude patterns and max depth.
+ */
 function isExcluded(
   path: string,
   currentDepth: number,
@@ -153,7 +157,9 @@ function sortContents(
   return contents;
 }
 
-/** Filters out files (when `dirsOnly`) and reorders entries (when `dirsFirst` or `filesFirst`). */
+/**
+ * Filters out files (when `dirsOnly`) and reorders entries (when `dirsFirst` or `filesFirst`).
+ */
 function filterAndOrderContents(
   contents: string[],
   stats: Map<string, fs.Stats>,
@@ -182,7 +188,9 @@ function filterAndOrderContents(
   return files.concat(dirs);
 }
 
-/** Reads, filters, stats, sorts, and orders directory entries in a single pass. */
+/**
+ * Reads, filters, stats, sorts, and orders directory entries in a single pass.
+ */
 function getDirectoryContents(
   dirPath: string,
   options: RequiredOptions,
@@ -309,7 +317,9 @@ function buildTreeNode(
   return buildTree(rootName, path, 0, options, sizeCache);
 }
 
-/** Merges user options with defaults, applies implicit flags (e.g. `du` implies `sizes`). */
+/**
+ * Merges user options with defaults, applies implicit flags (e.g. `du` implies `sizes`).
+ */
 function resolveOptions(options?: Options): RequiredOptions {
   return {
     ...DEFAULT_OPTIONS,
@@ -331,7 +341,9 @@ export function tree(path: string, options?: Options): string {
   return formatAsText(root, combinedOptions, path).join('\n');
 }
 
-/** Returns the directory tree as a structured JSON entry, or `null` if the root is excluded. */
+/**
+ * Returns the directory tree as a structured JSON entry, or `null` if the root is excluded.
+ */
 export function treeJson(
   path: string,
   options?: Options,

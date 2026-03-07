@@ -152,9 +152,7 @@ describe('formatAsText', () => {
   });
 
   test('fullPath shows relative path', () => {
-    const node = makeDir('src', [
-      makeFile('a.ts', { path: 'src/a.ts' }),
-    ]);
+    const node = makeDir('src', [makeFile('a.ts', { path: 'src/a.ts' })]);
     const lines = formatAsText(node, opts({ fullPath: true }), 'src');
     expect(lines[1]).toBe('└── src/a.ts');
   });
@@ -167,11 +165,9 @@ describe('formatAsText', () => {
 
   test('vertical line for non-last siblings', () => {
     const node = makeDir('root', [
-      makeDir(
-        'dir1',
-        [makeFile('file.txt', { path: 'root/dir1/file.txt' })],
-        { path: 'root/dir1' },
-      ),
+      makeDir('dir1', [makeFile('file.txt', { path: 'root/dir1/file.txt' })], {
+        path: 'root/dir1',
+      }),
       makeFile('other.txt', { path: 'root/other.txt' }),
     ]);
     const lines = formatAsText(node, opts(), '.');
