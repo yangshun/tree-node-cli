@@ -26,13 +26,33 @@ exports[`tree > allFiles 3`] = `
 `;
 
 exports[`tree > allFiles 4`] = `
+"hidden-files
+├── .hidden
+├── .hidden-dir
+│   └── nested.txt
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > allFiles 5`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+│   └── inner.txt
+├── charlie.txt
+├── delta-dir
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > allFiles 6`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > allFiles 5`] = `
+exports[`tree > allFiles 7`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -53,7 +73,7 @@ exports[`tree > allFiles 5`] = `
 └── delta.txt"
 `;
 
-exports[`tree > allFiles 6`] = `
+exports[`tree > allFiles 8`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -62,16 +82,33 @@ exports[`tree > allFiles 6`] = `
 └── file3.txt"
 `;
 
-exports[`tree > allFiles 7`] = `
+exports[`tree > allFiles 9`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > allFiles 8`] = `
+exports[`tree > allFiles 10`] = `
 "single-level
 ├── alpha.txt
 └── beta
     └── .gitkeep"
+`;
+
+exports[`tree > allFiles 11`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語
+    └── ファイル.txt"
+`;
+
+exports[`tree > allFiles 12`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
 `;
 
 exports[`tree > combined: allFiles + dirsOnly 1`] = `
@@ -148,13 +185,30 @@ exports[`tree > default 2`] = `
 exports[`tree > default 3`] = `"empty-dir"`;
 
 exports[`tree > default 4`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > default 5`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+│   └── inner.txt
+├── charlie.txt
+├── delta-dir
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > default 6`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > default 5`] = `
+exports[`tree > default 7`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -173,7 +227,7 @@ exports[`tree > default 5`] = `
 └── delta.txt"
 `;
 
-exports[`tree > default 6`] = `
+exports[`tree > default 8`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -182,15 +236,32 @@ exports[`tree > default 6`] = `
 └── file3.txt"
 `;
 
-exports[`tree > default 7`] = `
+exports[`tree > default 9`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > default 8`] = `
+exports[`tree > default 10`] = `
 "single-level
 ├── alpha.txt
 └── beta"
+`;
+
+exports[`tree > default 11`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語
+    └── ファイル.txt"
+`;
+
+exports[`tree > default 12`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
 `;
 
 exports[`tree > dirsFirst 1`] = `
@@ -216,13 +287,30 @@ exports[`tree > dirsFirst 2`] = `
 exports[`tree > dirsFirst 3`] = `"empty-dir"`;
 
 exports[`tree > dirsFirst 4`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > dirsFirst 5`] = `
+"mixed-content
+├── bravo-dir
+│   └── inner.txt
+├── delta-dir
+│   └── inner.txt
+├── alpha.txt
+├── charlie.txt
+└── echo.txt"
+`;
+
+exports[`tree > dirsFirst 6`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > dirsFirst 5`] = `
+exports[`tree > dirsFirst 7`] = `
 "multi-level
 ├── beta
 │   ├── alpha
@@ -241,7 +329,7 @@ exports[`tree > dirsFirst 5`] = `
 └── delta.txt"
 `;
 
-exports[`tree > dirsFirst 6`] = `
+exports[`tree > dirsFirst 8`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -250,15 +338,32 @@ exports[`tree > dirsFirst 6`] = `
 └── file3.txt"
 `;
 
-exports[`tree > dirsFirst 7`] = `
+exports[`tree > dirsFirst 9`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > dirsFirst 8`] = `
+exports[`tree > dirsFirst 10`] = `
 "single-level
 ├── beta
 └── alpha.txt"
+`;
+
+exports[`tree > dirsFirst 11`] = `
+"unicode-names
+├── 日本語
+│   └── ファイル.txt
+├── café.txt
+├── emoji-🎉.txt
+└── über.txt"
+`;
+
+exports[`tree > dirsFirst 12`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
 `;
 
 exports[`tree > dirsOnly 1`] = `
@@ -280,9 +385,17 @@ exports[`tree > dirsOnly 2`] = `
 
 exports[`tree > dirsOnly 3`] = `"empty-dir"`;
 
-exports[`tree > dirsOnly 4`] = `"multi-files"`;
+exports[`tree > dirsOnly 4`] = `"hidden-files"`;
 
 exports[`tree > dirsOnly 5`] = `
+"mixed-content
+├── bravo-dir
+└── delta-dir"
+`;
+
+exports[`tree > dirsOnly 6`] = `"multi-files"`;
+
+exports[`tree > dirsOnly 7`] = `
 "multi-level
 ├── beta
 │   ├── alpha
@@ -292,14 +405,21 @@ exports[`tree > dirsOnly 5`] = `
     └── beta"
 `;
 
-exports[`tree > dirsOnly 6`] = `"numbered-files"`;
+exports[`tree > dirsOnly 8`] = `"numbered-files"`;
 
-exports[`tree > dirsOnly 7`] = `"single-file"`;
+exports[`tree > dirsOnly 9`] = `"single-file"`;
 
-exports[`tree > dirsOnly 8`] = `
+exports[`tree > dirsOnly 10`] = `
 "single-level
 └── beta"
 `;
+
+exports[`tree > dirsOnly 11`] = `
+"unicode-names
+└── 日本語"
+`;
+
+exports[`tree > dirsOnly 12`] = `"varied-sizes"`;
 
 exports[`tree > exclude 1`] = `
 "chain
@@ -322,12 +442,29 @@ exports[`tree > exclude 2`] = `
 exports[`tree > exclude 3`] = `"empty-dir"`;
 
 exports[`tree > exclude 4`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > exclude 5`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+│   └── inner.txt
+├── charlie.txt
+├── delta-dir
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > exclude 6`] = `
 "multi-files
 ├── alpha.txt
 └── charlie.txt"
 `;
 
-exports[`tree > exclude 5`] = `
+exports[`tree > exclude 7`] = `
 "multi-level
 ├── alpha.txt
 ├── charlie
@@ -336,7 +473,7 @@ exports[`tree > exclude 5`] = `
 └── delta.txt"
 `;
 
-exports[`tree > exclude 6`] = `
+exports[`tree > exclude 8`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -345,17 +482,34 @@ exports[`tree > exclude 6`] = `
 └── file3.txt"
 `;
 
-exports[`tree > exclude 7`] = `
+exports[`tree > exclude 9`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 8`] = `
+exports[`tree > exclude 10`] = `
 "single-level
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 9`] = `
+exports[`tree > exclude 11`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語
+    └── ファイル.txt"
+`;
+
+exports[`tree > exclude 12`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
+`;
+
+exports[`tree > exclude 13`] = `
 "chain
 └── alpha
     └── alpha
@@ -368,22 +522,38 @@ exports[`tree > exclude 9`] = `
                                 └── alpha.txt"
 `;
 
-exports[`tree > exclude 10`] = `
+exports[`tree > exclude 14`] = `
 "double-level
 ├── alpha.txt
 └── beta
     └── alpha.txt"
 `;
 
-exports[`tree > exclude 11`] = `"empty-dir"`;
+exports[`tree > exclude 15`] = `"empty-dir"`;
 
-exports[`tree > exclude 12`] = `
+exports[`tree > exclude 16`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > exclude 17`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+│   └── inner.txt
+├── delta-dir
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > exclude 18`] = `
 "multi-files
 ├── alpha.txt
 └── beta.txt"
 `;
 
-exports[`tree > exclude 13`] = `
+exports[`tree > exclude 19`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -395,7 +565,7 @@ exports[`tree > exclude 13`] = `
 └── delta.txt"
 `;
 
-exports[`tree > exclude 14`] = `
+exports[`tree > exclude 20`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -404,18 +574,35 @@ exports[`tree > exclude 14`] = `
 └── file3.txt"
 `;
 
-exports[`tree > exclude 15`] = `
+exports[`tree > exclude 21`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 16`] = `
+exports[`tree > exclude 22`] = `
 "single-level
 ├── alpha.txt
 └── beta"
 `;
 
-exports[`tree > exclude 17`] = `
+exports[`tree > exclude 23`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語
+    └── ファイル.txt"
+`;
+
+exports[`tree > exclude 24`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
+`;
+
+exports[`tree > exclude 25`] = `
 "chain
 └── alpha
     └── alpha
@@ -428,25 +615,41 @@ exports[`tree > exclude 17`] = `
                                 └── alpha.txt"
 `;
 
-exports[`tree > exclude 18`] = `
+exports[`tree > exclude 26`] = `
 "double-level
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 19`] = `"empty-dir"`;
+exports[`tree > exclude 27`] = `"empty-dir"`;
 
-exports[`tree > exclude 20`] = `
+exports[`tree > exclude 28`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > exclude 29`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+│   └── inner.txt
+├── delta-dir
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > exclude 30`] = `
 "multi-files
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 21`] = `
+exports[`tree > exclude 31`] = `
 "multi-level
 ├── alpha.txt
 └── delta.txt"
 `;
 
-exports[`tree > exclude 22`] = `
+exports[`tree > exclude 32`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -455,14 +658,31 @@ exports[`tree > exclude 22`] = `
 └── file3.txt"
 `;
 
-exports[`tree > exclude 23`] = `
+exports[`tree > exclude 33`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > exclude 24`] = `
+exports[`tree > exclude 34`] = `
 "single-level
 └── alpha.txt"
+`;
+
+exports[`tree > exclude 35`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語
+    └── ファイル.txt"
+`;
+
+exports[`tree > exclude 36`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
 `;
 
 exports[`tree > lineAscii 1`] = `
@@ -488,13 +708,30 @@ exports[`tree > lineAscii 2`] = `
 exports[`tree > lineAscii 3`] = `"empty-dir"`;
 
 exports[`tree > lineAscii 4`] = `
+"hidden-files
+|-- another.txt
+\`-- visible.txt"
+`;
+
+exports[`tree > lineAscii 5`] = `
+"mixed-content
+|-- alpha.txt
+|-- bravo-dir
+|   \`-- inner.txt
+|-- charlie.txt
+|-- delta-dir
+|   \`-- inner.txt
+\`-- echo.txt"
+`;
+
+exports[`tree > lineAscii 6`] = `
 "multi-files
 |-- alpha.txt
 |-- beta.txt
 \`-- charlie.txt"
 `;
 
-exports[`tree > lineAscii 5`] = `
+exports[`tree > lineAscii 7`] = `
 "multi-level
 |-- alpha.txt
 |-- beta
@@ -513,7 +750,7 @@ exports[`tree > lineAscii 5`] = `
 \`-- delta.txt"
 `;
 
-exports[`tree > lineAscii 6`] = `
+exports[`tree > lineAscii 8`] = `
 "numbered-files
 |-- file1.txt
 |-- file10.txt
@@ -522,18 +759,35 @@ exports[`tree > lineAscii 6`] = `
 \`-- file3.txt"
 `;
 
-exports[`tree > lineAscii 7`] = `
+exports[`tree > lineAscii 9`] = `
 "single-file
 \`-- alpha.txt"
 `;
 
-exports[`tree > lineAscii 8`] = `
+exports[`tree > lineAscii 10`] = `
 "single-level
 |-- alpha.txt
 \`-- beta"
 `;
 
-exports[`tree > lineAscii 9`] = `
+exports[`tree > lineAscii 11`] = `
+"unicode-names
+|-- café.txt
+|-- emoji-🎉.txt
+|-- über.txt
+\`-- 日本語
+    \`-- ファイル.txt"
+`;
+
+exports[`tree > lineAscii 12`] = `
+"varied-sizes
+|-- large.txt
+|-- medium.txt
+|-- small.txt
+\`-- tiny.txt"
+`;
+
+exports[`tree > lineAscii 13`] = `
 "chain
 └── alpha
     └── alpha
@@ -546,23 +800,40 @@ exports[`tree > lineAscii 9`] = `
                                 └── alpha.txt"
 `;
 
-exports[`tree > lineAscii 10`] = `
+exports[`tree > lineAscii 14`] = `
 "double-level
 ├── alpha.txt
 └── beta
     └── alpha.txt"
 `;
 
-exports[`tree > lineAscii 11`] = `"empty-dir"`;
+exports[`tree > lineAscii 15`] = `"empty-dir"`;
 
-exports[`tree > lineAscii 12`] = `
+exports[`tree > lineAscii 16`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > lineAscii 17`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+│   └── inner.txt
+├── charlie.txt
+├── delta-dir
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > lineAscii 18`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > lineAscii 13`] = `
+exports[`tree > lineAscii 19`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -581,7 +852,7 @@ exports[`tree > lineAscii 13`] = `
 └── delta.txt"
 `;
 
-exports[`tree > lineAscii 14`] = `
+exports[`tree > lineAscii 20`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -590,15 +861,32 @@ exports[`tree > lineAscii 14`] = `
 └── file3.txt"
 `;
 
-exports[`tree > lineAscii 15`] = `
+exports[`tree > lineAscii 21`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > lineAscii 16`] = `
+exports[`tree > lineAscii 22`] = `
 "single-level
 ├── alpha.txt
 └── beta"
+`;
+
+exports[`tree > lineAscii 23`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語
+    └── ファイル.txt"
+`;
+
+exports[`tree > lineAscii 24`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
 `;
 
 exports[`tree > maxDepth 1`] = `
@@ -615,13 +903,28 @@ exports[`tree > maxDepth 2`] = `
 exports[`tree > maxDepth 3`] = `"empty-dir"`;
 
 exports[`tree > maxDepth 4`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > maxDepth 5`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+├── charlie.txt
+├── delta-dir
+└── echo.txt"
+`;
+
+exports[`tree > maxDepth 6`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > maxDepth 5`] = `
+exports[`tree > maxDepth 7`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -629,7 +932,7 @@ exports[`tree > maxDepth 5`] = `
 └── delta.txt"
 `;
 
-exports[`tree > maxDepth 6`] = `
+exports[`tree > maxDepth 8`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -638,40 +941,73 @@ exports[`tree > maxDepth 6`] = `
 └── file3.txt"
 `;
 
-exports[`tree > maxDepth 7`] = `
+exports[`tree > maxDepth 9`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > maxDepth 8`] = `
+exports[`tree > maxDepth 10`] = `
 "single-level
 ├── alpha.txt
 └── beta"
 `;
 
-exports[`tree > maxDepth 9`] = `
+exports[`tree > maxDepth 11`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語"
+`;
+
+exports[`tree > maxDepth 12`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
+`;
+
+exports[`tree > maxDepth 13`] = `
 "chain
 └── alpha
     └── alpha"
 `;
 
-exports[`tree > maxDepth 10`] = `
+exports[`tree > maxDepth 14`] = `
 "double-level
 ├── alpha.txt
 └── beta
     └── alpha.txt"
 `;
 
-exports[`tree > maxDepth 11`] = `"empty-dir"`;
+exports[`tree > maxDepth 15`] = `"empty-dir"`;
 
-exports[`tree > maxDepth 12`] = `
+exports[`tree > maxDepth 16`] = `
+"hidden-files
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > maxDepth 17`] = `
+"mixed-content
+├── alpha.txt
+├── bravo-dir
+│   └── inner.txt
+├── charlie.txt
+├── delta-dir
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > maxDepth 18`] = `
 "multi-files
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > maxDepth 13`] = `
+exports[`tree > maxDepth 19`] = `
 "multi-level
 ├── alpha.txt
 ├── beta
@@ -685,7 +1021,7 @@ exports[`tree > maxDepth 13`] = `
 └── delta.txt"
 `;
 
-exports[`tree > maxDepth 14`] = `
+exports[`tree > maxDepth 20`] = `
 "numbered-files
 ├── file1.txt
 ├── file10.txt
@@ -694,15 +1030,32 @@ exports[`tree > maxDepth 14`] = `
 └── file3.txt"
 `;
 
-exports[`tree > maxDepth 15`] = `
+exports[`tree > maxDepth 21`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > maxDepth 16`] = `
+exports[`tree > maxDepth 22`] = `
 "single-level
 ├── alpha.txt
 └── beta"
+`;
+
+exports[`tree > maxDepth 23`] = `
+"unicode-names
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語
+    └── ファイル.txt"
+`;
+
+exports[`tree > maxDepth 24`] = `
+"varied-sizes
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
 `;
 
 exports[`tree > reverse 1`] = `
@@ -728,13 +1081,30 @@ exports[`tree > reverse 2`] = `
 exports[`tree > reverse 3`] = `"empty-dir"`;
 
 exports[`tree > reverse 4`] = `
+"hidden-files
+├── visible.txt
+└── another.txt"
+`;
+
+exports[`tree > reverse 5`] = `
+"mixed-content
+├── echo.txt
+├── delta-dir
+│   └── inner.txt
+├── charlie.txt
+├── bravo-dir
+│   └── inner.txt
+└── alpha.txt"
+`;
+
+exports[`tree > reverse 6`] = `
 "multi-files
 ├── charlie.txt
 ├── beta.txt
 └── alpha.txt"
 `;
 
-exports[`tree > reverse 5`] = `
+exports[`tree > reverse 7`] = `
 "multi-level
 ├── delta.txt
 ├── charlie
@@ -753,7 +1123,7 @@ exports[`tree > reverse 5`] = `
 └── alpha.txt"
 `;
 
-exports[`tree > reverse 6`] = `
+exports[`tree > reverse 8`] = `
 "numbered-files
 ├── file3.txt
 ├── file20.txt
@@ -762,15 +1132,32 @@ exports[`tree > reverse 6`] = `
 └── file1.txt"
 `;
 
-exports[`tree > reverse 7`] = `
+exports[`tree > reverse 9`] = `
 "single-file
 └── alpha.txt"
 `;
 
-exports[`tree > reverse 8`] = `
+exports[`tree > reverse 10`] = `
 "single-level
 ├── beta
 └── alpha.txt"
+`;
+
+exports[`tree > reverse 11`] = `
+"unicode-names
+├── 日本語
+│   └── ファイル.txt
+├── über.txt
+├── emoji-🎉.txt
+└── café.txt"
+`;
+
+exports[`tree > reverse 12`] = `
+"varied-sizes
+├── tiny.txt
+├── small.txt
+├── medium.txt
+└── large.txt"
 `;
 
 exports[`tree > sizes 1`] = `
@@ -796,13 +1183,30 @@ exports[`tree > sizes 2`] = `
 exports[`tree > sizes 3`] = `"0B empty-dir"`;
 
 exports[`tree > sizes 4`] = `
+"30B hidden-files
+├── 8B another.txt
+└── 8B visible.txt"
+`;
+
+exports[`tree > sizes 5`] = `
+"5B mixed-content
+├── 1B alpha.txt
+├── 1B bravo-dir
+│   └── 1B inner.txt
+├── 1B charlie.txt
+├── 1B delta-dir
+│   └── 1B inner.txt
+└── 1B echo.txt"
+`;
+
+exports[`tree > sizes 6`] = `
 "68B multi-files
 ├── 5B alpha.txt
 ├── 17B beta.txt
 └── 46B charlie.txt"
 `;
 
-exports[`tree > sizes 5`] = `
+exports[`tree > sizes 7`] = `
 "127B multi-level
 ├── 10B alpha.txt
 ├── 48B beta
@@ -821,7 +1225,7 @@ exports[`tree > sizes 5`] = `
 └── 15B delta.txt"
 `;
 
-exports[`tree > sizes 6`] = `
+exports[`tree > sizes 8`] = `
 "0B numbered-files
 ├── 0B file1.txt
 ├── 0B file10.txt
@@ -830,15 +1234,32 @@ exports[`tree > sizes 6`] = `
 └── 0B file3.txt"
 `;
 
-exports[`tree > sizes 7`] = `
+exports[`tree > sizes 9`] = `
 "5B single-file
 └── 5B alpha.txt"
 `;
 
-exports[`tree > sizes 8`] = `
+exports[`tree > sizes 10`] = `
 "13B single-level
 ├── 13B alpha.txt
 └── 0B beta"
+`;
+
+exports[`tree > sizes 11`] = `
+"4B unicode-names
+├── 1B café.txt
+├── 1B emoji-🎉.txt
+├── 1B über.txt
+└── 1B 日本語
+    └── 1B ファイル.txt"
+`;
+
+exports[`tree > sizes 12`] = `
+"11.1kB varied-sizes
+├── 10kB large.txt
+├── 1kB medium.txt
+├── 100B small.txt
+└── 1B tiny.txt"
 `;
 
 exports[`tree > trailingSlash 1`] = `
@@ -864,13 +1285,30 @@ exports[`tree > trailingSlash 2`] = `
 exports[`tree > trailingSlash 3`] = `"empty-dir/"`;
 
 exports[`tree > trailingSlash 4`] = `
+"hidden-files/
+├── another.txt
+└── visible.txt"
+`;
+
+exports[`tree > trailingSlash 5`] = `
+"mixed-content/
+├── alpha.txt
+├── bravo-dir/
+│   └── inner.txt
+├── charlie.txt
+├── delta-dir/
+│   └── inner.txt
+└── echo.txt"
+`;
+
+exports[`tree > trailingSlash 6`] = `
 "multi-files/
 ├── alpha.txt
 ├── beta.txt
 └── charlie.txt"
 `;
 
-exports[`tree > trailingSlash 5`] = `
+exports[`tree > trailingSlash 7`] = `
 "multi-level/
 ├── alpha.txt
 ├── beta/
@@ -889,7 +1327,7 @@ exports[`tree > trailingSlash 5`] = `
 └── delta.txt"
 `;
 
-exports[`tree > trailingSlash 6`] = `
+exports[`tree > trailingSlash 8`] = `
 "numbered-files/
 ├── file1.txt
 ├── file10.txt
@@ -898,13 +1336,30 @@ exports[`tree > trailingSlash 6`] = `
 └── file3.txt"
 `;
 
-exports[`tree > trailingSlash 7`] = `
+exports[`tree > trailingSlash 9`] = `
 "single-file/
 └── alpha.txt"
 `;
 
-exports[`tree > trailingSlash 8`] = `
+exports[`tree > trailingSlash 10`] = `
 "single-level/
 ├── alpha.txt
 └── beta/"
+`;
+
+exports[`tree > trailingSlash 11`] = `
+"unicode-names/
+├── café.txt
+├── emoji-🎉.txt
+├── über.txt
+└── 日本語/
+    └── ファイル.txt"
+`;
+
+exports[`tree > trailingSlash 12`] = `
+"varied-sizes/
+├── large.txt
+├── medium.txt
+├── small.txt
+└── tiny.txt"
 `;
